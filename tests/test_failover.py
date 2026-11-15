@@ -282,3 +282,54 @@ def test_streaming_lcel_chain_yields_text() -> None:
 def test_fake_clock_default_is_independent() -> None:
     # Guard against shared state between tests built with make_failover.
     assert FakeClock().sleeps == []
+
+
+# --------------------------------------------------------------- tracing
+
+
+def _attempt_names(run) -> list[str]:
+    return [child.name for child in run.child_runs]
+
+
+@pytest.mark.parametrize("mode", ["invoke", "stream", "ainvoke", "astream"])
+async def test_provider_attempts_are_nested_under_the_failover_run(mode: str) -> None:
+    from langchain_core.tracers.run_collector import RunCollectorCallbackHandler
+
+    model, _, _ = make_failover(Script([openai_rate_limit(), "a b"]))
+    collector = RunCollectorCallbackHandler()
+    config = {"callbacks": [collector]}
+
+    if mode == "invoke":
+        model.invoke("hi", config=config)
+    elif mode == "stream":
+        list(model.stream("hi", config=config))
+    elif mode == "ainvoke":
+        await model.ainvoke("hi", config=config)
+    else:
+        _ = [c async for c in model.astream("hi", config=config)]
+
+    assert [r.name for r in collector.traced_runs] == ["FailoverChatModel"]
+    assert _attempt_names(collector.traced_runs[0]) == ["p0/m (attempt 1)", "p0/m (attempt 2)"]
+
+
+def test_streamed_chain_nests_failover_and_attempts() -> None:
+    from langchain_core.tracers.run_collector import RunCollectorCallbackHandler
+
+    model, _, _ = make_failover(Script([openai_server_error()]), Script(["x y"]), max_attempts=1)
+    chain = ChatPromptTemplate.from_messages([("human", "{q}")]) | model | StrOutputParser()
+    collector = RunCollectorCallbackHandler()
+
+    list(chain.stream({"q": "hi"}, config={"callbacks": [collector]}))
+
+    (root,) = collector.traced_runs
+    failover = next(c for c in root.child_runs if c.name == "FailoverChatModel")
+    assert _attempt_names(failover) == ["p0/m (attempt 1)", "p1/m (attempt 1)"]
+
+
+def test_stream_parent_does_not_leak_after_streaming() -> None:
+    from hybrid_rag.llm.failover import _STREAM_PARENT
+
+    model, _, _ = make_failover(Script(["a b c"]))
+    for _ in model.stream("hi"):
+        assert _STREAM_PARENT.get() is None  # only set while a chunk is being produced
+    assert _STREAM_PARENT.get() is None

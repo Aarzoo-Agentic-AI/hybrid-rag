@@ -8,15 +8,20 @@ Values are loaded in this order (later sources win):
 
 API keys are read from their conventional names (``ANTHROPIC_API_KEY``, ``OPENAI_API_KEY``,
 ``QDRANT_API_KEY``) and never from ``config.yaml``.
+
+LangSmith settings (``LANGSMITH_*``) are read by LangChain directly from the process
+environment, so ``get_settings()`` copies them from ``.env`` into ``os.environ``.
 """
 
 from __future__ import annotations
 
 import os
+from collections.abc import MutableMapping
 from functools import lru_cache
 from pathlib import Path
 from typing import Literal
 
+from dotenv import dotenv_values
 from pydantic import AliasChoices, BaseModel, Field, SecretStr, model_validator
 from pydantic_settings import (
     BaseSettings,
@@ -26,6 +31,9 @@ from pydantic_settings import (
 )
 
 CONFIG_ENV_VAR = "HYBRID_RAG_CONFIG"
+DOTENV_PATH = Path(".env")
+# Variables read straight from os.environ by LangChain/LangSmith rather than by Settings.
+TRACING_ENV_PREFIXES = ("LANGSMITH_", "LANGCHAIN_")
 DEFAULT_CONFIG_PATH = Path("config.yaml")
 
 ProviderName = Literal["anthropic", "openai", "fake"]
@@ -145,7 +153,28 @@ class Settings(BaseSettings):
         return (init_settings, env_settings, dotenv_settings, yaml_settings, file_secret_settings)
 
 
+def export_tracing_env(
+    dotenv_path: Path = DOTENV_PATH, environ: MutableMapping[str, str] | None = None
+) -> list[str]:
+    """Copy ``LANGSMITH_*`` / ``LANGCHAIN_*`` values from ``.env`` into ``os.environ``.
+
+    Variables already set in the environment win. Returns the names that were exported.
+    ``environ`` exists for tests: LangSmith caches these variables, so tests must not
+    change the real environment.
+    """
+    environ = os.environ if environ is None else environ
+    if not dotenv_path.is_file():
+        return []
+    exported = []
+    for name, value in dotenv_values(dotenv_path).items():
+        if name.startswith(TRACING_ENV_PREFIXES) and value and name not in environ:
+            environ[name] = value
+            exported.append(name)
+    return exported
+
+
 @lru_cache
 def get_settings() -> Settings:
-    """Return the process-wide settings (cached)."""
+    """Return the process-wide settings (cached). Also exports LangSmith settings from .env."""
+    export_tracing_env()
     return Settings()

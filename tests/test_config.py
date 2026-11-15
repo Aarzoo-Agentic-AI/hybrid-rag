@@ -70,3 +70,21 @@ def test_unknown_provider_rejected(monkeypatch: pytest.MonkeyPatch, tmp_path: Pa
 
     with pytest.raises(ValidationError):
         Settings()
+
+
+def test_tracing_vars_exported_from_dotenv(tmp_path: Path) -> None:
+    from hybrid_rag.config import export_tracing_env
+
+    dotenv = tmp_path / ".env"
+    dotenv.write_text(
+        "LANGSMITH_TRACING=true\nLANGSMITH_PROJECT=from-dotenv\nOPENAI_API_KEY=sk-x\n",
+        encoding="utf-8",
+    )
+    environ = {"LANGSMITH_PROJECT": "from-shell"}  # never touch the real os.environ here
+
+    exported = export_tracing_env(dotenv, environ)
+
+    assert exported == ["LANGSMITH_TRACING"]
+    assert environ["LANGSMITH_TRACING"] == "true"
+    assert environ["LANGSMITH_PROJECT"] == "from-shell"  # the shell wins
+    assert "OPENAI_API_KEY" not in environ  # only tracing settings are exported

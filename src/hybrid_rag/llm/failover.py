@@ -15,10 +15,13 @@ The provider that answered is recorded in ``AIMessage.response_metadata["failove
 from __future__ import annotations
 
 import asyncio
+import contextvars
 import logging
 import random
 import time
+import uuid
 from collections.abc import AsyncIterator, Awaitable, Callable, Iterator
+from dataclasses import dataclass
 from typing import Any
 
 from langchain_core.callbacks import (
@@ -27,10 +30,11 @@ from langchain_core.callbacks import (
     CallbackManager,
     CallbackManagerForLLMRun,
 )
+from langchain_core.language_models.base import LanguageModelInput
 from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_core.messages import AIMessage, AIMessageChunk, BaseMessage
 from langchain_core.outputs import ChatGeneration, ChatGenerationChunk, ChatResult
-from langchain_core.runnables import RunnableConfig
+from langchain_core.runnables import RunnableConfig, ensure_config
 from pydantic import Field
 
 from hybrid_rag.llm.circuit_breaker import CircuitBreaker, CircuitState
@@ -45,6 +49,27 @@ from hybrid_rag.llm.errors import (
 logger = logging.getLogger(__name__)
 
 FAILOVER_METADATA_KEY = "failover"
+
+
+@dataclass(frozen=True)
+class _StreamParent:
+    """The failover run's identity during ``stream()``, for nesting provider attempts under it.
+
+    ``BaseChatModel.stream()`` does not pass its run manager to ``_stream()``, so ``stream()``
+    and ``astream()`` below hand this to ``_stream()`` through ``_STREAM_PARENT`` instead.
+    It has the same attribute names as an LLM run manager, so ``_child_config`` accepts either.
+    """
+
+    run_id: uuid.UUID
+    inheritable_handlers: list[Any]
+    inheritable_tags: list[str]
+    inheritable_metadata: dict[str, Any]
+    is_async: bool
+
+
+_STREAM_PARENT: contextvars.ContextVar[_StreamParent | None] = contextvars.ContextVar(
+    "failover_stream_parent", default=None
+)
 
 
 class ProviderSlot:
@@ -91,6 +116,70 @@ class FailoverChatModel(BaseChatModel):
     def _identifying_params(self) -> dict[str, Any]:
         return {"providers": [s.label for s in self.slots]}
 
+    # ------------------------------------------------- stream() wrappers
+
+    def stream(
+        self,
+        input: LanguageModelInput,
+        config: RunnableConfig | None = None,
+        *,
+        stop: list[str] | None = None,
+        **kwargs: Any,
+    ) -> Iterator[AIMessageChunk]:
+        config, parent = self._prepare_stream_parent(config, is_async=False)
+        inner = super().stream(input, config, stop=stop, **kwargs)
+        while True:
+            token = _STREAM_PARENT.set(parent)  # set only while producing the next chunk
+            try:
+                chunk = next(inner)
+            except StopIteration:
+                return
+            finally:
+                _STREAM_PARENT.reset(token)
+            yield chunk
+
+    async def astream(
+        self,
+        input: LanguageModelInput,
+        config: RunnableConfig | None = None,
+        *,
+        stop: list[str] | None = None,
+        **kwargs: Any,
+    ) -> AsyncIterator[AIMessageChunk]:
+        config, parent = self._prepare_stream_parent(config, is_async=True)
+        inner = super().astream(input, config, stop=stop, **kwargs)
+        while True:
+            token = _STREAM_PARENT.set(parent)
+            try:
+                chunk = await anext(inner)
+            except StopAsyncIteration:
+                return
+            finally:
+                _STREAM_PARENT.reset(token)
+            yield chunk
+
+    def _prepare_stream_parent(
+        self, config: RunnableConfig | None, *, is_async: bool
+    ) -> tuple[RunnableConfig, _StreamParent]:
+        """Fix the run id and callback handlers that ``BaseChatModel.stream()`` will use.
+
+        Handlers are configured here (including the LangSmith tracer when tracing is on) and
+        passed in as a callback manager, so the failover run and its provider attempts share
+        the same handler instances. Tracers need that to link a child run to its parent.
+        """
+        config = ensure_config(config)
+        manager_cls = AsyncCallbackManager if is_async else CallbackManager
+        manager = manager_cls.configure(inheritable_callbacks=config.get("callbacks"))
+        run_id = config.get("run_id") or uuid.uuid4()
+        parent = _StreamParent(
+            run_id=run_id,
+            inheritable_handlers=list(manager.inheritable_handlers),
+            inheritable_tags=list(config.get("tags") or []),
+            inheritable_metadata=dict(config.get("metadata") or {}),
+            is_async=is_async,
+        )
+        return {**config, "callbacks": manager, "run_id": run_id}, parent
+
     # ------------------------------------------------------------------ sync
 
     def _generate(
@@ -130,6 +219,7 @@ class FailoverChatModel(BaseChatModel):
         run_manager: CallbackManagerForLLMRun | None = None,
         **kwargs: Any,
     ) -> Iterator[ChatGenerationChunk]:
+        parent = run_manager or _STREAM_PARENT.get()
         run = _Run(self)
         for index, slot in run.available_slots():
             for attempt in range(1, self.max_attempts + 1):
@@ -139,7 +229,7 @@ class FailoverChatModel(BaseChatModel):
                     slot.model.stream(
                         messages,
                         stop=stop,
-                        config=_child_config(run_manager, slot, attempt),
+                        config=_child_config(parent, slot, attempt),
                         **kwargs,
                     )
                 )
@@ -209,6 +299,7 @@ class FailoverChatModel(BaseChatModel):
         run_manager: AsyncCallbackManagerForLLMRun | None = None,
         **kwargs: Any,
     ) -> AsyncIterator[ChatGenerationChunk]:
+        parent = run_manager or _STREAM_PARENT.get()
         run = _Run(self)
         for index, slot in run.available_slots():
             for attempt in range(1, self.max_attempts + 1):
@@ -218,7 +309,7 @@ class FailoverChatModel(BaseChatModel):
                     slot.model.astream(
                         messages,
                         stop=stop,
-                        config=_child_config(run_manager, slot, attempt),
+                        config=_child_config(parent, slot, attempt),
                         **kwargs,
                     )
                 )
@@ -345,23 +436,24 @@ class _Run:
 
 
 def _child_config(
-    run_manager: CallbackManagerForLLMRun | AsyncCallbackManagerForLLMRun | None,
+    parent: CallbackManagerForLLMRun | AsyncCallbackManagerForLLMRun | _StreamParent | None,
     slot: ProviderSlot,
     attempt: int,
 ) -> RunnableConfig:
     """Nest each attempt under the failover run, so traces (e.g. LangSmith) show every try."""
     config: RunnableConfig = {"run_name": f"{slot.label} (attempt {attempt})"}
-    if run_manager is not None:
+    if parent is not None:
         # LLM run managers have no get_child(); this mirrors ParentRunManager.get_child().
-        manager_cls = (
-            AsyncCallbackManager
-            if isinstance(run_manager, AsyncCallbackManagerForLLMRun)
-            else CallbackManager
+        is_async = (
+            parent.is_async
+            if isinstance(parent, _StreamParent)
+            else isinstance(parent, AsyncCallbackManagerForLLMRun)
         )
-        child = manager_cls(handlers=[], parent_run_id=run_manager.run_id)
-        child.set_handlers(run_manager.inheritable_handlers)
-        child.add_tags(run_manager.inheritable_tags)
-        child.add_metadata(run_manager.inheritable_metadata)
+        manager_cls = AsyncCallbackManager if is_async else CallbackManager
+        child = manager_cls(handlers=[], parent_run_id=parent.run_id)
+        child.set_handlers(parent.inheritable_handlers)
+        child.add_tags(parent.inheritable_tags)
+        child.add_metadata(parent.inheritable_metadata)
         config["callbacks"] = child
     return config
 
