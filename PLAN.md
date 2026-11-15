@@ -14,7 +14,7 @@ Each step ends with something working and tested. Features and design decisions 
 - Linting with ruff and a basic GitHub Actions workflow running the tests.
 - **Done when:** `docker compose up` starts Qdrant and `pytest` runs.
 
-## Step 1: LLM layer with failover (LangChain chat models)
+## Step 1: LLM layer with failover (LangChain chat models) ✅
 - Provider factory: builds `ChatOpenAI` and `ChatAnthropic` from config, with the SDKs' own retries turned off. Providers without an API key are skipped.
 - `FailoverChatModel`, a custom LangChain `BaseChatModel`: retries with increasing waits, sorting errors into "retry/fail over" and "fail immediately", circuit breakers, time limits, and streaming failover only before the first token. Records the provider that answered in `response_metadata`.
 - **Done when:** unit tests with fake chat models pass for retries, failover order, the circuit breaker, streaming and caller errors, and a small script gets an answer from OpenAI through `FailoverChatModel` (and from Anthropic once that key is added).
