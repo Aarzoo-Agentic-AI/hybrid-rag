@@ -13,7 +13,6 @@ dependencies = [
     "flagembedding>=1.4.2",
     "langchain-anthropic>=1.7.10",
     "langchain-classic>=1.0.8",
-    "langchain-community>=0.4.2",
     "langchain-core>=1.8.0",
     "langchain-openai>=1.8.0",
     "langchain-qdrant>=1.1.0",

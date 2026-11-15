@@ -5,7 +5,7 @@ Each step ends with something working and tested. Features and design decisions 
 ## Step 0: Project setup ✅
 - Python 3.12 project managed with `uv`, using a `src/` layout.
 - Dependencies:
-  - **LangChain:** `langchain-core`, `langchain-openai`, `langchain-anthropic`, `langchain-qdrant`, `langchain-community`, `langchain-text-splitters` and `langchain-classic` (needed for the reranking retriever in LangChain 1.x)
+  - **LangChain:** `langchain-core`, `langchain-openai`, `langchain-anthropic`, `langchain-qdrant`, `langchain-text-splitters` and `langchain-classic` (needed for the reranking retriever in LangChain 1.x). `langchain-community` was used at first but removed in step 2, because it was sunset in May 2026.
   - **Models and storage:** `qdrant-client`, `FlagEmbedding` (provides `bge-m3`), `sentence-transformers` (runs the reranker), and the `openai` and `anthropic` SDKs (their exception types are used to classify errors for failover)
   - **API and config:** FastAPI, `pypdf`, `pydantic-settings`
   - **Dev tools:** pytest, ruff and httpx
@@ -21,8 +21,8 @@ Each step ends with something working and tested. Features and design decisions 
 
 *This comes first because it doesn't depend on anything else and is the most distinctive part of the design.*
 
-## Step 2: Document loading and chunking
-- LangChain's `PyPDFLoader` (keeps page numbers), `TextLoader` and `CSVLoader`, all producing `Document` objects. CSV rows become `column: value` text.
+## Step 2: Document loading and chunking ✅
+- Our own LangChain `BaseLoader`s: `PdfPageLoader` (on `pypdf`, keeps page numbers), `TextFileLoader` and `CsvRowLoader`, all producing `Document` objects. CSV rows become `column: value` text.
 - `RecursiveCharacterTextSplitter` for PDF and TXT, row grouping for CSV, contextual chunk headers, metadata and content hashes.
 - **Done when:** tests on sample files produce the expected chunks and metadata.
 
@@ -33,7 +33,7 @@ Each step ends with something working and tested. Features and design decisions 
 
 ## Step 4: Hybrid retrieval and reranking
 - Retrievers from `QdrantVectorStore` in dense, sparse and hybrid mode (Qdrant does the RRF fusion), plus metadata filters.
-- Reranking with `ContextualCompressionRetriever` and `CrossEncoderReranker`, running `bge-reranker-v2-m3`.
+- Reranking with `ContextualCompressionRetriever` and `CrossEncoderReranker`, plus our own `BaseCrossEncoder` running `bge-reranker-v2-m3` through `sentence-transformers`.
 - **Done when:** sample queries return relevant chunks, and you can switch between dense-only, sparse-only, hybrid and hybrid plus rerank. The evaluation script in step 7 needs these modes.
 
 ## Step 5: Answer generation (LCEL chain)

@@ -60,6 +60,7 @@ class ChunkingSettings(BaseModel):
     chunk_size: int = Field(default=800, gt=0)
     chunk_overlap: int = Field(default=120, ge=0)
     csv_rows_per_chunk: int = Field(default=1, gt=0)
+    contextual_headers: bool = True  # prepend "Document: ... / Location: ..." to each chunk
 
     @model_validator(mode="after")
     def _overlap_smaller_than_size(self) -> ChunkingSettings:

@@ -14,9 +14,9 @@
 | Vector database | Qdrant in Docker, one collection with dense and sparse vectors, used through `langchain-qdrant` (`QdrantVectorStore`) |
 | Embeddings | `bge-m3` (dense and sparse from one model), wrapped in LangChain's `Embeddings` and `SparseEmbeddings` interfaces |
 | Fusion | Reciprocal Rank Fusion (RRF), done by Qdrant through `QdrantVectorStore`'s hybrid mode |
-| Reranker | `bge-reranker-v2-m3` through LangChain's `CrossEncoderReranker` and `ContextualCompressionRetriever` |
+| Reranker | `bge-reranker-v2-m3` through LangChain's `CrossEncoderReranker` and `ContextualCompressionRetriever`, with our own `BaseCrossEncoder` running the model through `sentence-transformers` |
 | LLM | `ChatOpenAI` (primary) + `ChatAnthropic` (fallback) behind a custom `FailoverChatModel` (see section 9) |
-| Loaders and chunking | LangChain's `PyPDFLoader`, `TextLoader`, `CSVLoader` and `RecursiveCharacterTextSplitter` |
+| Loaders and chunking | Our own LangChain `BaseLoader`s (`PdfPageLoader` on `pypdf`, `TextFileLoader`, `CsvRowLoader`) and LangChain's `RecursiveCharacterTextSplitter` |
 | Tracing | LangSmith (optional, switched on with environment variables) |
 | API | FastAPI |
 | Packaging | Docker Compose and pytest |
@@ -24,6 +24,7 @@
 **How LangChain is used.** Ready-made LangChain components are used wherever they fit. Where they don't cover what the project needs, the project adds its own components that implement LangChain's interfaces, so they still plug into any chain:
 - `FailoverChatModel`, a custom chat model (retries, circuit breakers, time limits; see section 9)
 - the `bge-m3` dense and sparse embedding wrapper
+- the PDF, TXT and CSV loaders (`BaseLoader` subclasses) and the reranker's cross-encoder (`BaseCrossEncoder`), because `langchain-community`, which used to provide them, was sunset in May 2026
 - extra metadata on documents (content hashes, page and row numbers, contextual headers)
 
 ## 3. Core retrieval: what makes it "hybrid"
@@ -31,17 +32,17 @@
 - **Dense retrieval (vectors):** uses embeddings, so it finds passages with the same meaning even when the wording differs.
 - **Sparse retrieval:** matches exact words, which is good for names, IDs, error codes and acronyms. Uses `bge-m3`'s sparse output.
 - **Fusion:** combines the two ranked lists into one with RRF, which needs no tuning. Weighted score blending is an optional alternative.
-- **Reranking:** a cross-encoder re-scores the top ~20–50 fused results down to the top 5–10. This is usually the biggest quality gain for the effort. In LangChain this is a `ContextualCompressionRetriever` with a `CrossEncoderReranker`, wrapped around the hybrid retriever.
+- **Reranking:** a cross-encoder re-scores the top ~20–50 fused results down to the top 5–10. This is usually the biggest quality gain for the effort. In LangChain this is a `ContextualCompressionRetriever` with a `CrossEncoderReranker`, wrapped around the hybrid retriever. The cross-encoder itself is our own small `BaseCrossEncoder` (from `langchain-core`) that runs the model with `sentence-transformers`.
 
 ## 4. Ingestion pipeline
-- **Document loaders:** LangChain's `PyPDFLoader`, `TextLoader` and `CSVLoader`, which all produce LangChain `Document` objects.
+- **Document loaders:** `PdfPageLoader`, `TextFileLoader` and `CsvRowLoader`, our own subclasses of LangChain's `BaseLoader` (built on `pypdf` and Python's `csv` module), which all produce LangChain `Document` objects. Text encodings are detected automatically (UTF-8 first, then `charset-normalizer`).
 - **Handling for each file type:**
-  - **PDF:** chunking that follows headings and sections, with page numbers kept for citations.
-  - **TXT:** `RecursiveCharacterTextSplitter` with overlap.
-  - **CSV:** each row (or a small group of rows) becomes a chunk written as `column: value` lines, with headers kept as metadata.
-- **Metadata extraction:** source file, file type, page or row number, section, ingestion date and tags. Filters depend on this.
+  - **PDF:** one unit per page, split with `RecursiveCharacterTextSplitter`; chunks never cross page boundaries, so every chunk has an exact page number for citations. Words hyphenated across lines are re-joined. Pages without text (scanned pages) are skipped with a warning, since OCR isn't supported.
+  - **TXT:** `RecursiveCharacterTextSplitter` with overlap; each chunk records its line numbers.
+  - **CSV:** each row (or a small group of rows) becomes a chunk written as `column: value` lines, with headers kept as metadata. Empty cells and empty rows are left out.
+- **Metadata extraction:** document ID, source file name (never the local path), title, file type, chunk ID and position, content hash, and the page, line or row location. Filters depend on this. The full schema is in `src/hybrid_rag/ingestion/README.md`.
 - **Incremental indexing:** content hashing so unchanged documents aren't re-embedded, plus a way to delete or update documents.
-- **Contextual chunk headers:** add the document title and section path to each chunk before embedding. This is cheap and works well.
+- **Contextual chunk headers:** add the document name and location (for example `Document: Employee Handbook (handbook.pdf)` / `Location: page 3`) to each chunk before embedding. This is cheap and works well, and can be switched off in config.
 - **Batched and idempotent:** ingestion runs in batches and can be re-run safely.
 
 ## 5. Query-side intelligence

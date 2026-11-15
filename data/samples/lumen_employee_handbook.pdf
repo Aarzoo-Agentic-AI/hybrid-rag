@@ -1,0 +1,113 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R 6 0 R 8 0 R] /Count 3 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 1212 >>
+stream
+BT /F1 11 Tf 14 TL 72 740 Td
+(Lumen Robotics Employee Handbook) Tj T*
+(Version 3.1, effective 1 January 2026. Fictional sample document.) Tj T*
+() Tj T*
+(1. Welcome) Tj T*
+(This handbook explains the main policies for employees of Lumen Robotics.) Tj T*
+(If a policy here differs from your employment contract, your contract applies.) Tj T*
+(Questions about this handbook go to the People team at people@lumen.example.) Tj T*
+() Tj T*
+(2. Working hours) Tj T*
+(The standard working week is 38 hours, Monday to Friday. Core hours are) Tj T*
+(10:00 to 15:00, when everyone should be available for meetings. Outside core) Tj T*
+(hours you can choose when to work, as long as you agree it with your manager.) Tj T*
+() Tj T*
+(3. Remote work) Tj T*
+(Employees can work remotely for up to three days per week. Engineers who work) Tj T*
+(with robot hardware must be on site at least two days per week, because the) Tj T*
+(test lab cannot be used remotely. Fully remote arrangements need approval) Tj T*
+(from both your manager and the People team.) Tj T*
+(Lumen pays a home-office allowance of 600 USD once every two years, for a) Tj T*
+(desk, chair or monitor. Keep the receipts and submit them as an expense.) Tj T*
+ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 7 0 R >>
+endobj
+7 0 obj
+<< /Length 960 >>
+stream
+BT /F1 11 Tf 14 TL 72 740 Td
+(4. Annual leave) Tj T*
+(Full-time employees receive 25 days of paid annual leave per year, plus public) Tj T*
+(holidays. Part-time employees receive leave in proportion to their hours.) Tj T*
+(Up to 5 unused days can be carried over to the next year; any other unused) Tj T*
+(days expire on 31 March of the following year.) Tj T*
+(Request leave in the HR portal at least two weeks in advance for periods) Tj T*
+(longer than three days.) Tj T*
+() Tj T*
+(5. Sick leave) Tj T*
+(Tell your manager before 10:00 on the first day you are sick. You need a) Tj T*
+(doctor's note from the fourth consecutive sick day. Sick leave is paid in full) Tj T*
+(for up to 30 days per year.) Tj T*
+() Tj T*
+(6. Parental leave) Tj T*
+(Primary caregivers receive 20 weeks of paid parental leave. Secondary) Tj T*
+(caregivers receive 6 weeks. Parental leave can be taken in up to three blocks) Tj T*
+(within 18 months of the birth or adoption.) Tj T*
+ET
+endstream
+endobj
+8 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 9 0 R >>
+endobj
+9 0 obj
+<< /Length 957 >>
+stream
+BT /F1 11 Tf 14 TL 72 740 Td
+(7. Expenses and travel) Tj T*
+(Expenses must be submitted within 60 days, with a receipt for every item over) Tj T*
+(25 USD. Book travel through the company travel portal. Economy class is the) Tj T*
+(standard for flights under 6 hours; premium economy is allowed for longer) Tj T*
+(flights. The daily meal allowance during business travel is 75 USD.) Tj T*
+() Tj T*
+(8. Safety in the test lab) Tj T*
+(Everyone entering the robot test lab must complete safety training first and) Tj T*
+(wear safety glasses. Never enter the marked safety zone of an LR-200 arm while) Tj T*
+(it is powered. If a robot behaves unexpectedly, press the emergency stop and) Tj T*
+(report the incident to the lab lead within 24 hours, even if nobody was hurt.) Tj T*
+() Tj T*
+(9. Learning budget) Tj T*
+(Each employee has a learning budget of 1,500 USD per year for courses,) Tj T*
+(conferences and books. Unused budget does not carry over.) Tj T*
+ET
+endstream
+endobj
+10 0 obj
+<< /Title (Lumen Robotics Employee Handbook) /Producer (pdf_fixture) >>
+endobj
+xref
+0 11
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000127 00000 n 
+0000000197 00000 n 
+0000000323 00000 n 
+0000001587 00000 n 
+0000001713 00000 n 
+0000002724 00000 n 
+0000002850 00000 n 
+0000003858 00000 n 
+trailer
+<< /Size 11 /Root 1 0 R /Info 10 0 R >>
+startxref
+3946
+%%EOF
