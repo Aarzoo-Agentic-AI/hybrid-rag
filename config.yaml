@@ -1,0 +1,48 @@
+# Pipeline settings. Secrets (API keys) belong in .env, not here.
+# Any value can be overridden with an environment variable using the HYBRID_RAG_ prefix
+# and "__" between levels, e.g. HYBRID_RAG_QDRANT__URL=http://qdrant:6333
+
+qdrant:
+  url: http://localhost:6333
+  collection: documents
+
+embedding:
+  model: BAAI/bge-m3
+  batch_size: 16
+  device: cpu            # "cpu" or "cuda"
+
+reranker:
+  enabled: true
+  model: BAAI/bge-reranker-v2-m3
+  device: cpu
+
+chunking:
+  chunk_size: 800        # characters
+  chunk_overlap: 120
+  csv_rows_per_chunk: 1
+
+retrieval:
+  dense_limit: 50        # candidates from dense search
+  sparse_limit: 50       # candidates from sparse search
+  fused_limit: 20        # candidates kept after RRF, passed to the reranker
+  top_k: 6               # chunks sent to the LLM
+
+llm:
+  # Ordered lists: the first entry is the primary, the rest are fallbacks.
+  # Providers without an API key in .env are skipped, so Anthropic stays inactive until
+  # ANTHROPIC_API_KEY is set.
+  answer:
+    - {provider: openai, model: gpt-5}        # set to an OpenAI model your key can use
+    - {provider: anthropic, model: claude-sonnet-5-5}
+  query_rewrite:
+    - {provider: openai, model: gpt-5-mini}   # set to an OpenAI model your key can use
+    - {provider: anthropic, model: claude-haiku-5-5}
+  request_timeout_s: 60
+  overall_deadline_s: 120
+  retry:
+    max_attempts: 3
+    base_delay_s: 0.5
+    max_delay_s: 8
+  circuit_breaker:
+    failure_threshold: 5
+    cooldown_s: 30
