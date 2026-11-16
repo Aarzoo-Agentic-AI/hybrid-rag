@@ -8,6 +8,7 @@ from hybrid_rag.config import ChunkingSettings
 from hybrid_rag.ingestion import (
     EmptyDocumentError,
     FileType,
+    IngestionError,
     UnsupportedFileTypeError,
     citation,
     find_supported_files,
@@ -39,10 +40,6 @@ def test_clean_text_normalises_whitespace() -> None:
 def test_clean_text_joins_hyphenated_line_breaks_when_asked() -> None:
     assert clean_text("hy-\nbrid", join_hyphenated=True) == "hybrid"
     assert clean_text("hy-\nbrid") == "hy-\nbrid"
-
-
-def test_clean_text_can_keep_line_numbers() -> None:
-    assert clean_text("\n\nx\n\n\n\ny  \n", collapse_blank_lines=False) == "\n\nx\n\n\n\ny"
 
 
 # --------------------------------------------------------------------- PDF
@@ -80,6 +77,20 @@ def test_long_pdf_page_is_split_without_crossing_pages(tmp_path: Path) -> None:
     assert body(doc.chunks[-1]) == "Short second page."
 
 
+def test_chunks_respect_size_and_overlap(tmp_path: Path) -> None:
+    words = [f"word{i}" for i in range(200)]
+    lines = [" ".join(words[i : i + 5]) for i in range(0, len(words), 5)]  # 40 short lines
+    pdf = write_pdf(tmp_path / "words.pdf", [lines])
+
+    doc = load_document(pdf, settings(chunk_size=200, chunk_overlap=40))
+
+    bodies = [body(c) for c in doc.chunks]
+    assert len(bodies) > 1
+    assert all(len(b) <= 200 for b in bodies)
+    for previous, current in pairwise(bodies):
+        assert current.split(" ")[0] in previous  # each chunk starts inside the previous one
+
+
 def test_pdf_pages_without_text_are_skipped_with_a_warning(tmp_path: Path) -> None:
     pdf = write_pdf(tmp_path / "scan.pdf", [["Text page."], [], [], ["Another."]])
 
@@ -105,113 +116,24 @@ def test_pdf_without_title_uses_file_name(tmp_path: Path) -> None:
     assert doc.chunks[0].page_content.startswith("Document: notes.pdf\n")
 
 
-# --------------------------------------------------------------------- TXT
+def test_damaged_pdf_raises_ingestion_error(tmp_path: Path) -> None:
+    broken = tmp_path / "broken.pdf"
+    broken.write_bytes(b"%PDF-1.4 this is not really a pdf")
 
-
-def test_txt_line_numbers_match_the_file(tmp_path: Path) -> None:
-    lines = [f"Line {i}: the LR-50 courier robot delivers parcels." for i in range(1, 41)]
-    txt = tmp_path / "log.txt"
-    txt.write_text("\n\n" + "\n".join(lines) + "\n", encoding="utf-8")  # two leading blank lines
-
-    doc = load_document(txt, settings())
-
-    assert len(doc.chunks) > 1
-    original = txt.read_text(encoding="utf-8").split("\n")
-    for chunk in doc.chunks:
-        start, end = chunk.metadata["line_start"], chunk.metadata["line_end"]
-        expected = "\n".join(original[start - 1 : end]).strip()
-        assert body(chunk) == expected
-
-
-def test_txt_chunks_respect_size_and_overlap(tmp_path: Path) -> None:
-    words = " ".join(f"word{i}" for i in range(400))
-    txt = tmp_path / "words.txt"
-    txt.write_text(words, encoding="utf-8")
-
-    doc = load_document(txt, settings(chunk_size=200, chunk_overlap=40))
-
-    bodies = [body(c) for c in doc.chunks]
-    assert all(len(b) <= 200 for b in bodies)
-    for previous, current in pairwise(bodies):
-        assert current.split(" ")[0] in previous  # each chunk starts inside the previous one
-
-
-def test_txt_in_windows_encoding_is_decoded(tmp_path: Path) -> None:
-    txt = tmp_path / "legacy.txt"
-    txt.write_bytes("Café prices: 5 € per coffee.".encode("cp1252"))
-
-    doc = load_document(txt, settings())
-
-    assert "Café prices: 5 € per coffee." in doc.chunks[0].page_content
-
-
-def test_empty_txt_is_rejected(tmp_path: Path) -> None:
-    txt = tmp_path / "empty.txt"
-    txt.write_text("  \n\n  ", encoding="utf-8")
-
-    with pytest.raises(EmptyDocumentError):
-        load_document(txt, settings())
-
-
-# --------------------------------------------------------------------- CSV
-
-
-CSV_TEXT = (
-    "﻿sku,name,price,notes\n"  # Excel-style byte-order mark
-    "A-1,Widget,9.99,\n"
-    '"B-2","Gadget, Pro",19.50,"two\nlines"\n'
-    ",,,\n"
-    "C-3,Gizmo,5,cheap\n"
-)
-
-
-def test_csv_rows_become_column_value_chunks(tmp_path: Path) -> None:
-    csv_file = tmp_path / "products.csv"
-    csv_file.write_text(CSV_TEXT, encoding="utf-8")
-
-    doc = load_document(csv_file, settings())
-
-    assert len(doc.chunks) == 3
-    first = doc.chunks[0]
-    assert body(first) == "sku: A-1\nname: Widget\nprice: 9.99"  # empty "notes" left out
-    assert first.metadata["columns"] == ["sku", "name", "price", "notes"]  # no BOM in "sku"
-    assert body(doc.chunks[1]) == "sku: B-2\nname: Gadget, Pro\nprice: 19.50\nnotes: two\nlines"
-    assert [c.metadata["row_start"] for c in doc.chunks] == [1, 2, 4]  # row 3 was empty
-    assert citation(doc.chunks[2].metadata) == "products.csv, row 4"
-    assert doc.warnings == ["1 empty row(s) skipped"]
-
-
-def test_csv_rows_can_be_grouped(tmp_path: Path) -> None:
-    csv_file = tmp_path / "products.csv"
-    csv_file.write_text(CSV_TEXT, encoding="utf-8")
-
-    doc = load_document(csv_file, settings(csv_rows_per_chunk=2))
-
-    assert len(doc.chunks) == 2
-    assert (doc.chunks[0].metadata["row_start"], doc.chunks[0].metadata["row_end"]) == (1, 2)
-    assert body(doc.chunks[0]).startswith("Row 1\nsku: A-1")
-    assert "\n\nRow 2\nsku: B-2" in body(doc.chunks[0])
-    assert citation(doc.chunks[0].metadata) == "products.csv, rows 1-2"
-
-
-def test_csv_without_data_rows_is_rejected(tmp_path: Path) -> None:
-    csv_file = tmp_path / "header_only.csv"
-    csv_file.write_text("a,b,c\n", encoding="utf-8")
-
-    with pytest.raises(EmptyDocumentError):
-        load_document(csv_file, settings())
+    with pytest.raises(IngestionError, match=r"broken\.pdf"):
+        load_document(broken, settings())
 
 
 # ---------------------------------------------------------- IDs and schema
 
 
 def test_ids_and_hashes_are_deterministic(tmp_path: Path) -> None:
-    txt = tmp_path / "a.txt"
-    txt.write_text("Some text. " * 50, encoding="utf-8")
+    pdf = write_pdf(tmp_path / "a.pdf", [["Some text. " * 5] * 20])
 
-    first = load_document(txt, settings())
-    second = load_document(txt, settings())
+    first = load_document(pdf, settings())
+    second = load_document(pdf, settings())
 
+    assert len(first.chunks) > 1
     assert first.doc_id == second.doc_id
     assert first.doc_hash == second.doc_hash
     assert [c.id for c in first.chunks] == [c.id for c in second.chunks]
@@ -221,25 +143,23 @@ def test_ids_and_hashes_are_deterministic(tmp_path: Path) -> None:
 
 
 def test_changed_file_keeps_doc_id_but_changes_hash(tmp_path: Path) -> None:
-    txt = tmp_path / "a.txt"
-    txt.write_text("Version one.", encoding="utf-8")
-    before = load_document(txt, settings())
-    txt.write_text("Version two.", encoding="utf-8")
-    after = load_document(txt, settings())
+    pdf = write_pdf(tmp_path / "a.pdf", [["Version one."]])
+    before = load_document(pdf, settings())
+    write_pdf(pdf, [["Version two."]])
+    after = load_document(pdf, settings())
 
     assert before.doc_id == after.doc_id
     assert before.doc_hash != after.doc_hash
 
 
 def test_source_name_overrides_temporary_file_name(tmp_path: Path) -> None:
-    tmp = tmp_path / "upload_8f3a.tmp"
-    tmp.write_text("Uploaded text.", encoding="utf-8")
+    tmp = write_pdf(tmp_path / "upload_8f3a.tmp", [["Uploaded text."]])
 
-    doc = load_document(tmp, settings(), source="report.txt")
+    doc = load_document(tmp, settings(), source="report.pdf")
 
-    assert doc.source == "report.txt"
-    assert doc.file_type is FileType.TXT
-    assert doc.chunks[0].metadata["source"] == "report.txt"
+    assert doc.source == "report.pdf"
+    assert doc.file_type is FileType.PDF
+    assert doc.chunks[0].metadata["source"] == "report.pdf"
 
 
 def test_metadata_is_json_serialisable_and_has_no_local_paths(tmp_path: Path) -> None:
@@ -252,27 +172,37 @@ def test_metadata_is_json_serialisable_and_has_no_local_paths(tmp_path: Path) ->
 
 
 def test_contextual_headers_can_be_turned_off(tmp_path: Path) -> None:
-    txt = tmp_path / "a.txt"
-    txt.write_text("Just the text.", encoding="utf-8")
+    pdf = write_pdf(tmp_path / "a.pdf", [["Just the text."]])
 
-    doc = load_document(txt, settings(contextual_headers=False))
+    doc = load_document(pdf, settings(contextual_headers=False))
 
     assert doc.chunks[0].page_content == "Just the text."
 
 
-def test_unsupported_file_type_is_rejected(tmp_path: Path) -> None:
-    docx = tmp_path / "report.docx"
-    docx.write_bytes(b"x")
+@pytest.mark.parametrize("name", ["notes.txt", "data.csv", "report.docx"])
+def test_unsupported_file_types_are_rejected(tmp_path: Path, name: str) -> None:
+    path = tmp_path / name
+    path.write_bytes(b"x")
 
-    with pytest.raises(UnsupportedFileTypeError, match=r"\.pdf, \.txt, \.csv"):
-        load_document(docx, settings())
+    with pytest.raises(UnsupportedFileTypeError, match=r"Supported: \.pdf"):
+        load_document(path, settings())
 
 
 def test_extensions_are_case_insensitive(tmp_path: Path) -> None:
-    txt = tmp_path / "SHOUT.TXT"
-    txt.write_text("Hello.", encoding="utf-8")
+    pdf = write_pdf(tmp_path / "SHOUT.PDF", [["Hello."]])
 
-    assert load_document(txt, settings()).file_type is FileType.TXT
+    assert load_document(pdf, settings()).file_type is FileType.PDF
+
+
+def test_find_supported_files_returns_only_pdfs(tmp_path: Path) -> None:
+    write_pdf(tmp_path / "b.pdf", [["B."]])
+    (tmp_path / "sub").mkdir()
+    write_pdf(tmp_path / "sub" / "a.PDF", [["A."]])
+    (tmp_path / "notes.txt").write_text("ignored", encoding="utf-8")
+
+    files = find_supported_files(tmp_path)
+
+    assert [f.name for f in files] == ["b.pdf", "a.PDF"]
 
 
 # ----------------------------------------------------------------- samples
@@ -280,7 +210,7 @@ def test_extensions_are_case_insensitive(tmp_path: Path) -> None:
 
 def test_sample_files_all_load() -> None:
     files = find_supported_files(SAMPLES)
-    assert {f.suffix for f in files} == {".pdf", ".txt", ".csv"}
+    assert files and {f.suffix for f in files} == {".pdf"}
 
     for path in files:
         doc = load_document(path, ChunkingSettings())
@@ -288,58 +218,21 @@ def test_sample_files_all_load() -> None:
         assert not doc.warnings, (path.name, doc.warnings)
 
 
-def test_sample_release_notes_keep_error_codes_intact() -> None:
-    doc = load_document(SAMPLES / "lumen_release_notes.txt", ChunkingSettings())
-
-    text = "\n".join(c.page_content for c in doc.chunks)
-    for code in ("E-1001", "E-2204", "E-3301", "E-4012", "E-4107", "E-5500"):
-        assert code in text
+# ------------------------------------------------- LangChain loader class
 
 
-# ------------------------------------------------- LangChain loader classes
-
-
-def test_loaders_are_langchain_base_loaders(tmp_path: Path) -> None:
+def test_pdf_loader_is_a_langchain_base_loader(tmp_path: Path) -> None:
     from langchain_core.document_loaders import BaseLoader
 
-    from hybrid_rag.ingestion.loaders import CsvRowLoader, PdfPageLoader, TextFileLoader
+    from hybrid_rag.ingestion.loaders import PdfPageLoader
 
     pdf = write_pdf(tmp_path / "a.pdf", [["One."], ["Two."]], title="T")
-    txt = tmp_path / "a.txt"
-    txt.write_text("Hello.", encoding="utf-8")
-    csv_file = tmp_path / "a.csv"
-    csv_file.write_text("x,y\n1,2\n", encoding="utf-8")
+    loader = PdfPageLoader(pdf)
 
-    for loader in (PdfPageLoader(pdf), TextFileLoader(txt), CsvRowLoader(csv_file)):
-        assert isinstance(loader, BaseLoader)
-
-    pages = list(PdfPageLoader(pdf).lazy_load())
+    assert isinstance(loader, BaseLoader)
+    pages = list(loader.lazy_load())
     # Raw pypdf text; cleaning happens in load_pdf().
     assert [(p.page_content.strip(), p.metadata["page"], p.metadata["title"]) for p in pages] == [
         ("One.", 1, "T"),
         ("Two.", 2, "T"),
     ]
-    assert TextFileLoader(txt).load()[0].page_content == "Hello."
-    (row,) = CsvRowLoader(csv_file).load()
-    assert (row.page_content, row.metadata) == ("x: 1\ny: 2", {"row": 1, "columns": ["x", "y"]})
-
-
-def test_csv_values_in_extra_unnamed_columns_are_kept(tmp_path: Path) -> None:
-    from hybrid_rag.ingestion.loaders import CsvRowLoader
-
-    csv_file = tmp_path / "ragged.csv"
-    csv_file.write_text("a,b\n1,2,extra\n", encoding="utf-8")
-
-    (row,) = CsvRowLoader(csv_file).load()
-
-    assert row.page_content == "a: 1\nb: 2\ncolumn 3: extra"
-
-
-def test_damaged_pdf_raises_ingestion_error(tmp_path: Path) -> None:
-    from hybrid_rag.ingestion import IngestionError
-
-    broken = tmp_path / "broken.pdf"
-    broken.write_bytes(b"%PDF-1.4 this is not really a pdf")
-
-    with pytest.raises(IngestionError, match=r"broken\.pdf"):
-        load_document(broken, settings())

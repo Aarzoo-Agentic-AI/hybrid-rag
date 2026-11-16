@@ -8,13 +8,11 @@ Chunk metadata (flat and JSON-friendly, so it can be stored as a Qdrant payload)
 | ``doc_hash`` | ``"9a0b..."`` | SHA-256 of the file bytes |
 | ``source`` | ``"handbook.pdf"`` | File name only, never the local path |
 | ``title`` | ``"Employee Handbook"`` | PDF title, otherwise the file name without extension |
-| ``file_type`` | ``"pdf"`` | ``pdf``, ``txt`` or ``csv`` |
+| ``file_type`` | ``"pdf"`` | Always ``pdf`` for now |
 | ``chunk_id`` | ``"0e7d..."`` | UUID, deterministic from ``doc_id`` and ``chunk_index`` |
 | ``chunk_index`` / ``chunk_count`` | ``0`` / ``12`` | Position within the file |
 | ``content_hash`` | ``"77c2..."`` | SHA-256 of ``page_content`` |
-| ``page`` (+ ``page_label``) | ``3`` | PDF only, 1-based |
-| ``line_start`` / ``line_end`` | ``40`` / ``58`` | TXT only, 1-based |
-| ``row_start`` / ``row_end``, ``columns`` | ``5`` / ``5`` | CSV only, 1-based data rows |
+| ``page`` (+ ``page_label``) | ``3`` | 1-based; ``page_label`` only if it differs, e.g. ``iv`` |
 """
 
 from __future__ import annotations
@@ -50,12 +48,6 @@ def location_label(metadata: Mapping[str, Any]) -> str:
     if "page" in metadata:
         label = metadata.get("page_label")
         return f"page {metadata['page']}" + (f" (labelled {label})" if label else "")
-    if "row_start" in metadata:
-        start, end = metadata["row_start"], metadata["row_end"]
-        return f"row {start}" if start == end else f"rows {start}-{end}"
-    if "line_start" in metadata:
-        start, end = metadata["line_start"], metadata["line_end"]
-        return f"line {start}" if start == end else f"lines {start}-{end}"
     return ""
 
 
@@ -79,19 +71,9 @@ def split_units(units: list[Document], settings: ChunkingSettings) -> list[Docum
         chunk_overlap=settings.chunk_overlap,
         separators=_SEPARATORS,
         keep_separator="end",  # keep "." at the end of a sentence, not the start of the next
-        add_start_index=True,
         strip_whitespace=True,
     )
     return splitter.split_documents(units)
-
-
-def add_line_numbers(chunks: list[Document], full_text: str) -> None:
-    """Turn the splitter's character offsets into 1-based line numbers (TXT files)."""
-    for chunk in chunks:
-        start = chunk.metadata.pop("start_index")
-        line_start = full_text.count("\n", 0, start) + 1
-        chunk.metadata["line_start"] = line_start
-        chunk.metadata["line_end"] = line_start + chunk.page_content.count("\n")
 
 
 def finalize_chunks(
@@ -107,7 +89,7 @@ def finalize_chunks(
     """Add headers, IDs and hashes; returns new Documents in the final schema."""
     final: list[Document] = []
     for index, chunk in enumerate(chunks):
-        location = {k: v for k, v in chunk.metadata.items() if k != "start_index"}
+        location = dict(chunk.metadata)  # page, and page_label if present
         body = chunk.page_content
         if contextual_headers:
             body = f"{contextual_header(source, title, location)}\n\n{body}"

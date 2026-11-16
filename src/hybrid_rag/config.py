@@ -45,9 +45,15 @@ class QdrantSettings(BaseModel):
 
 
 class EmbeddingSettings(BaseModel):
+    # "bge-m3": the real model (about 2.3 GB, downloaded on first use).
+    # "hashing": a tiny deterministic stand-in for tests and offline demos; no download,
+    # but no real understanding of meaning either.
+    provider: Literal["bge-m3", "hashing"] = "bge-m3"
     model: str = "BAAI/bge-m3"
     batch_size: int = Field(default=16, gt=0)
+    max_length: int = Field(default=1024, gt=0)  # tokens per chunk; longer text is truncated
     device: str = "cpu"
+    cache_size: int = Field(default=4096, ge=0)  # encoded texts kept in memory
 
 
 class RerankerSettings(BaseModel):
@@ -59,7 +65,6 @@ class RerankerSettings(BaseModel):
 class ChunkingSettings(BaseModel):
     chunk_size: int = Field(default=800, gt=0)
     chunk_overlap: int = Field(default=120, ge=0)
-    csv_rows_per_chunk: int = Field(default=1, gt=0)
     contextual_headers: bool = True  # prepend "Document: ... / Location: ..." to each chunk
 
     @model_validator(mode="after")

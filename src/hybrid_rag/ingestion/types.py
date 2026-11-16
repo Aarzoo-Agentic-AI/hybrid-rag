@@ -10,9 +10,9 @@ from langchain_core.documents import Document
 
 
 class FileType(StrEnum):
+    """Supported file types. PDF is the only data source."""
+
     PDF = "pdf"
-    TXT = "txt"
-    CSV = "csv"
 
     @classmethod
     def from_path(cls, path: str | Path) -> FileType:
@@ -50,4 +50,4 @@ class IngestedDocument:
     title: str
     chunks: list[Document]
     warnings: list[str] = field(default_factory=list)
-    stats: dict[str, int] = field(default_factory=dict)  # e.g. pages, rows, chunks
+    stats: dict[str, int] = field(default_factory=dict)  # pages, pages_with_text, chunks

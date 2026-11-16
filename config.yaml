@@ -7,9 +7,12 @@ qdrant:
   collection: documents
 
 embedding:
+  provider: bge-m3       # "bge-m3" (real model, ~2.3 GB download) or "hashing" (tiny test stand-in)
   model: BAAI/bge-m3
   batch_size: 16
+  max_length: 1024       # tokens per chunk; longer text is truncated
   device: cpu            # "cpu" or "cuda"
+  cache_size: 4096       # encoded texts kept in memory
 
 reranker:
   enabled: true
@@ -19,8 +22,7 @@ reranker:
 chunking:
   chunk_size: 800        # characters
   chunk_overlap: 120
-  csv_rows_per_chunk: 1
-  contextual_headers: true   # prepend the document name and page/line/row to each chunk
+  contextual_headers: true   # prepend the document name and page to each chunk
 
 retrieval:
   dense_limit: 50        # candidates from dense search

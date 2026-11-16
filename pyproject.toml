@@ -56,3 +56,7 @@ markers = [
     "integration: tests that need external services (Qdrant, LLM APIs, model downloads)",
 ]
 addopts = "-m 'not integration'"
+filterwarnings = [
+    # Expected with QdrantClient(":memory:") in unit tests; the real server uses the indexes.
+    "ignore:Payload indexes have no effect in the local Qdrant:UserWarning",
+]

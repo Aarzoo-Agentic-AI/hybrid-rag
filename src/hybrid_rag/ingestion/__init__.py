@@ -1,4 +1,4 @@
-"""Document loading and chunking for PDF, TXT and CSV files."""
+"""Document loading and chunking for PDF files."""
 
 from hybrid_rag.ingestion.chunking import citation, location_label, make_doc_id
 from hybrid_rag.ingestion.pipeline import find_supported_files, load_document
