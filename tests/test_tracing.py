@@ -143,3 +143,31 @@ def test_every_trace_processor_succeeds(traced, index, tmp_path, caplog) -> None
     traced(lambda: ingest_paths([tmp_path], index, CHUNKING, force=True))
 
     assert not [r for r in caplog.records if "process_" in r.getMessage()]
+
+
+def test_sanitize_step_is_traced_with_counts_only(traced, index, tmp_path) -> None:
+    write_pdf(tmp_path / "faq.pdf", [["Questions go to jane.doe@gmail.com or 415-555-0134."]])
+
+    _, runs = traced(lambda: ingest_paths([tmp_path], index, CHUNKING))
+
+    (sanitize,) = runs.named("sanitize")
+    assert runs.parent_name(sanitize) == "load_document"
+    assert sanitize["inputs"] == {"source": "faq.pdf", "pages": 1}
+    scan = runs.outputs(sanitize)
+    assert scan["status"] == "redacted"
+    assert scan["redactions"] == {"EMAIL_ADDRESS": 1, "PHONE_NUMBER": 1}
+    assert "jane.doe" not in runs.everything_sent
+    assert "555-0134" not in runs.everything_sent
+
+
+def test_quarantined_file_trace_reveals_no_values(traced, index, tmp_path) -> None:
+    write_pdf(tmp_path / "export.pdf", [["Direct deposit: SSN 123-45-6789."]])
+
+    _, runs = traced(lambda: ingest_paths([tmp_path], index, CHUNKING))
+
+    file_run = runs.outputs(runs.named("ingest_file")[0])
+    assert file_run["status"] == "quarantined"
+    assert "US_SSN x1" in file_run["error"]
+    assert runs.outputs(runs.named("ingest")[0]) == {"files": 1, "quarantined": 1}
+    assert runs.named("index_document") == []  # never reaches the store
+    assert "6789" not in runs.everything_sent

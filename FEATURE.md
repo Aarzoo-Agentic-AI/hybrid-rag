@@ -5,6 +5,7 @@
 - **Domain:** HR policies (employee handbook, benefits, leave, travel, expenses, conduct and similar). See section 10 for the chunking and metadata strategy this calls for.
 - **Data source:** PDF files only (HR policy PDFs in `data/pdfs/`).
 - **Access control:** every chunk carries authorization metadata, and every search is filtered by the caller's permissions inside Qdrant. See section 11.
+- **Sensitive data:** personal data is redacted before chunking, and documents with high-risk data are quarantined, so nothing sensitive is embedded, stored or traced. See section 12.
 - **Interface:** API only (FastAPI), with no UI.
 - **Orchestration:** LangChain. The pipeline is built from LangChain components and LCEL chains, with custom LangChain components where the project needs more than LangChain provides (failover, `bge-m3` embeddings).
 - **Deployment:** a mix of self-hosted and hosted. Open-source models (embeddings, reranker) run locally; answers are generated through hosted LLM APIs (OpenAI primary, Anthropic fallback).
@@ -19,6 +20,7 @@
 | Reranker | `bge-reranker-v2-m3` through LangChain's `CrossEncoderReranker` and `ContextualCompressionRetriever`, with our own `BaseCrossEncoder` running the model through `sentence-transformers` |
 | LLM | `ChatOpenAI` (primary) + `ChatAnthropic` (fallback) behind a custom `FailoverChatModel` (see section 9) |
 | Loaders and chunking | Our own LangChain `BaseLoader` (`PdfPageLoader` on `pypdf`) and LangChain's `RecursiveCharacterTextSplitter` |
+| Privacy | Our own validated patterns plus Microsoft Presidio with the spaCy model `en_core_web_sm`, before chunking (section 12) |
 | Tracing | LangSmith (optional, switched on with environment variables) |
 | API | FastAPI |
 | Packaging | Docker Compose and pytest |
@@ -41,8 +43,9 @@
 - **PDF handling:**
   - One unit per page, split with `RecursiveCharacterTextSplitter`; chunks never cross page boundaries, so every chunk has an exact page number for citations. Words hyphenated across lines are re-joined. Pages without text (scanned pages) are skipped with a warning, since OCR isn't supported.
   - Section-aware chunking across page breaks replaces this in step 3a (section 10).
-- **Metadata extraction:** document ID, source file name (never the local path), title, file type, chunk ID and position, content hash, and the page number. Filters depend on this. The full schema is in `src/hybrid_rag/ingestion/README.md`. HR policy metadata (section 10) and authorization metadata (section 11) are added on top.
-- **Incremental indexing:** content hashing so unchanged documents aren't re-embedded, plus a way to delete or update documents.
+- **Metadata extraction:** document ID, source file name (never the local path), title, file type, chunk ID and position, content hash, and the page number. Filters depend on this. The full schema is in `src/hybrid_rag/ingestion/README.md`. HR policy metadata (section 10) and authorization metadata (section 11) are added on top, plus the privacy scan result (`pii_scan`) and a `pipeline_hash` of the chunking and privacy settings (section 12).
+- **Sensitive-data sanitization:** before chunking, personal data is redacted and documents with high-risk data are quarantined; every chunk is checked again before embedding (section 12).
+- **Incremental indexing:** content hashing so unchanged documents aren't re-embedded, plus a way to delete or update documents. An unchanged file is skipped before it's even loaded; a change to the chunking or privacy settings re-processes it.
 - **Contextual chunk headers:** add the document name and location (for example `Document: Employee Handbook (handbook.pdf)` / `Location: page 3`) to each chunk before embedding. This is cheap and works well, and can be switched off in config.
 - **Batched and idempotent:** ingestion runs in batches and can be re-run safely.
 
@@ -254,7 +257,57 @@ AND ( visibility == "tenant"
 10. **Beyond Qdrant:** LangSmith traces contain document text, so each environment gets its own LangSmith project. Any answer cache is keyed by caller. The embedding cache is safe, because it is keyed by text and holds only vectors.
 11. **Leakage tests:** for every rule, a caller without access gets zero chunks, even for an exact-match query, and even through list and get.
 
-## 12. Scaling to production
+## 12. Sensitive data protection
+Sensitive data is removed **before chunking** and checked again **after chunking**, before anything is embedded, stored or traced. Once text is embedded, it exists in the vectors, the Qdrant payload, snapshots, LangSmith traces, logs and caches, and removing it from all of them is much harder.
+
+```
+PDF ─► extract ─► clean ─► ① DETECT + REDACT ─► chunk ─► ② VERIFY ─► embed ─► Qdrant
+                          (whole page + title)          (each chunk)
+                                  │
+                                  └─► high-risk finding ─► QUARANTINE (not indexed)
+```
+
+| Stage | Why |
+|---|---|
+| **① Before chunking** | Detection needs context. A chunk boundary can split an entity (`123-45-` / `6789`) so that neither half matches, and names are recognised better in full sentences. |
+| **② After chunking** | A second line of defence. The pattern detector re-checks every chunk, header included, and stops the document if anything survived. |
+| **Before embedding** | Embeddings can be partly inverted back to text, so vectors made from personal data still count as personal data. |
+
+**What happens to each kind of data:**
+
+| Category | Examples | Action |
+|---|---|---|
+| High risk: should never be in a policy | SSN, card, bank account, IBAN, passport and ITIN numbers | **Quarantine** the whole document: not indexed, reported for HR review |
+| Personal data | Employee names, personal emails and phones, employee IDs | **Redact** with typed placeholders (`<PERSON>`, `<EMAIL>`, `<PHONE>`, `<EMPLOYEE_ID>`) |
+| Shared business contacts | `hr@company.com`, the HR service centre number | **Keep**, through an allowlist (exact values or patterns) |
+| Policy content | "$300 hotel cap", "25 days", dates, cities | **Keep**: this is the knowledge base |
+| Sensitive but legitimate | Salary bands, investigation procedures | **Restrict**, don't redact: classification and access control (section 11) |
+
+**Detection:**
+- **Patterns** (always on), each with validation: emails, North American phone numbers, SSNs (valid ranges only), cards (Luhn check), IBANs (mod-97 check) and employee IDs (a configurable pattern).
+- **Microsoft Presidio** with the small spaCy model (`en_core_web_sm`, 13 MB) adds person names and context-based IDs (bank account, passport, ITIN).
+- **Name filter:** spaCy's person guesses are noisy on policy text ("Roth", "Bereavement", "Tier 2"). A name is accepted only if it has at least two capitalised words, no digits, and no word that also appears in lower case in the same document. On the 5 HR PDFs this took false positives from 31 to 0, with all planted test names still found. It made the small model as accurate as the 560 MB one.
+
+**Rules:**
+1. **Irreversible:** placeholders, no encryption and no lookup table. Nothing reversible is stored.
+2. **Values are never recorded.** Logs, traces, errors and metadata contain entity types, counts and page numbers only.
+3. **Each chunk records its scan** as `pii_scan` (status, detector, policy hash, redaction counts). There is a payload index on the status.
+4. **Re-scan when rules change.** The privacy policy hash is part of each chunk's `pipeline_hash`, so changing the privacy settings, or `SCANNER_VERSION`, re-processes every document on the next ingest.
+5. **Safe by default.** Without an explicit sanitizer, ingestion uses the pattern sanitizer, so nothing is ever chunked unscanned. Scanning can only be switched off explicitly (`privacy.enabled: false`), and those chunks are marked `not_scanned`.
+6. **Hashes:** `doc_hash` stays on the original file bytes, for change detection. `content_hash` is computed on the redacted text.
+7. **Original PDFs** are kept outside the index, in restricted storage in production. Only redacted text is indexed, and citations still point to the page.
+8. **Query side (step 5):** personal data in user questions is redacted before it reaches the LLM, traces or logs, and LLM answers get a final pattern check.
+9. **Traces and audit (step 6):** a LangSmith anonymizer for query traces, and redaction counts in the audit log.
+10. **Erasure:** deleting a document by `doc_id` removes all its chunks. Keeping personal data out of the index in the first place keeps GDPR erasure requests simple.
+
+**Standards this follows:** GDPR (Art. 5 data minimisation, Art. 17 erasure, Art. 25 privacy by design), CCPA/CPRA for employee data, HIPAA if benefits documents ever contain an individual's health information, NIST SP 800-122 (protecting PII by risk level), ISO/IEC 27001 and 27701, and the OWASP Top 10 for LLM Applications (2025), LLM02 Sensitive Information Disclosure.
+
+**Known limits:**
+- Single-word names, or names made of common words, aren't redacted.
+- Non-US national IDs need extra recognisers.
+- Scanned PDFs have no text to scan, since OCR isn't supported.
+
+## 13. Scaling to production
 **Scale estimate.** Millions of documents usually means tens of millions of chunks. For 10 million chunks with `bge-m3` dense vectors (1024 dimensions):
 
 | Storage | Approx. memory |
@@ -286,7 +339,7 @@ AND ( visibility == "tenant"
 - Quantization as a config option.
 - An optional benchmark script measuring ingestion speed, query latency (p50/p95) and memory at around 100k chunks, with notes on how it would scale.
 
-## 13. Advanced (later phases)
+## 14. Advanced (later phases)
 - **Graph RAG:** builds an entity and relationship graph alongside the vector and keyword indexes, as a third retriever.
 - **Agentic or iterative retrieval with LangGraph:** the LLM decides whether it needs another search.
 - **GPU or hosted models:** switch embeddings and reranker to GPU or hosted APIs.
@@ -296,15 +349,16 @@ AND ( visibility == "tenant"
 - **Contextual retrieval and hypothetical questions** (section 10), if the evaluation shows they help.
 - **Feedback loop:** thumbs up/down on answers, which feeds back into the evaluation set.
 
-## 14. Phasing
+## 15. Phasing
 1. **MVP:**
    - LangChain loaders and splitters → `bge-m3` → `QdrantVectorStore` → hybrid search with RRF → cross-encoder reranker
    - Section-aware chunking of HR policies with heading paths and policy metadata (section 10)
    - Authorization metadata and permission-filtered search, with leakage tests (section 11)
+   - Sensitive-data sanitization before chunking, with quarantine and verification (section 12)
    - An LCEL chain that answers with citations and "I don't know" handling, through `FailoverChatModel` (OpenAI → Anthropic)
    - All endpoints from section 8
    - Evaluation script comparing dense-only, sparse-only, hybrid, and hybrid plus rerank (Recall@k, MRR)
    - Docker Compose, pytest tests, and a README with an architecture diagram
 2. **Quality:** metadata filters, query rewriting, multi-query/HyDE, answer metrics.
 3. **Production readiness:** incremental ingestion, caching, tracing (including LangSmith), quantization, benchmark script.
-4. **Advanced:** pick from section 13.
+4. **Advanced:** pick from section 14.

@@ -38,6 +38,7 @@ PAYLOAD_INDEXES: dict[str, models.PayloadSchemaType] = {
     f"{METADATA_KEY}.source": models.PayloadSchemaType.KEYWORD,
     f"{METADATA_KEY}.file_type": models.PayloadSchemaType.KEYWORD,
     f"{METADATA_KEY}.chunk_index": models.PayloadSchemaType.INTEGER,
+    f"{METADATA_KEY}.pii_scan.status": models.PayloadSchemaType.KEYWORD,
 }
 
 
@@ -58,6 +59,9 @@ class DocumentInfo:
     chunk_count: int
     doc_hash: str
     ingested_at: str
+    pii_status: str = ""  # clean / redacted / not_scanned
+    pii_policy: str = ""  # privacy settings the document was scanned with
+    pipeline_hash: str = ""  # chunking + privacy settings the chunks were made with
 
 
 @dataclass(frozen=True)
@@ -156,7 +160,9 @@ class DocumentIndex:
             "chunks": len(i["document"].chunks),
             "force": i["force"],
         },
-        process_outputs=lambda r: {"status": r.status, "chunks": r.chunks, "removed": r.removed},
+        process_outputs=lambda r: (
+            {"status": r.status, "chunks": r.chunks, "removed": r.removed} if r else {}
+        ),
     )
     def index(self, document: IngestedDocument, *, force: bool = False) -> IndexResult:
         """Add a document, replace an older version of it, or skip it if it hasn't changed.
@@ -180,9 +186,11 @@ class DocumentIndex:
             for c in document.chunks
         ]
         self._write_chunks(chunks, self.batch_size)
+        # Leftovers are this document's chunks that aren't part of the new version: from an
+        # older file, or from the same file chunked differently (new chunking/privacy rules).
         removed = self._delete_where(
             must=[_match("doc_id", document.doc_id)],
-            must_not=[_match("doc_hash", document.doc_hash)],
+            must_not=[models.HasIdCondition(has_id=[c.id for c in chunks])],
         )
         status: Literal["added", "updated"] = "added" if existing is None else "updated"
         logger.info(
@@ -200,6 +208,23 @@ class DocumentIndex:
         ensure_collection(self.client, self.collection, self.embeddings.dense_dim)
 
     # ------------------------------------------------------------- reads
+
+    def current_version(
+        self, doc_id: str, doc_hash: str, pipeline_hash: str
+    ) -> DocumentInfo | None:
+        """The stored document if it is this exact file, made with these settings, and complete.
+
+        Lets ingestion skip an unchanged file before loading, scanning or chunking it.
+        """
+        existing = self.get_document(doc_id)
+        if (
+            existing is not None
+            and existing.doc_hash == doc_hash
+            and existing.pipeline_hash == pipeline_hash
+            and self.count_chunks(doc_id) == existing.chunk_count
+        ):
+            return existing
+        return None
 
     def get_document(self, doc_id: str) -> DocumentInfo | None:
         points, _ = self.client.scroll(
@@ -253,9 +278,14 @@ class DocumentIndex:
         self.vector_store.add_documents(chunks, ids=[c.id for c in chunks], batch_size=batch_size)
 
     def _is_complete(self, existing: DocumentInfo, document: IngestedDocument) -> bool:
-        """Same file, and every chunk of it is stored (guards against an interrupted write)."""
+        """Same file, made with the same pipeline settings, and every chunk of it is stored.
+
+        The chunk count guards against an interrupted write; the pipeline hash makes a change
+        to the chunking or privacy settings re-process documents.
+        """
         return (
             existing.doc_hash == document.doc_hash
+            and existing.pipeline_hash == document.pipeline_hash
             and existing.chunk_count == len(document.chunks)
             and self.count_chunks(document.doc_id) == len(document.chunks)
         )
@@ -284,4 +314,7 @@ def _document_info(payload: dict[str, Any] | None) -> DocumentInfo:
         chunk_count=metadata["chunk_count"],
         doc_hash=metadata["doc_hash"],
         ingested_at=metadata.get("ingested_at", ""),
+        pii_status=metadata.get("pii_scan", {}).get("status", ""),
+        pii_policy=metadata.get("pii_scan", {}).get("policy", ""),
+        pipeline_hash=metadata.get("pipeline_hash", ""),
     )

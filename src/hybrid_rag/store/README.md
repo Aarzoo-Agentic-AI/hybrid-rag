@@ -48,7 +48,7 @@ One collection (`qdrant.collection`, default `documents`). Each chunk is one poi
 
 This is the payload layout that LangChain's `QdrantVectorStore` expects, and all writes go through `QdrantVectorStore.add_documents`. So the retrievers in step 4 read exactly what was written, with no conversion.
 
-**Payload indexes** on `metadata.doc_id`, `doc_hash`, `source`, `file_type` and `chunk_index` keep filtered searches, deletes and the document list fast.
+**Payload indexes** on `metadata.doc_id`, `doc_hash`, `source`, `file_type`, `chunk_index` and `pii_scan.status` keep filtered searches, deletes and the document list fast.
 
 `ensure_collection()` creates the collection if needed and checks an existing one. If the vector size or vector names don't match the embedding model (for example after switching from `hashing` to `bge-m3`), it raises `CollectionConfigError` with instructions, instead of failing later on the first write.
 
@@ -56,17 +56,18 @@ This is the payload layout that LangChain's `QdrantVectorStore` expects, and all
 
 ```
 index(document)
-  ├─ stored version has the same doc_hash, the same chunk_count,
-  │  and all its chunks are present?              ──► "unchanged" (nothing embedded)
+  ├─ stored version has the same doc_hash and pipeline_hash, the same
+  │  chunk_count, and all its chunks are present?  ──► "unchanged" (nothing embedded)
   └─ otherwise
        1. write all new chunks (upsert by chunk ID, overwriting old chunks in place)
-       2. delete chunks of this doc_id whose doc_hash differs   ──► "added" / "updated"
+       2. delete chunks of this doc_id that aren't in the new version   ──► "added" / "updated"
 ```
 
-- **Unchanged files cost nothing.** No embedding runs, which matters because embedding is the slow part.
+- **Unchanged files cost nothing.** `ingest_file()` asks `current_version()` first. If the stored version has the same file hash and the same `pipeline_hash` (chunking settings plus privacy policy) and is complete, the file isn't even loaded, scanned or embedded. A re-run with nothing to do takes under a second.
+- **Settings changes are picked up.** A different chunk size or new privacy rules change the `pipeline_hash`, so unchanged files are processed again on the next run.
 - **No gap during updates.** New chunks are written before stale ones are deleted, so a document never disappears from search while it's being updated. A failure part-way leaves the old and new versions side by side, never neither.
 - **Self-repairing.** If a write was interrupted, the chunk count doesn't match on the next run, so the document is indexed again.
-- **Shorter documents clean up after themselves.** If a file shrinks from 10 chunks to 6, the 4 leftover chunks are deleted (`IndexResult.removed`).
+- **Shorter documents clean up after themselves.** If a file shrinks from 10 chunks to 6, or is re-chunked into fewer pieces, every chunk that isn't part of the new version is deleted (`IndexResult.removed`).
 
 A document's identity is its `doc_id`, which comes from the source file name (see the ingestion README). Re-uploading `report.pdf` therefore replaces the earlier `report.pdf`.
 
@@ -86,13 +87,14 @@ With LangSmith tracing on, each `ingest_paths()` call is one trace:
 ```
 ingest                      files, and how many were added / updated / unchanged / failed
 └─ ingest_file              one per PDF: status, chunks, stale chunks removed, error
-   ├─ load_document         title, pages, chunks, warnings
+   ├─ load_document         title, pages, chunks, warnings, privacy status and redaction counts
+   │  └─ sanitize           pages scanned, status, redactions by type (quarantine: error, types only)
    └─ index_document        status, chunks, removed
       └─ qdrant_upsert      chunks, batch size
          └─ embed           texts embedded, texts served from cache, dense size
 ```
 
-An unchanged file has no `qdrant_upsert` or `embed` run, because nothing is embedded. The runs record counts, names, statuses and timings only, never document text, vectors or local paths. `tests/test_tracing.py` checks the tree and the privacy rule with a mock LangSmith client. See [`../tracing.py`](../tracing.py).
+An unchanged file has only its `ingest_file` run, because it's skipped before loading. A quarantined file has no `index_document` run, because it never reaches the store. The runs record counts, names, statuses and timings only, never document text, vectors or local paths. `tests/test_tracing.py` checks the tree and the privacy rule with a mock LangSmith client. See [`../tracing.py`](../tracing.py).
 
 ## Tests
 

@@ -36,6 +36,7 @@ Each step ends with something working and tested. Features and design decisions 
 ## Step 3a: HR policy chunking and metadata
 - The HR policy PDFs in `data/pdfs/` become the main data set: HR Policy Handbook, Employee Benefits Guide, Travel Policy, Expense Policy, and the Annual Review, Merit Increase and Performance Bonus Policy (a candidate for a restricted document in step 3b).
 - Layout-aware PDF parsing (Docling or `pymupdf4llm`, chosen after a quick comparison) that keeps headings and tables and removes repeated page headers and footers.
+- The sanitizer (step 3c) keeps running on whole sections before they're chunked, and the policy registry metadata is scanned too.
 - Section-aware chunking across page breaks: a section stays whole if it fits; longer ones split on paragraphs, list items, then sentences, with overlap only inside a section. Table rows, list items, rules with their exceptions, and definitions are never split. Chunk size measured in tokens (target 300–500, maximum 800).
 - The heading path and policy details in the contextual header (`Policy: Travel Policy (v4, effective 2026-01-01, UK)` / `Section: 4 Air travel > 4.2 Class of travel`).
 - Policy metadata from a policy registry file: `policy_name`, `policy_category`, `section_number`, `section_path`, `version`, `effective_date`, `is_current`, `jurisdiction`, `applies_to`, `owner_department`, `review_date`, `language`.
@@ -50,6 +51,16 @@ Each step ends with something working and tested. Features and design decisions 
 - `scripts/ingest.py` gains `--tenant` and `--registry`.
 - **Done when:** leakage tests pass for every rule (tenant, classification ceiling, each kind of grant, deny by default), including exact-match queries and list/get; a permission change updates all chunks without embedding anything.
 
+## Step 3c: Sensitive-data sanitization ✅
+*Built before steps 3a and 3b, because it changes what may enter the index at all.*
+- A `privacy` package: a pattern detector with validation (emails, phones, SSNs, cards with the Luhn check, IBANs with mod-97, employee IDs), and Microsoft Presidio with the small spaCy model for person names and context-based IDs. A name filter removes spaCy's false positives on policy text (31 → 0 on the HR PDFs).
+- Pass ① before chunking: redact personal data with typed placeholders; quarantine documents with high-risk data (`SensitiveDataError`, reported as `QUARANTINE`, never indexed). Pass ② after chunking: re-check every chunk.
+- An allowlist (exact values and patterns) for shared business contacts; a `privacy:` section in `config.yaml`.
+- `pii_scan` metadata on every chunk (status, detector, policy hash, counts by type, never values), with a payload index on the status. `pipeline_hash` (chunking settings plus privacy policy) re-processes documents when either changes.
+- Unchanged files are skipped before loading, so a re-run with nothing to do stays under a second. Stale chunks are now any chunk not in the new version, which also covers re-chunking the same file.
+- The `sanitize` step in LangSmith traces, with counts only.
+- **Done when:** the 5 HR PDFs come out clean with their content intact; planted names, emails, phones and IDs are redacted; planted SSNs and cards quarantine the document; no value appears in Qdrant, traces, logs or errors; changing the privacy settings re-indexes. ✅
+
 ## Step 4: Hybrid retrieval and reranking
 - Retrievers from `QdrantVectorStore` in dense, sparse and hybrid mode (Qdrant does the RRF fusion). Every retriever requires a `Principal`, and its security filter is always applied. Relevance filters (`is_current`, `jurisdiction`, `applies_to`, document, file type) are separate and optional.
 - Small-to-big retrieval: matched chunks are expanded to their parent section before reranking or generation.
@@ -62,12 +73,14 @@ Each step ends with something working and tested. Features and design decisions 
 - Context building: removes duplicates, keeps within a token budget, and orders the chunks.
 - A confidence threshold for "I don't know" answers.
 - Answer parsing that links citations back to the policy, section, page and effective date.
+- Privacy on the query side: personal data in questions is redacted before it reaches the LLM, traces and logs; answers get a final pattern check before they're returned.
 - HR answer rules: the more specific policy wins over the global one (and the answer says so), weak evidence gives "please contact HR", and no advice on an individual's situation.
 - One LangSmith trace per question: query rewrite, retrieval, reranking, context building, prompt, `FailoverChatModel` and citation parsing, each as a nested run.
 - **Done when:** questions end to end return grounded answers with correct citations, and still do when failover to Anthropic is forced (once that key is added).
 
 ## Step 6: FastAPI service
 - `POST /ingest`, `POST /query` (with `debug` and `stream` options), `GET /documents`, `DELETE /documents/{id}`, `PUT /documents/{id}/access` and `GET /health`, which reports Qdrant and circuit-breaker states.
+- A LangSmith anonymizer for query traces; redaction and quarantine counts in the audit log; `POST /ingest` reports quarantined files.
 - API keys mapped to principals in config; every route scoped to the caller's principal. An audit log of who asked and which chunks (and `access_version`s) were retrieved.
 - Request validation, error handling and structured logging.
 - Every route traced, with `request_id`, `tenant_id`, retrieval mode and the answering provider as LangSmith metadata and tags, and the `request_id` also in the logs, so a log line leads to its trace.

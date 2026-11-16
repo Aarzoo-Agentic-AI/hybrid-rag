@@ -215,3 +215,31 @@ def test_hybrid_search_finds_exact_term(index: DocumentIndex) -> None:
 
     assert "LR-200" in hits[0].page_content
     assert hits[0].metadata["page"] == 3
+
+
+def test_unchanged_file_is_skipped_before_loading(
+    index: DocumentIndex, tmp_path: Path, monkeypatch
+) -> None:
+    write(tmp_path, "a.pdf", long_text(10))
+    ingest_paths([tmp_path], index, CHUNKING)
+
+    def fail(*args, **kwargs):
+        raise AssertionError("an unchanged file must not be loaded, scanned or chunked")
+
+    monkeypatch.setattr("hybrid_rag.indexing.load_document", fail)
+    (outcome,) = ingest_paths([tmp_path], index, CHUNKING)
+
+    assert outcome.result.status == "unchanged"
+
+
+def test_changed_chunking_settings_reindex_unchanged_files(
+    index: DocumentIndex, tmp_path: Path
+) -> None:
+    write(tmp_path, "a.pdf", long_text(10))
+    ingest_paths([tmp_path], index, CHUNKING)
+
+    bigger = ChunkingSettings(chunk_size=300, chunk_overlap=40)
+    (outcome,) = ingest_paths([tmp_path], index, bigger)
+
+    assert outcome.result.status == "updated"
+    assert index.count_chunks() == outcome.result.chunks

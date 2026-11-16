@@ -51,3 +51,6 @@ class IngestedDocument:
     chunks: list[Document]
     warnings: list[str] = field(default_factory=list)
     stats: dict[str, int] = field(default_factory=dict)  # pages, pages_with_text, chunks
+    # Result of the sensitive-data scan: status, detector, policy and redaction counts.
+    pii_scan: dict = field(default_factory=dict)
+    pipeline_hash: str = ""  # chunking settings + privacy policy; see pipeline_hash()

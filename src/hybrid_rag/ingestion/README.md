@@ -1,6 +1,6 @@
 # Ingestion
 
-This package turns PDF files into LangChain `Document` chunks, ready to be embedded and stored. Each chunk carries a contextual header, a stable ID, a content hash and its page number for citations. PDF is the only supported file type.
+This package turns PDF files into LangChain `Document` chunks, ready to be embedded and stored. Sensitive data is removed before chunking (see the [privacy README](../privacy/README.md)). Each chunk carries a contextual header, a stable ID, a content hash and its page number for citations. PDF is the only supported file type.
 
 ```python
 from hybrid_rag.config import get_settings
@@ -32,11 +32,13 @@ load_document("/tmp/upload_8f3a.tmp", settings.chunking, source="report.pdf")
 ## How a PDF is processed
 
 ```
-PDF ──► PdfPageLoader ──► units ──────────► chunks ─────────────► final chunks
-        (LangChain        (one per page,     (split with            (header + IDs +
-         BaseLoader,       cleaned text)      RecursiveCharacter-    hashes + metadata)
-         pypdf)                               TextSplitter)
+PDF ──► PdfPageLoader ──► units ──────► sanitize ──────► chunks ─────────► final chunks ──► verify
+        (LangChain        (one per      (redact or       (Recursive-        (header + IDs +   (re-check
+         BaseLoader,       page,         quarantine;      Character-         hashes +          each chunk)
+         pypdf)            cleaned)      privacy/)        TextSplitter)      metadata)
 ```
+
+`load_document(path, chunking, sanitizer=...)` takes the sanitizer built from `settings.privacy`. Without one, it uses the pattern-only `default_sanitizer()`, so no document is ever chunked unscanned. A quarantined document raises `SensitiveDataError`, which is an `IngestionError`.
 
 - One `Document` per page, and one unit per page that has text.
 - Pages are split with overlap, and **chunks never cross pages**, so every chunk has an exact page number.
@@ -78,7 +80,9 @@ Metadata is flat and JSON-friendly, so it can be stored directly as a Qdrant pay
 | `file_type` | `"pdf"` | Always `pdf` |
 | `chunk_id` | `"0e7d…"` | UUID from `doc_id` and `chunk_index`; also set as `Document.id` |
 | `chunk_index` / `chunk_count` | `0` / `5` | Position within the file |
-| `content_hash` | `"77c2…"` | SHA-256 of `page_content`, including the header |
+| `content_hash` | `"77c2…"` | SHA-256 of `page_content` (after redaction), including the header |
+| `pii_scan` | `{"status": "redacted", …}` | Privacy scan: status, detector, policy, redaction counts by type (never values) |
+| `pipeline_hash` | `"4be1…"` | Hash of the chunking settings and privacy policy the chunks were made with. When it changes, unchanged files are processed again |
 | `page`, `page_label` | `3` | 1-based page number; `page_label` only when the printed label differs, e.g. `iv` |
 
 The IDs are deterministic (UUID5 with a fixed namespace), so the same file always produces the same IDs on any machine. Step 3 relies on this for incremental indexing. HR policy metadata and authorization metadata are added in steps 3a and 3b.
@@ -109,6 +113,7 @@ All inherit from `IngestionError`.
 | `UnsupportedFileTypeError` | The extension isn't `.pdf` (case-insensitive) |
 | `EmptyDocumentError` | No page has extractable text |
 | `IngestionError` | A damaged or password-protected PDF |
+| `SensitiveDataError` | High-risk data (for example an SSN or card number) found: the document is quarantined. Defined in `hybrid_rag.privacy` |
 
 ## Tests
 

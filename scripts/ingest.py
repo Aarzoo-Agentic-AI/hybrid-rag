@@ -20,6 +20,7 @@ import time
 
 from hybrid_rag.config import get_settings
 from hybrid_rag.indexing import ingest_paths
+from hybrid_rag.privacy import build_sanitizer
 from hybrid_rag.store import DocumentIndex, StoreError, build_document_index
 from hybrid_rag.tracing import flush_traces, tracing_is_enabled
 
@@ -30,7 +31,9 @@ def print_documents(index: DocumentIndex) -> None:
         f"\n{len(documents)} document(s), {index.count_chunks()} chunk(s) in {index.collection!r}:"
     )
     for d in documents:
-        print(f"  {d.source:<36} {d.file_type:<4} {d.chunk_count:>4} chunks  {d.ingested_at}")
+        print(
+            f"  {d.source:<42} {d.chunk_count:>4} chunks  {d.pii_status or '-':<11} {d.ingested_at}"
+        )
 
 
 def main() -> int:
@@ -58,17 +61,22 @@ def main() -> int:
 
     emb = settings.embedding
     print(f"Embeddings: {emb.provider} ({emb.model}) on {emb.device}")
+    sanitizer = build_sanitizer(settings.privacy)
+    print(f"Privacy scan: {sanitizer.name} (policy {sanitizer.policy})")
     if tracing_is_enabled():
         print("LangSmith tracing is on: one 'ingest' trace (counts and names only, no text)")
     started = time.perf_counter()
-    outcomes = ingest_paths(args.paths, index, settings.chunking, force=args.force)
+    outcomes = ingest_paths(
+        args.paths, index, settings.chunking, force=args.force, sanitizer=sanitizer
+    )
     for o in outcomes:
         if o.ok and o.result:
             r = o.result
             extra = f", {r.removed} stale removed" if r.removed else ""
             print(f"  {r.status:<9} {r.source:<36} {r.chunks:>4} chunks{extra}")
         else:
-            print(f"  FAILED    {o.path.name:<36} {o.error}")
+            label = "QUARANTINE" if o.quarantined else "FAILED"
+            print(f"  {label:<10} {o.path.name:<36} {o.error}")
         for w in o.warnings:
             print(f"            warning: {w}")
     print(

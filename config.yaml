@@ -24,6 +24,20 @@ chunking:
   chunk_overlap: 120
   contextual_headers: true   # prepend the document name and page to each chunk
 
+privacy:
+  # Sensitive data is handled before chunking and checked again after; nothing sensitive is
+  # embedded, stored or traced. See src/hybrid_rag/privacy/README.md.
+  enabled: true
+  detector: presidio         # presidio (patterns + spaCy names) | patterns (regex only)
+  spacy_model: en_core_web_sm
+  score_threshold: 0.5
+  redact: [PERSON, EMAIL_ADDRESS, PHONE_NUMBER, EMPLOYEE_ID]           # -> <PERSON>, <EMAIL>, ...
+  quarantine: [US_SSN, CREDIT_CARD, IBAN_CODE, US_BANK_NUMBER, US_PASSPORT, US_ITIN]  # not indexed
+  employee_id_pattern: '\bEMP-?\d{5,7}\b'
+  allowlist:                 # shared business contacts that answers should keep
+    - hr@dummymocktest.example
+  allowlist_patterns: []
+
 retrieval:
   dense_limit: 50        # candidates from dense search
   sparse_limit: 50       # candidates from sparse search

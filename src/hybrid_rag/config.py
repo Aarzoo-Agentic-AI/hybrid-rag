@@ -16,6 +16,7 @@ environment, so ``get_settings()`` copies them from ``.env`` into ``os.environ``
 from __future__ import annotations
 
 import os
+import re
 from collections.abc import MutableMapping
 from functools import lru_cache
 from pathlib import Path
@@ -71,6 +72,62 @@ class ChunkingSettings(BaseModel):
     def _overlap_smaller_than_size(self) -> ChunkingSettings:
         if self.chunk_overlap >= self.chunk_size:
             raise ValueError("chunk_overlap must be smaller than chunk_size")
+        return self
+
+
+PiiEntity = Literal[
+    "PERSON",
+    "EMAIL_ADDRESS",
+    "PHONE_NUMBER",
+    "EMPLOYEE_ID",
+    "US_SSN",
+    "CREDIT_CARD",
+    "IBAN_CODE",
+    "US_BANK_NUMBER",
+    "US_PASSPORT",
+    "US_ITIN",
+]
+
+
+class PrivacySettings(BaseModel):
+    """Sensitive-data scanning during ingestion (see hybrid_rag/privacy/README.md)."""
+
+    enabled: bool = True
+    # "presidio": patterns + Presidio (spaCy names, validated IDs). "patterns": regex only.
+    detector: Literal["presidio", "patterns"] = "presidio"
+    spacy_model: str = "en_core_web_sm"
+    score_threshold: float = Field(default=0.5, ge=0, le=1)
+    # Replaced with a typed placeholder such as <EMAIL>.
+    redact: list[PiiEntity] = Field(
+        default_factory=lambda: ["PERSON", "EMAIL_ADDRESS", "PHONE_NUMBER", "EMPLOYEE_ID"]
+    )
+    # Never indexed: a document containing any of these is quarantined.
+    quarantine: list[PiiEntity] = Field(
+        default_factory=lambda: [
+            "US_SSN",
+            "CREDIT_CARD",
+            "IBAN_CODE",
+            "US_BANK_NUMBER",
+            "US_PASSPORT",
+            "US_ITIN",
+        ]
+    )
+    employee_id_pattern: str = r"\bEMP-?\d{5,7}\b"
+    # Shared business contacts that answers should keep (exact match, case-insensitive)...
+    allowlist: list[str] = Field(default_factory=list)
+    # ...or regular expressions, e.g. role mailboxes like "^(hr|payroll)@example\.com$".
+    allowlist_patterns: list[str] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def _check(self) -> PrivacySettings:
+        overlap = set(self.redact) & set(self.quarantine)
+        if overlap:
+            raise ValueError(f"entities can't be both redacted and quarantined: {sorted(overlap)}")
+        for pattern in [self.employee_id_pattern, *self.allowlist_patterns]:
+            try:
+                re.compile(pattern)
+            except re.error as exc:
+                raise ValueError(f"invalid regular expression {pattern!r}: {exc}") from None
         return self
 
 
@@ -131,6 +188,7 @@ class Settings(BaseSettings):
     embedding: EmbeddingSettings = Field(default_factory=EmbeddingSettings)
     reranker: RerankerSettings = Field(default_factory=RerankerSettings)
     chunking: ChunkingSettings = Field(default_factory=ChunkingSettings)
+    privacy: PrivacySettings = Field(default_factory=PrivacySettings)
     retrieval: RetrievalSettings = Field(default_factory=RetrievalSettings)
     llm: LLMSettings = Field(default_factory=LLMSettings)
 

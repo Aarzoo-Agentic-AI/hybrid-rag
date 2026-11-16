@@ -179,7 +179,7 @@ class CachingEncoder:
             "served_from_cache": i["requested"] - len(i["texts"]),
         },
         process_outputs=lambda o: {
-            "vectors": len(o),
+            "vectors": len(o or []),
             "dense_dim": len(o[0].dense) if o else 0,
             "avg_sparse_terms": round(sum(len(e.sparse) for e in o) / len(o), 1) if o else 0,
         },

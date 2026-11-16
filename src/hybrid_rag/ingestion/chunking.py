@@ -12,6 +12,8 @@ Chunk metadata (flat and JSON-friendly, so it can be stored as a Qdrant payload)
 | ``chunk_id`` | ``"0e7d..."`` | UUID, deterministic from ``doc_id`` and ``chunk_index`` |
 | ``chunk_index`` / ``chunk_count`` | ``0`` / ``12`` | Position within the file |
 | ``content_hash`` | ``"77c2..."`` | SHA-256 of ``page_content`` |
+| ``pipeline_hash`` | ``"4be1..."`` | Chunking settings + privacy policy the chunk was made with |
+| ``pii_scan`` | ``{"status": "redacted"}`` | Privacy scan: status, detector, policy, counts |
 | ``page`` (+ ``page_label``) | ``3`` | 1-based; ``page_label`` only if it differs, e.g. ``iv`` |
 """
 
@@ -85,6 +87,8 @@ def finalize_chunks(
     title: str,
     file_type: FileType,
     contextual_headers: bool,
+    pii_scan: dict | None = None,
+    pipeline_hash: str | None = None,
 ) -> list[Document]:
     """Add headers, IDs and hashes; returns new Documents in the final schema."""
     final: list[Document] = []
@@ -105,5 +109,9 @@ def finalize_chunks(
             "content_hash": sha256_text(body),
             **location,
         }
+        if pii_scan is not None:
+            metadata["pii_scan"] = pii_scan
+        if pipeline_hash is not None:
+            metadata["pipeline_hash"] = pipeline_hash
         final.append(Document(page_content=body, metadata=metadata, id=metadata["chunk_id"]))
     return final
