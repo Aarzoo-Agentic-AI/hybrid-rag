@@ -24,7 +24,6 @@ Each step ends with something working and tested. Features and design decisions 
 ## Step 2: Document loading and chunking ✅
 - Our own LangChain `BaseLoader`: `PdfPageLoader` (on `pypdf`, keeps page numbers), producing `Document` objects.
 - `RecursiveCharacterTextSplitter`, contextual chunk headers, metadata and content hashes.
-- TXT and CSV loaders were built here too, then removed when the data source became PDF only.
 - **Done when:** tests on sample files produce the expected chunks and metadata.
 
 ## Step 3: Embeddings and the Qdrant store ✅
@@ -34,7 +33,7 @@ Each step ends with something working and tested. Features and design decisions 
 - **Done when:** ingesting sample files fills Qdrant, re-running it changes nothing, and the data is visible in the Qdrant dashboard. Tests use Qdrant's in-memory mode.
 
 ## Step 3a: HR policy chunking and metadata
-- Sample data replaced with a small HR policy set for the fictional company: employee handbook, travel, expense and benefits policies, with UK and US variants, an outdated version, a table of limits and a restricted document.
+- The HR policy PDFs in `data/pdfs/` become the main data set: HR Policy Handbook, Employee Benefits Guide, Travel Policy, Expense Policy, and the Annual Review, Merit Increase and Performance Bonus Policy (a candidate for a restricted document in step 3b).
 - Layout-aware PDF parsing (Docling or `pymupdf4llm`, chosen after a quick comparison) that keeps headings and tables and removes repeated page headers and footers.
 - Section-aware chunking across page breaks: a section stays whole if it fits; longer ones split on paragraphs, list items, then sentences, with overlap only inside a section. Table rows, list items, rules with their exceptions, and definitions are never split. Chunk size measured in tokens (target 300–500, maximum 800).
 - The heading path and policy details in the contextual header (`Policy: Travel Policy (v4, effective 2026-01-01, UK)` / `Section: 4 Air travel > 4.2 Class of travel`).
@@ -95,7 +94,8 @@ hybrid-rag/
 │   └── config.py
 ├── tests/
 ├── eval/             # golden set and evaluation script
-├── data/samples/
+├── data/pdfs/        # HR policy PDFs
+├── data/samples/     # small generated PDF used by the tests
 ├── config.yaml
 ├── docker-compose.yml
 └── pyproject.toml

@@ -3,7 +3,7 @@
 ## 1. Project decisions
 - **Goal:** a portfolio project, designed so it could scale to production.
 - **Domain:** HR policies (employee handbook, benefits, leave, travel, expenses, conduct and similar). See section 10 for the chunking and metadata strategy this calls for.
-- **Data source:** PDF files only. TXT and CSV support was built in step 2 and then removed, to focus on HR policy PDFs.
+- **Data source:** PDF files only (HR policy PDFs in `data/pdfs/`).
 - **Access control:** every chunk carries authorization metadata, and every search is filtered by the caller's permissions inside Qdrant. See section 11.
 - **Interface:** API only (FastAPI), with no UI.
 - **Orchestration:** LangChain. The pipeline is built from LangChain components and LCEL chains, with custom LangChain components where the project needs more than LangChain provides (failover, `bge-m3` embeddings).
