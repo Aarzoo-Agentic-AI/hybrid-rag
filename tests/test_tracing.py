@@ -1,0 +1,145 @@
+"""Ingestion tracing, checked with a mock LangSmith client (nothing is sent anywhere)."""
+
+from pathlib import Path
+from unittest.mock import MagicMock
+
+import pytest
+from langsmith import Client
+from langsmith.run_helpers import tracing_context
+from qdrant_client import QdrantClient
+
+from hybrid_rag.config import ChunkingSettings, EmbeddingSettings
+from hybrid_rag.embedding import build_embeddings
+from hybrid_rag.indexing import ingest_paths
+from hybrid_rag.store import DocumentIndex
+from tests.pdf_fixture import write_pdf
+
+SECRET_SENTENCE = "Salary band C4 tops out at 187000 dollars."
+CHUNKING = ChunkingSettings(chunk_size=200, chunk_overlap=40)
+
+
+class Runs:
+    """Collects the runs a traced call would send to LangSmith."""
+
+    def __init__(self, client: MagicMock) -> None:
+        calls = client.method_calls
+        self.created = {c.kwargs["id"]: c.kwargs for c in calls if c[0] == "create_run"}
+        self.updated = {c.kwargs["run_id"]: c.kwargs for c in calls if c[0] == "update_run"}
+        self.everything_sent = repr(client.method_calls)
+
+    def named(self, name: str) -> list[dict]:
+        return [r for r in self.created.values() if r["name"] == name]
+
+    def parent_name(self, run: dict) -> str | None:
+        parent = self.created.get(run.get("parent_run_id"))
+        return parent["name"] if parent else None
+
+    def outputs(self, run: dict) -> dict:
+        return self.updated[run["id"]]["outputs"]
+
+
+@pytest.fixture
+def traced():
+    client = MagicMock(spec=Client)
+    client.tracing_queue = None
+
+    def run(fn):
+        with tracing_context(enabled=True, client=client):
+            result = fn()
+        return result, Runs(client)
+
+    return run
+
+
+@pytest.fixture
+def index() -> DocumentIndex:
+    embeddings = build_embeddings(EmbeddingSettings(provider="hashing"))
+    return DocumentIndex(QdrantClient(":memory:"), "test", embeddings)
+
+
+def write_policy(tmp_path: Path) -> Path:
+    lines = [SECRET_SENTENCE] + [f"Rule {i}: claims need a receipt over 25 USD." for i in range(20)]
+    return write_pdf(tmp_path / "salary_bands.pdf", [lines], title="Salary Bands")
+
+
+def test_ingestion_is_one_trace_with_a_run_for_every_step(traced, index, tmp_path) -> None:
+    write_policy(tmp_path)
+
+    _, runs = traced(lambda: ingest_paths([tmp_path], index, CHUNKING))
+
+    (root,) = runs.named("ingest")
+    assert root.get("parent_run_id") is None
+    assert "ingestion" in root["tags"]
+    assert runs.parent_name(runs.named("ingest_file")[0]) == "ingest"
+    assert runs.parent_name(runs.named("load_document")[0]) == "ingest_file"
+    assert runs.parent_name(runs.named("index_document")[0]) == "ingest_file"
+    assert runs.parent_name(runs.named("qdrant_upsert")[0]) == "index_document"
+    (embed,) = runs.named("embed")  # dense and sparse share one model pass
+    assert embed["run_type"] == "embedding"
+    assert runs.parent_name(embed) == "qdrant_upsert"
+    assert {r["trace_id"] for r in runs.created.values()} == {root["trace_id"]}
+
+
+def test_runs_record_counts_and_statuses(traced, index, tmp_path) -> None:
+    write_policy(tmp_path)
+
+    outcomes, runs = traced(lambda: ingest_paths([tmp_path], index, CHUNKING))
+
+    chunks = outcomes[0].result.chunks
+    assert runs.outputs(runs.named("ingest")[0]) == {"files": 1, "added": 1}
+    assert runs.outputs(runs.named("ingest_file")[0])["status"] == "added"
+    loaded = runs.outputs(runs.named("load_document")[0])
+    assert (loaded["title"], loaded["pages"], loaded["chunks"]) == ("Salary Bands", 1, chunks)
+    embed = runs.named("embed")[0]
+    assert embed["inputs"]["texts"] == chunks
+    assert runs.outputs(embed)["dense_dim"] == 384
+
+
+def test_traces_never_contain_document_text_vectors_or_local_paths(traced, index, tmp_path) -> None:
+    write_policy(tmp_path)
+
+    _, runs = traced(lambda: ingest_paths([tmp_path], index, CHUNKING))
+
+    assert "salary_bands.pdf" in runs.everything_sent  # file names are fine
+    assert "187000" not in runs.everything_sent
+    assert "receipt" not in runs.everything_sent
+    assert str(tmp_path) not in runs.everything_sent
+
+
+def test_unchanged_file_is_traced_without_an_embedding_run(traced, index, tmp_path) -> None:
+    write_policy(tmp_path)
+    ingest_paths([tmp_path], index, CHUNKING)
+
+    _, runs = traced(lambda: ingest_paths([tmp_path], index, CHUNKING))
+
+    assert runs.outputs(runs.named("ingest")[0]) == {"files": 1, "unchanged": 1}
+    assert runs.named("embed") == []
+
+
+def test_failed_file_is_visible_in_the_trace(traced, index, tmp_path) -> None:
+    write_pdf(tmp_path / "scanned.pdf", [[]])
+
+    _, runs = traced(lambda: ingest_paths([tmp_path], index, CHUNKING))
+
+    file_run = runs.outputs(runs.named("ingest_file")[0])
+    assert file_run["status"] == "failed"
+    assert "no extractable text" in file_run["error"]
+    assert runs.outputs(runs.named("ingest")[0]) == {"files": 1, "failed": 1}
+
+
+def test_generator_of_paths_is_not_consumed_by_tracing(traced, index, tmp_path) -> None:
+    write_policy(tmp_path)
+
+    outcomes, runs = traced(lambda: ingest_paths((p for p in [tmp_path]), index, CHUNKING))
+
+    assert len(outcomes) == 1
+    assert runs.named("ingest")[0]["inputs"]["paths"] == "(iterable)"
+
+
+def test_every_trace_processor_succeeds(traced, index, tmp_path, caplog) -> None:
+    """LangSmith drops a run's inputs/outputs if a processor raises; make sure none do."""
+    write_policy(tmp_path)
+
+    traced(lambda: ingest_paths([tmp_path], index, CHUNKING, force=True))
+
+    assert not [r for r in caplog.records if "process_" in r.getMessage()]

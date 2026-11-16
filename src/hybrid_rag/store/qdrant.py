@@ -22,6 +22,7 @@ from qdrant_client import QdrantClient, models
 
 from hybrid_rag.embedding import EmbeddingModels
 from hybrid_rag.ingestion import IngestedDocument
+from hybrid_rag.tracing import traceable
 
 logger = logging.getLogger(__name__)
 
@@ -147,6 +148,16 @@ class DocumentIndex:
 
     # ------------------------------------------------------------ writes
 
+    @traceable(
+        name="index_document",
+        process_inputs=lambda i: {
+            "source": i["document"].source,
+            "doc_id": i["document"].doc_id,
+            "chunks": len(i["document"].chunks),
+            "force": i["force"],
+        },
+        process_outputs=lambda r: {"status": r.status, "chunks": r.chunks, "removed": r.removed},
+    )
     def index(self, document: IngestedDocument, *, force: bool = False) -> IndexResult:
         """Add a document, replace an older version of it, or skip it if it hasn't changed.
 
@@ -168,9 +179,7 @@ class DocumentIndex:
             )
             for c in document.chunks
         ]
-        self.vector_store.add_documents(
-            chunks, ids=[c.id for c in chunks], batch_size=self.batch_size
-        )
+        self._write_chunks(chunks, self.batch_size)
         removed = self._delete_where(
             must=[_match("doc_id", document.doc_id)],
             must_not=[_match("doc_hash", document.doc_hash)],
@@ -233,6 +242,15 @@ class DocumentIndex:
         }
 
     # ----------------------------------------------------------- helpers
+
+    @traceable(
+        name="qdrant_upsert",
+        process_inputs=lambda i: {"chunks": len(i["chunks"]), "batch_size": i["batch_size"]},
+        process_outputs=lambda _: {},
+    )
+    def _write_chunks(self, chunks: list[Document], batch_size: int) -> None:
+        """Embed (dense + sparse) and upsert; the embedding run nests under this one."""
+        self.vector_store.add_documents(chunks, ids=[c.id for c in chunks], batch_size=batch_size)
 
     def _is_complete(self, existing: DocumentInfo, document: IngestedDocument) -> bool:
         """Same file, and every chunk of it is stored (guards against an interrupted write)."""

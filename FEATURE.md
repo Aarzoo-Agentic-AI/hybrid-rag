@@ -66,6 +66,17 @@
 - **Answer metrics:** faithfulness and relevance, either with RAGAS or an LLM judge.
 - **Tracing:** logs the query, retrieved chunks, scores, latency, token cost, and which LLM provider answered for every request.
 - **LangSmith (optional):** setting `LANGSMITH_TRACING=true` and `LANGSMITH_API_KEY` sends a trace of every chain run to LangSmith, showing each step's inputs, outputs and timing.
+- **Every step is traced.** LangChain components (chat models, retrievers, LCEL chains) are traced automatically. Our own plain-Python steps use LangSmith's `@traceable`, through `hybrid_rag/tracing.py`, so ingestion and queries each appear as one trace tree:
+
+  | Trace | Runs (nested) | Status |
+  |---|---|---|
+  | Ingestion | `ingest` → `ingest_file` (one per PDF) → `load_document`, `index_document` → `qdrant_upsert` → `embed` | ✅ Built |
+  | LLM call | `FailoverChatModel` → one run per provider attempt | ✅ Built |
+  | Query | `query` → query rewrite (LLM) → retriever (dense / sparse / hybrid) → `embed` (query) → reranker (scores before and after) → small-to-big expansion → prompt → `FailoverChatModel` → citation parser | Steps 4–5 |
+  | API request | Each route's trace carries `request_id`, `tenant_id`, retrieval mode and the answering provider as metadata and tags | Step 6 |
+
+- **What traces contain.** Ingestion and embedding runs record counts, names, statuses and timings only: never document text, vectors or local paths (a unit test checks this). Query traces do contain the question, the retrieved chunks and the answer, which is what makes them useful. For restricted HR documents, `LANGSMITH_HIDE_INPUTS=true` and `LANGSMITH_HIDE_OUTPUTS=true` keep the trace structure and timings but drop the text. Each environment uses its own LangSmith project.
+- **Short-lived scripts** call `flush_traces()` before exiting, so queued runs aren't lost.
 
 ## 8. API and operations
 - **Endpoints (FastAPI):**

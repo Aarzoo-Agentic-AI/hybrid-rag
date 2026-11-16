@@ -10,6 +10,7 @@ from pathlib import Path
 from hybrid_rag.config import ChunkingSettings
 from hybrid_rag.ingestion import IngestionError, find_supported_files, load_document
 from hybrid_rag.store import DocumentIndex, IndexResult
+from hybrid_rag.tracing import traceable
 
 logger = logging.getLogger(__name__)
 
@@ -26,6 +27,23 @@ class IngestOutcome:
         return self.error is None
 
 
+def _outcome_summary(o: IngestOutcome) -> dict[str, object]:
+    r = o.result
+    return {
+        "source": r.source if r else o.path.name,
+        "status": r.status if r else "failed",
+        "chunks": r.chunks if r else 0,
+        "removed": r.removed if r else 0,
+        "error": o.error,
+        "warnings": o.warnings,
+    }
+
+
+@traceable(
+    name="ingest_file",
+    process_inputs=lambda i: {"source": i["source"] or Path(i["path"]).name, "force": i["force"]},
+    process_outputs=_outcome_summary,
+)
 def ingest_file(
     path: str | Path,
     index: DocumentIndex,
@@ -53,6 +71,23 @@ def expand_paths(paths: Iterable[str | Path]) -> list[Path]:
     return expanded
 
 
+def _ingest_summary(outcomes: list[IngestOutcome]) -> dict[str, object]:
+    statuses = [_outcome_summary(o)["status"] for o in outcomes]
+    return {"files": len(outcomes), **{s: statuses.count(s) for s in sorted(set(statuses))}}
+
+
+@traceable(
+    name="ingest",
+    tags=["ingestion"],
+    process_inputs=lambda i: {
+        # File names only (never local paths), and never consume an iterator here.
+        "paths": [Path(p).name for p in i["paths"]]
+        if isinstance(i["paths"], list | tuple)
+        else "(iterable)",
+        "force": i["force"],
+    },
+    process_outputs=_ingest_summary,
+)
 def ingest_paths(
     paths: Iterable[str | Path],
     index: DocumentIndex,
@@ -60,4 +95,5 @@ def ingest_paths(
     *,
     force: bool = False,
 ) -> list[IngestOutcome]:
+    """Ingest files and folders. Traced as one ``ingest`` run with a child run per file."""
     return [ingest_file(p, index, chunking, force=force) for p in expand_paths(paths)]

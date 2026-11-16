@@ -17,6 +17,8 @@ from collections import OrderedDict
 from dataclasses import dataclass
 from typing import Any, Protocol
 
+from hybrid_rag.tracing import traceable
+
 logger = logging.getLogger(__name__)
 
 
@@ -156,13 +158,38 @@ class CachingEncoder:
         missing = [t for t in dict.fromkeys(texts) if t not in results]
         if missing:
             # Encode outside the lock so other threads aren't blocked by the model.
-            encoded = self.inner.encode(missing)
+            encoded = self._encode_uncached(
+                missing,
+                requested=len(texts),
+                encoder=getattr(self.inner, "model_name", type(self.inner).__name__),
+            )
             with self._lock:
                 self.encoded_count += len(missing)
                 for text, encoding in zip(missing, encoded, strict=True):
                     results[text] = encoding
                     self._store(text, encoding)
         return [results[t] for t in texts]
+
+    @traceable(
+        name="embed",
+        run_type="embedding",
+        process_inputs=lambda i: {
+            "encoder": i["encoder"],
+            "texts": len(i["texts"]),
+            "served_from_cache": i["requested"] - len(i["texts"]),
+        },
+        process_outputs=lambda o: {
+            "vectors": len(o),
+            "dense_dim": len(o[0].dense) if o else 0,
+            "avg_sparse_terms": round(sum(len(e.sparse) for e in o) / len(o), 1) if o else 0,
+        },
+    )
+    def _encode_uncached(self, texts: list[str], requested: int, encoder: str) -> list[Encoding]:
+        """The only place the model runs; traced (counts only, never text or vectors).
+
+        ``requested`` and ``encoder`` are only there for the trace.
+        """
+        return self.inner.encode(texts)
 
     def _store(self, text: str, encoding: Encoding) -> None:
         if self.max_entries == 0:

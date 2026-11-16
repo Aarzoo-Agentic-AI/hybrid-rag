@@ -10,10 +10,21 @@ from hybrid_rag.ingestion.chunking import finalize_chunks, make_doc_id, split_un
 from hybrid_rag.ingestion.loaders import load_pdf
 from hybrid_rag.ingestion.text import sha256_bytes
 from hybrid_rag.ingestion.types import FileType, IngestedDocument
+from hybrid_rag.tracing import traceable
 
 logger = logging.getLogger(__name__)
 
 
+@traceable(
+    name="load_document",
+    run_type="parser",
+    process_inputs=lambda i: {"source": i["source"] or Path(i["path"]).name},
+    process_outputs=lambda d: {
+        "title": d.title,
+        **d.stats,  # pages, pages_with_text, chunks
+        "warnings": d.warnings,
+    },
+)
 def load_document(
     path: str | Path, settings: ChunkingSettings, *, source: str | None = None
 ) -> IngestedDocument:

@@ -79,6 +79,21 @@ A document's identity is its `doc_id`, which comes from the source file name (se
 | `count_chunks(doc_id=None)` | Exact chunk count, for one document or for all |
 | `health()` | Collection name, status and point count, for `/health` |
 
+## Tracing
+
+With LangSmith tracing on, each `ingest_paths()` call is one trace:
+
+```
+ingest                      files, and how many were added / updated / unchanged / failed
+└─ ingest_file              one per PDF: status, chunks, stale chunks removed, error
+   ├─ load_document         title, pages, chunks, warnings
+   └─ index_document        status, chunks, removed
+      └─ qdrant_upsert      chunks, batch size
+         └─ embed           texts embedded, texts served from cache, dense size
+```
+
+An unchanged file has no `qdrant_upsert` or `embed` run, because nothing is embedded. The runs record counts, names, statuses and timings only, never document text, vectors or local paths. `tests/test_tracing.py` checks the tree and the privacy rule with a mock LangSmith client. See [`../tracing.py`](../tracing.py).
+
 ## Tests
 
 - `tests/test_store.py` (unit tests): uses `QdrantClient(":memory:")` and the `hashing` encoder, so no Docker or model download is needed. It covers the collection layout and validation, add, skip, update with stale-chunk removal, force, interrupted-write repair, delete, list, reset, ingesting the samples twice (the second run embeds nothing), bad files, and a hybrid search for an exact term (`LR-200`).

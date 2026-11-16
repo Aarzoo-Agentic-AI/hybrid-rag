@@ -21,6 +21,7 @@ import time
 from hybrid_rag.config import get_settings
 from hybrid_rag.indexing import ingest_paths
 from hybrid_rag.store import DocumentIndex, StoreError, build_document_index
+from hybrid_rag.tracing import flush_traces, tracing_is_enabled
 
 
 def print_documents(index: DocumentIndex) -> None:
@@ -57,6 +58,8 @@ def main() -> int:
 
     emb = settings.embedding
     print(f"Embeddings: {emb.provider} ({emb.model}) on {emb.device}")
+    if tracing_is_enabled():
+        print("LangSmith tracing is on: one 'ingest' trace (counts and names only, no text)")
     started = time.perf_counter()
     outcomes = ingest_paths(args.paths, index, settings.chunking, force=args.force)
     for o in outcomes:
@@ -73,6 +76,7 @@ def main() -> int:
         f"(texts embedded: {index.embeddings.encoder.encoded_count})"
     )
 
+    flush_traces()
     print_documents(index)
     return 0 if all(o.ok for o in outcomes) else 1
 

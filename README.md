@@ -32,11 +32,27 @@ uv run python scripts/llm_smoke.py --task query_rewrite
 ```
 Then open the **hybrid-rag** project in LangSmith to see the run.
 
+To see an ingestion trace, re-index the sample handbook:
+```bash
+uv run python scripts/ingest.py --force
+```
+It appears as one `ingest` trace: `ingest_file` for each PDF, with `load_document`, `index_document`, `qdrant_upsert` and `embed` nested inside.
+
+### What is traced
+
+| Trace | Runs | Status |
+|---|---|---|
+| Ingestion | `ingest` → `ingest_file` → `load_document`, `index_document` → `qdrant_upsert` → `embed` | Built |
+| LLM call | `FailoverChatModel` → one run per provider attempt | Built |
+| Query | rewrite, retrieval, reranking, prompt, LLM and citations, as one trace | Steps 4–5 |
+
 ### Notes
 - **How the settings are loaded.** LangSmith reads its settings from environment variables. `get_settings()` in [config.py](src/hybrid_rag/config.py) copies the `LANGSMITH_*` and `LANGCHAIN_*` values from `.env` into the environment; no other values are copied. A value already set in your shell takes priority over `.env`.
 - **To turn tracing off,** set `LANGSMITH_TRACING=false`.
 - **Tests never send traces.** [tests/conftest.py](tests/conftest.py) switches tracing off for every test run.
-- **Privacy.** Traces contain full prompts and responses, and once the RAG chain is built they include text from your documents. Don't trace confidential documents unless you're comfortable storing them in LangSmith.
+- **Privacy.**
+  - Ingestion and embedding traces contain only counts, file names, titles, statuses and timings: no document text, vectors or local paths.
+  - LLM traces contain full prompts and responses, and once the RAG chain is built they include text from your documents. To keep only the structure and timings, set `LANGSMITH_HIDE_INPUTS=true` and `LANGSMITH_HIDE_OUTPUTS=true` in `.env`.
 - **Troubleshooting:**
 
   | Error | Fix |

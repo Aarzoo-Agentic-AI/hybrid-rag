@@ -30,6 +30,7 @@ Each step ends with something working and tested. Features and design decisions 
 - A `bge-m3` encoder behind LangChain's `Embeddings` (dense) and `SparseEmbeddings` (sparse) interfaces. Both wrappers share one cached encoder, so each chunk goes through the model once. A `hashing` provider stands in for tests and offline demos.
 - `QdrantVectorStore` (`langchain-qdrant`) in hybrid mode, plus our own `DocumentIndex`: collection creation and validation, payload indexes, batched adds, skipping unchanged files (by file hash), replacing changed files without a gap (write new chunks, then delete stale ones), repairing interrupted writes, deletion by document, and listing documents.
 - `scripts/ingest.py` to index files from the command line.
+- LangSmith tracing of every ingestion step (`ingest` → `ingest_file` → `load_document`, `index_document` → `qdrant_upsert` → `embed`), recording counts, names, statuses and timings but never document text or vectors.
 - **Done when:** ingesting sample files fills Qdrant, re-running it changes nothing, and the data is visible in the Qdrant dashboard. Tests use Qdrant's in-memory mode.
 
 ## Step 3a: HR policy chunking and metadata
@@ -52,6 +53,7 @@ Each step ends with something working and tested. Features and design decisions 
 ## Step 4: Hybrid retrieval and reranking
 - Retrievers from `QdrantVectorStore` in dense, sparse and hybrid mode (Qdrant does the RRF fusion). Every retriever requires a `Principal`, and its security filter is always applied. Relevance filters (`is_current`, `jurisdiction`, `applies_to`, document, file type) are separate and optional.
 - Small-to-big retrieval: matched chunks are expanded to their parent section before reranking or generation.
+- Tracing: retrievers are traced automatically by LangChain; `@traceable` on the cross-encoder (scores before and after reranking) and on small-to-big expansion. Query embedding is already traced as `embed`.
 - Reranking with `ContextualCompressionRetriever` and `CrossEncoderReranker`, plus our own `BaseCrossEncoder` running `bge-reranker-v2-m3` through `sentence-transformers`.
 - **Done when:** sample queries return relevant chunks, and you can switch between dense-only, sparse-only, hybrid and hybrid plus rerank. The evaluation script in step 7 needs these modes. Leakage tests from step 3b also pass through every retriever and the reranker.
 
@@ -61,13 +63,14 @@ Each step ends with something working and tested. Features and design decisions 
 - A confidence threshold for "I don't know" answers.
 - Answer parsing that links citations back to the policy, section, page and effective date.
 - HR answer rules: the more specific policy wins over the global one (and the answer says so), weak evidence gives "please contact HR", and no advice on an individual's situation.
-- Optional LangSmith tracing, switched on with environment variables.
+- One LangSmith trace per question: query rewrite, retrieval, reranking, context building, prompt, `FailoverChatModel` and citation parsing, each as a nested run.
 - **Done when:** questions end to end return grounded answers with correct citations, and still do when failover to Anthropic is forced (once that key is added).
 
 ## Step 6: FastAPI service
 - `POST /ingest`, `POST /query` (with `debug` and `stream` options), `GET /documents`, `DELETE /documents/{id}`, `PUT /documents/{id}/access` and `GET /health`, which reports Qdrant and circuit-breaker states.
 - API keys mapped to principals in config; every route scoped to the caller's principal. An audit log of who asked and which chunks (and `access_version`s) were retrieved.
 - Request validation, error handling and structured logging.
+- Every route traced, with `request_id`, `tenant_id`, retrieval mode and the answering provider as LangSmith metadata and tags, and the `request_id` also in the logs, so a log line leads to its trace.
 - The API itself added to Docker Compose.
 - **Done when:** API tests pass, the whole flow works through Swagger UI, and `docker compose up` runs everything.
 
