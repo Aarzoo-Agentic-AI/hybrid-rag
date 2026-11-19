@@ -6,7 +6,7 @@ from qdrant_client import QdrantClient, models
 from hybrid_rag.config import ChunkingSettings, EmbeddingSettings
 from hybrid_rag.embedding import build_embeddings
 from hybrid_rag.indexing import ingest_paths
-from hybrid_rag.ingestion import load_document
+from hybrid_rag.ingestion import IngestionPipeline, load_document
 from hybrid_rag.store import (
     DENSE_VECTOR,
     SPARSE_VECTOR,
@@ -17,7 +17,8 @@ from hybrid_rag.store import (
 from tests.pdf_fixture import write_pdf
 
 SAMPLES = Path(__file__).resolve().parents[1] / "data" / "samples"
-CHUNKING = ChunkingSettings(chunk_size=200, chunk_overlap=40)
+CHUNKING = ChunkingSettings(target_tokens=60, max_tokens=120, overlap_tokens=12, tokenizer="approx")
+PIPELINE = IngestionPipeline(CHUNKING)
 
 
 @pytest.fixture
@@ -185,9 +186,9 @@ def test_health_reports_point_count(index: DocumentIndex, tmp_path: Path) -> Non
 
 
 def test_ingest_samples_then_rerun_is_a_no_op(index: DocumentIndex) -> None:
-    first = ingest_paths([SAMPLES], index, ChunkingSettings())
+    first = ingest_paths([SAMPLES], index, PIPELINE)
     embedded = index.embeddings.encoder.encoded_count
-    second = ingest_paths([SAMPLES], index, ChunkingSettings())
+    second = ingest_paths([SAMPLES], index, PIPELINE)
 
     assert all(o.ok for o in first)
     assert {o.result.status for o in first} == {"added"}
@@ -201,7 +202,7 @@ def test_ingest_reports_bad_files_without_stopping(index: DocumentIndex, tmp_pat
     write(tmp_path, "good.pdf", "Fine.")
     write(tmp_path, "empty.pdf", "   ")
 
-    outcomes = {o.path.name: o for o in ingest_paths([tmp_path], index, CHUNKING)}
+    outcomes = {o.path.name: o for o in ingest_paths([tmp_path], index, PIPELINE)}
 
     assert outcomes["good.pdf"].ok
     assert not outcomes["empty.pdf"].ok
@@ -209,7 +210,7 @@ def test_ingest_reports_bad_files_without_stopping(index: DocumentIndex, tmp_pat
 
 
 def test_hybrid_search_finds_exact_term(index: DocumentIndex) -> None:
-    ingest_paths([SAMPLES], index, ChunkingSettings())
+    ingest_paths([SAMPLES], index, PIPELINE)
 
     hits = index.vector_store.similarity_search("Can I enter the LR-200 safety zone?", k=3)
 
@@ -221,13 +222,13 @@ def test_unchanged_file_is_skipped_before_loading(
     index: DocumentIndex, tmp_path: Path, monkeypatch
 ) -> None:
     write(tmp_path, "a.pdf", long_text(10))
-    ingest_paths([tmp_path], index, CHUNKING)
+    ingest_paths([tmp_path], index, PIPELINE)
 
     def fail(*args, **kwargs):
         raise AssertionError("an unchanged file must not be loaded, scanned or chunked")
 
-    monkeypatch.setattr("hybrid_rag.indexing.load_document", fail)
-    (outcome,) = ingest_paths([tmp_path], index, CHUNKING)
+    monkeypatch.setattr("hybrid_rag.ingestion.pipeline.IngestionPipeline.load", fail)
+    (outcome,) = ingest_paths([tmp_path], index, PIPELINE)
 
     assert outcome.result.status == "unchanged"
 
@@ -236,9 +237,11 @@ def test_changed_chunking_settings_reindex_unchanged_files(
     index: DocumentIndex, tmp_path: Path
 ) -> None:
     write(tmp_path, "a.pdf", long_text(10))
-    ingest_paths([tmp_path], index, CHUNKING)
+    ingest_paths([tmp_path], index, PIPELINE)
 
-    bigger = ChunkingSettings(chunk_size=300, chunk_overlap=40)
+    bigger = IngestionPipeline(
+        ChunkingSettings(target_tokens=100, max_tokens=200, overlap_tokens=12, tokenizer="approx")
+    )
     (outcome,) = ingest_paths([tmp_path], index, bigger)
 
     assert outcome.result.status == "updated"

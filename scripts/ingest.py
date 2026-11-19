@@ -1,14 +1,15 @@
 """Index files into Qdrant.
 
 Usage:
-    uv run python scripts/ingest.py                    # index data/samples
+    uv run python scripts/ingest.py                    # index documents.path (data/pdfs)
     uv run python scripts/ingest.py path/to/file.pdf some/folder
     uv run python scripts/ingest.py --force            # re-embed even unchanged files
     uv run python scripts/ingest.py --reset            # empty the collection first
     uv run python scripts/ingest.py --list             # only list indexed documents
 
-Unchanged files are skipped, so running it twice is cheap. The first run downloads the
-bge-m3 model (about 2.3 GB) unless embedding.provider is "hashing".
+Unchanged files are skipped before they are even parsed, so running it twice is cheap. The first
+run downloads the bge-m3 model (about 2.3 GB) unless embedding.provider is "hashing", and
+Docling's layout models (a few hundred MB) unless documents.parser is "pypdf".
 """
 
 from __future__ import annotations
@@ -20,7 +21,7 @@ import time
 
 from hybrid_rag.config import get_settings
 from hybrid_rag.indexing import ingest_paths
-from hybrid_rag.privacy import build_sanitizer
+from hybrid_rag.ingestion import IngestionError, IngestionPipeline
 from hybrid_rag.store import DocumentIndex, StoreError, build_document_index
 from hybrid_rag.tracing import flush_traces, tracing_is_enabled
 
@@ -38,7 +39,7 @@ def print_documents(index: DocumentIndex) -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("paths", nargs="*", default=["data/samples"], help="files or folders")
+    parser.add_argument("paths", nargs="*", help="files or folders (default: documents.path)")
     parser.add_argument("--force", action="store_true", help="re-index unchanged files")
     parser.add_argument("--reset", action="store_true", help="delete all indexed documents first")
     parser.add_argument("--list", action="store_true", help="list indexed documents and exit")
@@ -61,14 +62,18 @@ def main() -> int:
 
     emb = settings.embedding
     print(f"Embeddings: {emb.provider} ({emb.model}) on {emb.device}")
-    sanitizer = build_sanitizer(settings.privacy)
-    print(f"Privacy scan: {sanitizer.name} (policy {sanitizer.policy})")
+    try:
+        pipeline = IngestionPipeline.from_settings(settings)
+    except IngestionError as exc:
+        print(f"error: {exc}")
+        return 1
+    print(f"Parser: {pipeline.parser.name} | tokens: {pipeline.tokens.name}")
+    print(f"Privacy scan: {pipeline.sanitizer.name} (policy {pipeline.sanitizer.policy})")
     if tracing_is_enabled():
         print("LangSmith tracing is on: one 'ingest' trace (counts and names only, no text)")
     started = time.perf_counter()
-    outcomes = ingest_paths(
-        args.paths, index, settings.chunking, force=args.force, sanitizer=sanitizer
-    )
+    paths = args.paths or [settings.documents.path]
+    outcomes = ingest_paths(paths, index, pipeline, force=args.force)
     for o in outcomes:
         if o.ok and o.result:
             r = o.result

@@ -11,11 +11,13 @@ from qdrant_client import QdrantClient
 from hybrid_rag.config import ChunkingSettings, EmbeddingSettings
 from hybrid_rag.embedding import build_embeddings
 from hybrid_rag.indexing import ingest_paths
+from hybrid_rag.ingestion import IngestionPipeline
 from hybrid_rag.store import DocumentIndex
 from tests.pdf_fixture import write_pdf
 
 SECRET_SENTENCE = "Salary band C4 tops out at 187000 dollars."
-CHUNKING = ChunkingSettings(chunk_size=200, chunk_overlap=40)
+CHUNKING = ChunkingSettings(target_tokens=60, max_tokens=120, overlap_tokens=12, tokenizer="approx")
+PIPELINE = IngestionPipeline(CHUNKING)
 
 
 class Runs:
@@ -65,7 +67,7 @@ def write_policy(tmp_path: Path) -> Path:
 def test_ingestion_is_one_trace_with_a_run_for_every_step(traced, index, tmp_path) -> None:
     write_policy(tmp_path)
 
-    _, runs = traced(lambda: ingest_paths([tmp_path], index, CHUNKING))
+    _, runs = traced(lambda: ingest_paths([tmp_path], index, PIPELINE))
 
     (root,) = runs.named("ingest")
     assert root.get("parent_run_id") is None
@@ -83,7 +85,7 @@ def test_ingestion_is_one_trace_with_a_run_for_every_step(traced, index, tmp_pat
 def test_runs_record_counts_and_statuses(traced, index, tmp_path) -> None:
     write_policy(tmp_path)
 
-    outcomes, runs = traced(lambda: ingest_paths([tmp_path], index, CHUNKING))
+    outcomes, runs = traced(lambda: ingest_paths([tmp_path], index, PIPELINE))
 
     chunks = outcomes[0].result.chunks
     assert runs.outputs(runs.named("ingest")[0]) == {"files": 1, "added": 1}
@@ -98,7 +100,7 @@ def test_runs_record_counts_and_statuses(traced, index, tmp_path) -> None:
 def test_traces_never_contain_document_text_vectors_or_local_paths(traced, index, tmp_path) -> None:
     write_policy(tmp_path)
 
-    _, runs = traced(lambda: ingest_paths([tmp_path], index, CHUNKING))
+    _, runs = traced(lambda: ingest_paths([tmp_path], index, PIPELINE))
 
     assert "salary_bands.pdf" in runs.everything_sent  # file names are fine
     assert "187000" not in runs.everything_sent
@@ -108,9 +110,9 @@ def test_traces_never_contain_document_text_vectors_or_local_paths(traced, index
 
 def test_unchanged_file_is_traced_without_an_embedding_run(traced, index, tmp_path) -> None:
     write_policy(tmp_path)
-    ingest_paths([tmp_path], index, CHUNKING)
+    ingest_paths([tmp_path], index, PIPELINE)
 
-    _, runs = traced(lambda: ingest_paths([tmp_path], index, CHUNKING))
+    _, runs = traced(lambda: ingest_paths([tmp_path], index, PIPELINE))
 
     assert runs.outputs(runs.named("ingest")[0]) == {"files": 1, "unchanged": 1}
     assert runs.named("embed") == []
@@ -119,7 +121,7 @@ def test_unchanged_file_is_traced_without_an_embedding_run(traced, index, tmp_pa
 def test_failed_file_is_visible_in_the_trace(traced, index, tmp_path) -> None:
     write_pdf(tmp_path / "scanned.pdf", [[]])
 
-    _, runs = traced(lambda: ingest_paths([tmp_path], index, CHUNKING))
+    _, runs = traced(lambda: ingest_paths([tmp_path], index, PIPELINE))
 
     file_run = runs.outputs(runs.named("ingest_file")[0])
     assert file_run["status"] == "failed"
@@ -130,7 +132,7 @@ def test_failed_file_is_visible_in_the_trace(traced, index, tmp_path) -> None:
 def test_generator_of_paths_is_not_consumed_by_tracing(traced, index, tmp_path) -> None:
     write_policy(tmp_path)
 
-    outcomes, runs = traced(lambda: ingest_paths((p for p in [tmp_path]), index, CHUNKING))
+    outcomes, runs = traced(lambda: ingest_paths((p for p in [tmp_path]), index, PIPELINE))
 
     assert len(outcomes) == 1
     assert runs.named("ingest")[0]["inputs"]["paths"] == "(iterable)"
@@ -140,7 +142,7 @@ def test_every_trace_processor_succeeds(traced, index, tmp_path, caplog) -> None
     """LangSmith drops a run's inputs/outputs if a processor raises; make sure none do."""
     write_policy(tmp_path)
 
-    traced(lambda: ingest_paths([tmp_path], index, CHUNKING, force=True))
+    traced(lambda: ingest_paths([tmp_path], index, PIPELINE, force=True))
 
     assert not [r for r in caplog.records if "process_" in r.getMessage()]
 
@@ -148,7 +150,7 @@ def test_every_trace_processor_succeeds(traced, index, tmp_path, caplog) -> None
 def test_sanitize_step_is_traced_with_counts_only(traced, index, tmp_path) -> None:
     write_pdf(tmp_path / "faq.pdf", [["Questions go to jane.doe@gmail.com or 415-555-0134."]])
 
-    _, runs = traced(lambda: ingest_paths([tmp_path], index, CHUNKING))
+    _, runs = traced(lambda: ingest_paths([tmp_path], index, PIPELINE))
 
     (sanitize,) = runs.named("sanitize")
     assert runs.parent_name(sanitize) == "load_document"
@@ -163,7 +165,7 @@ def test_sanitize_step_is_traced_with_counts_only(traced, index, tmp_path) -> No
 def test_quarantined_file_trace_reveals_no_values(traced, index, tmp_path) -> None:
     write_pdf(tmp_path / "export.pdf", [["Direct deposit: SSN 123-45-6789."]])
 
-    _, runs = traced(lambda: ingest_paths([tmp_path], index, CHUNKING))
+    _, runs = traced(lambda: ingest_paths([tmp_path], index, PIPELINE))
 
     file_run = runs.outputs(runs.named("ingest_file")[0])
     assert file_run["status"] == "quarantined"

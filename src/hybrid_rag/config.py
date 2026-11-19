@@ -63,15 +63,44 @@ class RerankerSettings(BaseModel):
     device: str = "cpu"
 
 
+class DocumentsSettings(BaseModel):
+    """Where the policy PDFs are and how they are parsed."""
+
+    path: Path = Path("data/pdfs")  # default folder for scripts/ingest.py
+    registry: Path | None = Path("data/pdfs/registry.yaml")  # policy metadata per file
+    # "docling": layout-aware (headings, tables, page headers removed). "pypdf": fast text-only
+    # fallback with heading heuristics, used by unit tests.
+    parser: Literal["docling", "pypdf"] = "docling"
+    cache_dir: Path | None = Path(".cache/parsed")  # parsed documents, keyed by file hash
+
+
 class ChunkingSettings(BaseModel):
-    chunk_size: int = Field(default=800, gt=0)
-    chunk_overlap: int = Field(default=120, ge=0)
-    contextual_headers: bool = True  # prepend "Document: ... / Location: ..." to each chunk
+    """Section-aware chunking. Sizes are in tokens of the embedding model's tokenizer."""
+
+    target_tokens: int = Field(default=400, gt=0)  # aim for this when a section is split
+    max_tokens: int = Field(default=800, gt=0)  # a section up to this size stays whole
+    overlap_tokens: int = Field(default=60, ge=0)  # only between parts of the same section
+    # "BAAI/bge-m3" counts with that model's tokenizer; "approx" estimates (4 chars per token).
+    tokenizer: str = "BAAI/bge-m3"
+    contextual_headers: bool = True  # prepend "Policy: ... / Section: ..." to each chunk
+    # Sections whose title matches are not indexed (case-insensitive regular expressions).
+    skip_sections: list[str] = Field(
+        default_factory=lambda: [r"^contents$", r"^what's inside$", r"acknowledge?ment"]
+    )
+    # Tables in sections whose title matches become one definition chunk per row.
+    definition_sections: list[str] = Field(default_factory=lambda: [r"definitions?", r"glossary"])
 
     @model_validator(mode="after")
-    def _overlap_smaller_than_size(self) -> ChunkingSettings:
-        if self.chunk_overlap >= self.chunk_size:
-            raise ValueError("chunk_overlap must be smaller than chunk_size")
+    def _check_sizes(self) -> ChunkingSettings:
+        if self.target_tokens > self.max_tokens:
+            raise ValueError("target_tokens must not exceed max_tokens")
+        if self.overlap_tokens >= self.target_tokens:
+            raise ValueError("overlap_tokens must be smaller than target_tokens")
+        for pattern in [*self.skip_sections, *self.definition_sections]:
+            try:
+                re.compile(pattern)
+            except re.error as exc:
+                raise ValueError(f"invalid regular expression {pattern!r}: {exc}") from None
         return self
 
 
@@ -187,6 +216,7 @@ class Settings(BaseSettings):
     qdrant: QdrantSettings = Field(default_factory=QdrantSettings)
     embedding: EmbeddingSettings = Field(default_factory=EmbeddingSettings)
     reranker: RerankerSettings = Field(default_factory=RerankerSettings)
+    documents: DocumentsSettings = Field(default_factory=DocumentsSettings)
     chunking: ChunkingSettings = Field(default_factory=ChunkingSettings)
     privacy: PrivacySettings = Field(default_factory=PrivacySettings)
     retrieval: RetrievalSettings = Field(default_factory=RetrievalSettings)

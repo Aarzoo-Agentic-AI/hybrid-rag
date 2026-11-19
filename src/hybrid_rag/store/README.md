@@ -5,11 +5,13 @@ This package stores chunks in Qdrant for hybrid search, and keeps exactly one ve
 ```python
 from hybrid_rag.config import get_settings
 from hybrid_rag.indexing import ingest_paths
+from hybrid_rag.ingestion import IngestionPipeline
 from hybrid_rag.store import build_document_index
 
 settings = get_settings()
 index = build_document_index(settings)  # connects and creates the collection
-outcomes = ingest_paths(["data/samples"], index, settings.chunking)
+pipeline = IngestionPipeline.from_settings(settings)  # Docling, privacy scan, registry
+outcomes = ingest_paths(["data/pdfs"], index, pipeline)
 
 index.list_documents()  # one DocumentInfo per document
 index.delete(doc_id)  # remove a document's chunks
@@ -19,7 +21,7 @@ index.vector_store  # the LangChain QdrantVectorStore (hybrid mode), used by ret
 From the command line:
 
 ```bash
-uv run python scripts/ingest.py               # index data/samples
+uv run python scripts/ingest.py               # index documents.path (data/pdfs)
 uv run python scripts/ingest.py my/folder a.pdf
 uv run python scripts/ingest.py --list        # show what's indexed
 uv run python scripts/ingest.py --force       # re-embed even unchanged files
@@ -48,7 +50,12 @@ One collection (`qdrant.collection`, default `documents`). Each chunk is one poi
 
 This is the payload layout that LangChain's `QdrantVectorStore` expects, and all writes go through `QdrantVectorStore.add_documents`. So the retrievers in step 4 read exactly what was written, with no conversion.
 
-**Payload indexes** on `metadata.doc_id`, `doc_hash`, `source`, `file_type`, `chunk_index` and `pii_scan.status` keep filtered searches, deletes and the document list fast.
+**Payload indexes** on these fields keep filtered searches, deletes and the document list fast:
+- **Document:** `metadata.doc_id`, `doc_hash`, `source`, `file_type`, `chunk_index`, `pii_scan.status`.
+- **Policy:** `policy_id`, `policy_category`, `jurisdiction`, `applies_to`, `is_current`.
+- **Section:** `section_id`, `chunk_type`.
+
+The policy and section fields are for the relevance filters and the small-to-big retrieval in step 4.
 
 `ensure_collection()` creates the collection if needed and checks an existing one. If the vector size or vector names don't match the embedding model (for example after switching from `hashing` to `bge-m3`), it raises `CollectionConfigError` with instructions, instead of failing later on the first write.
 
@@ -87,8 +94,9 @@ With LangSmith tracing on, each `ingest_paths()` call is one trace:
 ```
 ingest                      files, and how many were added / updated / unchanged / failed
 └─ ingest_file              one per PDF: status, chunks, stale chunks removed, error
-   ├─ load_document         title, pages, chunks, warnings, privacy status and redaction counts
-   │  └─ sanitize           pages scanned, status, redactions by type (quarantine: error, types only)
+   ├─ load_document         title, pages, sections, chunks, definitions, warnings, privacy status
+   │  ├─ parse              pages, blocks, tables (from the cache when the file was parsed before)
+   │  └─ sanitize           blocks scanned, status, redactions by type (quarantine: error, types only)
    └─ index_document        status, chunks, removed
       └─ qdrant_upsert      chunks, batch size
          └─ embed           texts embedded, texts served from cache, dense size

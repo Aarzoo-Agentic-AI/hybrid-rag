@@ -1,0 +1,58 @@
+# Policy registry: metadata for each policy PDF in this folder.
+#
+# The policy owner maintains these values; ingestion never guesses them from the text. Each
+# entry was transcribed from the policy's cover page and "Document Control" table. Changing an
+# entry re-indexes that policy on the next `scripts/ingest.py` run (no re-parsing needed).
+#
+# Fields: policy_name, policy_id, policy_category, version, effective_date, is_current,
+# jurisdiction, applies_to, owner_department, review_date, language.
+# Access-control fields (tenant, classification, groups, roles) are added in step 3b.
+
+defaults:
+  jurisdiction: US
+  language: en
+  is_current: true
+  applies_to: [employees, interns]
+
+policies:
+  HR_Policy_Handbook_2027.pdf:
+    policy_name: HR Policy Handbook
+    policy_category: handbook
+    version: "1.0"
+    effective_date: 2027-01-01
+    owner_department: People (Chief People Officer)
+    review_date: 2028-01-01          # reviewed annually
+
+  Employee_Benefits_Guide_2027.pdf:
+    policy_name: Employee Benefits Guide
+    policy_category: benefits
+    version: "Plan Year 2027"
+    effective_date: 2027-01-01
+    applies_to: [eligible_employees]
+    owner_department: People (Benefits)
+    review_date: 2027-10-01          # before open enrollment for the next plan year
+
+  Travel_Policy.pdf:
+    policy_name: Travel Policy
+    policy_id: HR-TRV-003
+    policy_category: travel
+    effective_date: 2027-01-01
+    owner_department: People (Chief People Officer) with Finance
+    review_date: 2028-01-01
+
+  Expense_Policy.pdf:
+    policy_name: Expense Policy
+    policy_id: HR-EXP-004
+    policy_category: expenses
+    effective_date: 2027-01-01
+    owner_department: People (Chief People Officer) with Finance
+    review_date: 2028-01-01
+
+  Annual_Review_Merit_Bonus_Policy_2027.pdf:
+    policy_name: Annual Review, Merit Increase and Performance Bonus Policy
+    policy_id: HR-COMP-002
+    policy_category: compensation
+    effective_date: 2027-01-01
+    applies_to: [employees]
+    owner_department: Total Rewards
+    review_date: 2027-10-01          # annually, before budgets are set each Q4

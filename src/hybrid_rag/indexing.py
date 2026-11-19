@@ -6,18 +6,17 @@ import logging
 from collections.abc import Iterable
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import TYPE_CHECKING
 
-from hybrid_rag.config import ChunkingSettings
-from hybrid_rag.ingestion import IngestionError, find_supported_files, load_document, make_doc_id
-from hybrid_rag.ingestion.pipeline import pipeline_hash
+from hybrid_rag.ingestion import (
+    IngestionError,
+    IngestionPipeline,
+    find_supported_files,
+    make_doc_id,
+)
 from hybrid_rag.ingestion.text import sha256_bytes
-from hybrid_rag.privacy import SensitiveDataError, default_sanitizer
+from hybrid_rag.privacy import SensitiveDataError
 from hybrid_rag.store import DocumentIndex, IndexResult
 from hybrid_rag.tracing import traceable
-
-if TYPE_CHECKING:
-    from hybrid_rag.privacy import Sanitizer
 
 logger = logging.getLogger(__name__)
 
@@ -57,22 +56,20 @@ def _outcome_summary(o: IngestOutcome | None) -> dict[str, object]:
 def ingest_file(
     path: str | Path,
     index: DocumentIndex,
-    chunking: ChunkingSettings,
+    pipeline: IngestionPipeline,
     *,
     source: str | None = None,
     force: bool = False,
-    sanitizer: Sanitizer | None = None,
 ) -> IngestOutcome:
     """Load, sanitize, chunk and index one file.
 
     File problems, including quarantined files, are reported in the outcome, not raised.
     """
     path = Path(path)
-    sanitizer = sanitizer or default_sanitizer()
-    if not force and (unchanged := _unchanged(path, source, index, chunking, sanitizer)):
+    if not force and (unchanged := _unchanged(path, source, index, pipeline)):
         return IngestOutcome(path, result=unchanged)
     try:
-        document = load_document(path, chunking, source=source, sanitizer=sanitizer)
+        document = pipeline.load(path, source=source)
     except IngestionError as exc:
         logger.warning("Skipping %s: %s", path.name, exc)
         return IngestOutcome(path, error=str(exc), quarantined=isinstance(exc, SensitiveDataError))
@@ -84,8 +81,7 @@ def _unchanged(
     path: Path,
     source: str | None,
     index: DocumentIndex,
-    chunking: ChunkingSettings,
-    sanitizer: Sanitizer,
+    pipeline: IngestionPipeline,
 ) -> IndexResult | None:
     """Skip a file that is already indexed exactly as it would be now, without loading it."""
     try:
@@ -94,7 +90,7 @@ def _unchanged(
         return None  # let load_document report the problem
     source = source or path.name
     doc_id = make_doc_id(source)
-    existing = index.current_version(doc_id, doc_hash, pipeline_hash(chunking, sanitizer))
+    existing = index.current_version(doc_id, doc_hash, pipeline.fingerprint(source))
     if existing is None:
         return None
     logger.info("%s unchanged, skipped", source)
@@ -131,13 +127,9 @@ def _ingest_summary(outcomes: list[IngestOutcome] | None) -> dict[str, object]:
 def ingest_paths(
     paths: Iterable[str | Path],
     index: DocumentIndex,
-    chunking: ChunkingSettings,
+    pipeline: IngestionPipeline,
     *,
     force: bool = False,
-    sanitizer: Sanitizer | None = None,
 ) -> list[IngestOutcome]:
     """Ingest files and folders. Traced as one ``ingest`` run with a child run per file."""
-    return [
-        ingest_file(p, index, chunking, force=force, sanitizer=sanitizer)
-        for p in expand_paths(paths)
-    ]
+    return [ingest_file(p, index, pipeline, force=force) for p in expand_paths(paths)]

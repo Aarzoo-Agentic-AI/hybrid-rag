@@ -12,6 +12,7 @@ import pytest
 from hybrid_rag.config import ChunkingSettings, EmbeddingSettings, get_settings
 from hybrid_rag.embedding import build_embeddings
 from hybrid_rag.indexing import ingest_paths
+from hybrid_rag.ingestion import IngestionPipeline
 from hybrid_rag.store import DocumentIndex, create_client
 
 pytestmark = pytest.mark.integration
@@ -52,7 +53,9 @@ def test_samples_are_indexed_in_real_qdrant(embeddings) -> None:
     collection = f"test_{uuid.uuid4().hex[:8]}"
     try:
         index = DocumentIndex(client, collection, embeddings)
-        outcomes = ingest_paths([SAMPLES], index, ChunkingSettings())
+        outcomes = ingest_paths(
+            [SAMPLES], index, IngestionPipeline(ChunkingSettings(tokenizer="approx"))
+        )
 
         assert all(o.ok for o in outcomes)
         assert len(index.list_documents()) == len(outcomes)

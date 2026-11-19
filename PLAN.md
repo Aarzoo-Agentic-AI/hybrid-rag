@@ -33,14 +33,27 @@ Each step ends with something working and tested. Features and design decisions 
 - LangSmith tracing of every ingestion step (`ingest` → `ingest_file` → `load_document`, `index_document` → `qdrant_upsert` → `embed`), recording counts, names, statuses and timings but never document text or vectors.
 - **Done when:** ingesting sample files fills Qdrant, re-running it changes nothing, and the data is visible in the Qdrant dashboard. Tests use Qdrant's in-memory mode.
 
-## Step 3a: HR policy chunking and metadata
-- The HR policy PDFs in `data/pdfs/` become the main data set: HR Policy Handbook, Employee Benefits Guide, Travel Policy, Expense Policy, and the Annual Review, Merit Increase and Performance Bonus Policy (a candidate for a restricted document in step 3b).
-- Layout-aware PDF parsing (Docling or `pymupdf4llm`, chosen after a quick comparison) that keeps headings and tables and removes repeated page headers and footers.
-- The sanitizer (step 3c) keeps running on whole sections before they're chunked, and the policy registry metadata is scanned too.
-- Section-aware chunking across page breaks: a section stays whole if it fits; longer ones split on paragraphs, list items, then sentences, with overlap only inside a section. Table rows, list items, rules with their exceptions, and definitions are never split. Chunk size measured in tokens (target 300–500, maximum 800).
-- The heading path and policy details in the contextual header (`Policy: Travel Policy (v4, effective 2026-01-01, UK)` / `Section: 4 Air travel > 4.2 Class of travel`).
-- Policy metadata from a policy registry file: `policy_name`, `policy_category`, `section_number`, `section_path`, `version`, `effective_date`, `is_current`, `jurisdiction`, `applies_to`, `owner_department`, `review_date`, `language`.
-- **Done when:** tests show sections kept whole, tables and exceptions not split, correct heading paths and page ranges, and registry metadata on every chunk.
+## Step 3a: HR policy chunking and metadata ✅
+- **Data set:** the HR policy PDFs in `data/pdfs/` are now the main data set, and the default for `scripts/ingest.py`: HR Policy Handbook, Employee Benefits Guide, Travel Policy, Expense Policy, and the Annual Review, Merit Increase and Performance Bonus Policy (a candidate for a restricted document in step 3b).
+- **Parser:** Docling, chosen over `pymupdf4llm` after comparing both on the 5 policies.
+  - Both kept headings and tables. Only Docling dropped the running page headers.
+  - Docling is MIT-licensed; PyMuPDF is AGPL.
+  - Docling runs without OCR, with accurate table structure. Its results are cached by file hash, at about 4 s per page on the first parse.
+  - A `pypdf` parser with numbered-heading heuristics stays for unit tests.
+- **Sections:** levels and paths come from the numbering. The cover becomes "Overview". Tables of contents and acknowledgement forms are skipped.
+- **Section-aware chunking**, sized in `bge-m3` tokens (target 400, maximum 800, overlap 60):
+  - a section stays whole if it fits;
+  - longer ones split at paragraph, list-item or table-row boundaries, with overlap only inside the section;
+  - split tables repeat their headers;
+  - rules keep their exceptions and lists keep their introductions;
+  - glossary rows become definition chunks (17 terms).
+- **Contextual header:** the policy details and section path, e.g. `Policy: Travel Policy (HR-TRV-003, effective 2027-01-01, US)` / `Section: 5 Air travel`.
+- **Policy registry** (`data/pdfs/registry.yaml`), validated: `policy_name`, `policy_id`, `policy_category`, `version`, `effective_date`, `is_current`, `jurisdiction`, `applies_to`, `owner_department`, `review_date`, `language`.
+- **Section metadata on each chunk:** `section_id`, `section_number`, `section_path`, `section_part`, `page`/`page_end`, `chunk_type`. There are payload indexes for the filter fields.
+- **Sanitizer:** it now runs on every paragraph, list item and table row, and on the policy name. A new acronym rule removed a false positive ("Generative AI").
+- **Fingerprint:** `pipeline_hash` covers the parser, tokenizer, chunking, privacy policy and registry entry. Changing any of them re-processes only the affected files, and re-chunking reads the parse cache.
+- **Tests:** Docling's output for the 5 policies is saved as test fixtures (`scripts/make_parse_fixtures.py`), so unit tests check real structure without models. An integration test confirms that live Docling still matches.
+- **Done when:** tests show sections kept whole, tables and exceptions not split, correct heading paths and page ranges, and registry metadata on every chunk. ✅
 
 ## Step 3b: Authorization metadata
 - The access fields from FEATURE.md section 11 on every chunk: `tenant_id`, `classification` and `classification_rank`, `visibility`, `allowed_groups`, `allowed_roles`, `allowed_users`, `access_version`, `access_hash` and `access_updated_at`, read from the policy registry. Deny by default.
@@ -101,7 +114,8 @@ Each step ends with something working and tested. Features and design decisions 
 hybrid-rag/
 ├── src/hybrid_rag/
 │   ├── llm/          # provider factory, FailoverChatModel
-│   ├── ingestion/    # LangChain loaders, splitters, metadata
+│   ├── ingestion/    # Docling/pypdf parsers, sections, chunking, policy registry
+│   ├── privacy/      # sensitive-data detection and redaction
 │   ├── embedding/    # bge-m3 dense + sparse LangChain wrapper
 │   ├── store/        # QdrantVectorStore setup and indexing
 │   ├── retrieval/    # hybrid retriever, reranker
@@ -109,8 +123,9 @@ hybrid-rag/
 │   ├── api/          # FastAPI routes
 │   └── config.py
 ├── tests/
+│   └── fixtures/     # Docling output for the HR PDFs (scripts/make_parse_fixtures.py)
 ├── eval/             # golden set and evaluation script
-├── data/pdfs/        # HR policy PDFs
+├── data/pdfs/        # HR policy PDFs and registry.yaml
 ├── data/samples/     # small generated PDF used by the tests
 ├── config.yaml
 ├── docker-compose.yml

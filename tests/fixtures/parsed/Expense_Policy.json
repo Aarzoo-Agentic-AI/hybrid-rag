@@ -1,0 +1,516 @@
+{
+ "source": "Expense_Policy.pdf",
+ "doc_hash": "03fdd4fe68cc30028bd2d7a12838b9ef2e624845c0c389c03763fd7786f4ead1",
+ "parser": "docling-v1",
+ "title": "Expense Policy",
+ "pages": 5,
+ "warnings": [],
+ "blocks": [
+  {
+   "kind": "paragraph",
+   "text": "Policy No. HR-EXP-004 | Effective January 1, 2027",
+   "page": 1,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "Dummy Mock Test Inc.",
+   "page": 1,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "Applies to all U.S. employees | Workforce of 1,000 - 5,000",
+   "page": 1,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "Sample template for illustration. Limits and approval tiers are examples only. Review with Legal and Finance before adoption.",
+   "page": 1,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "Document Control",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "table",
+   "text": "",
+   "page": 2,
+   "header": [
+    "Item",
+    "Detail"
+   ],
+   "rows": [
+    [
+     "Policy number",
+     "HR-EXP-004"
+    ],
+    [
+     "Policy owner",
+     "Chief People Officer, with Finance (Handbook Section 20)"
+    ],
+    [
+     "Approved by",
+     "Executive Leadership Team; reviewed by Legal"
+    ],
+    [
+     "Effective date",
+     "January 1, 2027"
+    ],
+    [
+     "Review cycle",
+     "Annually, or sooner when laws or business needs change"
+    ],
+    [
+     "Applies to",
+     "All U.S. employees and interns; contractors only where their contract says so"
+    ],
+    [
+     "Related policies",
+     "HR Policy Handbook (Sections 11, 12, 20, 22, 24); Travel Policy HR-TRV-003; Employee Benefits Guide (Section 9)"
+    ],
+    [
+     "Questions",
+     "HR Service Center: hr@dummymocktest.example | 1-800-XXX-XXXX"
+    ]
+   ]
+  },
+  {
+   "kind": "heading",
+   "text": "1. Purpose",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "This policy expands Section 20 (Travel and Expenses) of the HR Policy Handbook. It defines which business expenses Dummy Mock Test Inc. reimburses, how they are approved and documented, and how claims are submitted. If this policy and the Handbook differ, the Handbook governs.",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "2. Principles",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Business purpose: expenses must be necessary and directly related to company business.",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Reasonableness: spend as prudently as you would your own money.",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Documentation: every claim needs adequate supporting evidence.",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Honesty: employees must be honest in records, reports and expense claims (Handbook Section 11).",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "3. Roles and responsibilities",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "table",
+   "text": "",
+   "page": 3,
+   "header": [
+    "Role",
+    "Responsibility"
+   ],
+   "rows": [
+    [
+     "Employee",
+     "Incur only eligible expenses, keep receipts, submit accurate claims within 30 days."
+    ],
+    [
+     "Approving manager",
+     "Confirm business purpose and reasonableness; never approve your own claim."
+    ],
+    [
+     "Finance",
+     "Audit claims, reimburse, keep records and report on spend."
+    ],
+    [
+     "HR and Ethics and Compliance",
+     "Handle policy questions, exceptions and investigations of suspected misuse."
+    ]
+   ]
+  },
+  {
+   "kind": "heading",
+   "text": "4. Eligible expense categories",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "table",
+   "text": "",
+   "page": 3,
+   "header": [
+    "Category",
+    "Guidance",
+    "Limit (USD)"
+   ],
+   "rows": [
+    [
+     "Travel and lodging",
+     "Per Travel Policy HR-TRV-003.",
+     "Per Travel Policy"
+    ],
+    [
+     "Meals on domestic business travel",
+     "Itemized receipts; no alcohol.",
+     "$75 per day"
+    ],
+    [
+     "Client entertainment",
+     "Record attendees and business purpose.",
+     "Pre-approval over $500"
+    ],
+    [
+     "Office supplies",
+     "Low-cost items for immediate work use.",
+     "$100 per item"
+    ],
+    [
+     "Software and subscriptions",
+     "Only IT-approved tools; AI tools must be on the approved-tools register (Handbook Section 17).",
+     "Per IT approval"
+    ],
+    [
+     "Mileage",
+     "Business use of a personal vehicle, with a log.",
+     "Current IRS standard rate"
+    ],
+    [
+     "Remote/hybrid stipend",
+     "Internet and phone for approved remote and hybrid roles (Benefits Guide, Section 9).",
+     "$50 per month"
+    ],
+    [
+     "Home-office setup",
+     "One-time, with receipts (Benefits Guide, Section 9).",
+     "$500 one time"
+    ]
+   ]
+  },
+  {
+   "kind": "paragraph",
+   "text": "Tuition assistance, learning programs, fitness, wellness rewards and commuter benefits are handled under the Employee Benefits Guide, not through expense claims.",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "5. Approval limits",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "table",
+   "text": "",
+   "page": 4,
+   "header": [
+    "Expense amount (USD)",
+    "Approval required"
+   ],
+   "rows": [
+    [
+     "Up to $250",
+     "Direct manager"
+    ],
+    [
+     "$250.01 to $2,500",
+     "Vice President"
+    ],
+    [
+     "$2,500.01 to $10,000",
+     "Finance director"
+    ],
+    [
+     "Over $10,000",
+     "CFO; follow Procurement rules"
+    ]
+   ]
+  },
+  {
+   "kind": "paragraph",
+   "text": "Large purchases and recurring vendor services go through Procurement, not expense claims. Contractors are engaged and managed through Procurement.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "6. Documentation",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Submit receipts for any item over $25.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Receipts must show vendor, date, items and amount paid.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Record the business purpose, and attendees for meals and entertainment.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Missing receipts need a signed declaration; repeated cases may lead to non-reimbursement.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Keep records for at least [7 years] or as local tax law requires.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "7. Submission, corporate card and reimbursement",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Submit expenses within 30 days of the expense; later claims may be declined.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "The corporate card is for business use only. Personal charges are prohibited.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Managers approve within [5 business days]. Finance reimburses by direct deposit within [the next biweekly pay cycle] after approval.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Foreign currency is converted at the transaction-date rate.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Report errors to Payroll right away; underpayments are corrected no later than the next pay cycle (Handbook Section 9).",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "8. Non-reimbursable expenses",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Personal items, groceries, clothing and normal commuting.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Fines, penalties and parking or traffic violations.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Alcohol, except at approved company events.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Cash gifts or cash equivalents, and political or charitable donations.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Family or guest costs, and anything already paid by a client or third party.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "9. Gifts and entertainment",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "You may accept gifts and entertainment worth up to $100 per source per year. Cash or cash equivalents are never allowed.",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "No gifts or hospitality for government officials without prior Legal approval.",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Never offer or accept bribes or improper payments (FCPA and anti-bribery laws).",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Disclose conflicts and gifts each year in the compliance portal, and whenever circumstances change (Handbook Section 12).",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "10. Fraud, audit and consequences",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "Finance may audit any claim. Falsified receipts, duplicate claims or card misuse are serious misconduct and lead to repayment and corrective action under Handbook Section 22, up to termination. Report suspected misuse to your manager, HR or the 24/7 ethics hotline. Retaliation against anyone who reports in good faith is prohibited (Handbook Section 21).",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "11. Exceptions",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "Exceptions need written approval from the Chief People Officer, with Finance concurrence (Handbook Section 24).",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "Acknowledgement",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "I acknowledge that I have received and read the Dummy Mock Test Inc. Expense Policy, effective January 1, 2027, and I agree to follow it.",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "Employee name (print): ____________________",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "Signature: ____________________",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "Employee ID: ______________",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "Date: ______________",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "Please sign electronically in the HR system within 14 days of receiving this policy. A copy is kept in your personnel file.",
+   "page": 5,
+   "header": null,
+   "rows": []
+  }
+ ]
+}

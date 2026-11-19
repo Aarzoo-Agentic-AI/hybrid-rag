@@ -1,0 +1,1260 @@
+{
+ "source": "Employee_Benefits_Guide_2027.pdf",
+ "doc_hash": "234c437175ebb7134078005eb279759ed17afb8de5e9531b7131f3fd4c168789",
+ "parser": "docling-v1",
+ "title": "Employee Benefits Guide 2027",
+ "pages": 9,
+ "warnings": [],
+ "blocks": [
+  {
+   "kind": "heading",
+   "text": "Employee Benefits Guide Plan Year 2027",
+   "page": 1,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "Dummy Mock Test Inc.",
+   "page": 1,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "For eligible U.S. employees | Workforce of 1,000 - 5,000",
+   "page": 1,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "Sample template. Company name, plan designs and costs are illustrative. Official plan documents (SPDs) govern in case of any difference.",
+   "page": 1,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "Welcome",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "At Dummy Mock Test Inc., our people are our most important investment. This guide summarizes the benefits available to you and your family, explains how to enroll, and shows where to get help. Our program is designed to be competitive with large employers, giving you choice, financial protection and support for your health, wealth and wellbeing.",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "What's inside",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "1. Eligibility and enrollment",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "2. Medical plans",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "3. Dental and vision",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "4. Health Savings and Flexible Spending Accounts",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "5. Life and disability insurance",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "6. Retirement savings: 401(k)",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "7. Time off and leave",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "8. Wellbeing and support programs",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "9. Additional and voluntary benefits",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "10. Life events, COBRA and changes",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "11. Contacts and resources",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "12. Required notices and glossary",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "Tip: Open enrollment runs November 1-20. If you do nothing, most current elections roll over, but FSA and HSA contributions do not. You must re-elect them every year.",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "1. Eligibility and Enrollment",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "Who is eligible",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Employees: regular full-time employees scheduled for 30+ hours per week. Part-time employees scheduled 20-29 hours are eligible for 401(k), EAP and selected voluntary benefits.",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Dependents: legal spouse or registered domestic partner; children up to age 26 regardless of student or marital status; disabled children of any age who meet plan criteria.",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Coverage start: the first day of the month following your date of hire (or on your date of hire if hired on the 1st).",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "When you can enroll",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "As a new hire: within 31 days of your start date.",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Annual open enrollment: each November for coverage effective January 1.",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Qualifying life event: within 31 days of the event (60 days for birth or adoption). See Section 10.",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "How to enroll",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Log in to the benefits portal (Workday or equivalent HRIS) and select Benefits > Enroll.",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Review plan options, add dependents and upload verification documents.",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Name beneficiaries for life insurance and 401(k).",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Submit and save your confirmation statement.",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "2. Medical Plans",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "Choose from three national medical plans administered by a major carrier. All plans cover in-network preventive care at 100%, include prescription drug coverage, and offer virtual care visits.",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "table",
+   "text": "",
+   "page": 3,
+   "header": [
+    "Feature (in-network)",
+    "PPO Plus",
+    "HDHP with HSA",
+    "EPO Select"
+   ],
+   "rows": [
+    [
+     "Annual deductible (individual / family)",
+     "$500 / $1,000",
+     "$1,700 / $3,400",
+     "$250 / $500"
+    ],
+    [
+     "Out-of-pocket max (individual / family)",
+     "$3,500 / $7,000",
+     "$4,000 / $8,000",
+     "$3,000 / $6,000"
+    ],
+    [
+     "Coinsurance",
+     "20% after deductible",
+     "10% after deductible",
+     "10% after deductible"
+    ],
+    [
+     "Preventive care",
+     "Covered 100%",
+     "Covered 100%",
+     "Covered 100%"
+    ],
+    [
+     "Primary care visit",
+     "$25 copay",
+     "10% after deductible",
+     "$20 copay"
+    ],
+    [
+     "Specialist visit",
+     "$50 copay",
+     "10% after deductible",
+     "$40 copay"
+    ],
+    [
+     "Virtual care visit",
+     "$0",
+     "$0 after deductible*",
+     "$0"
+    ],
+    [
+     "Urgent care / ER",
+     "$75 / $300 copay",
+     "10% after deductible",
+     "$50 / $250 copay"
+    ],
+    [
+     "Out-of-network coverage",
+     "Yes (40% after deductible)",
+     "Yes (30% after deductible)",
+     "No (emergencies only)"
+    ],
+    [
+     "Rx: generic / preferred / non-preferred",
+     "$10 / $40 / $70",
+     "10% after deductible**",
+     "$10 / $35 / $60"
+    ],
+    [
+     "Company HSA contribution",
+     "N/A",
+     "$750 / $1,500",
+     "N/A"
+    ]
+   ]
+  },
+  {
+   "kind": "list_item",
+   "text": "Subject to IRS rules for HSA-eligible plans. ** Preventive generics on the IRS preventive list are covered at 100%.",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "Your cost per paycheck (26 pay periods)",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "Dummy Mock Test Inc. pays about 80% of total premiums on average. Rates below are illustrative.",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "table",
+   "text": "",
+   "page": 3,
+   "header": [
+    "Coverage tier",
+    "PPO Plus",
+    "HDHP with HSA",
+    "EPO Select"
+   ],
+   "rows": [
+    [
+     "Employee only",
+     "$58",
+     "$22",
+     "$45"
+    ],
+    [
+     "Employee + spouse/partner",
+     "$142",
+     "$68",
+     "$118"
+    ],
+    [
+     "Employee + child(ren)",
+     "$118",
+     "$55",
+     "$96"
+    ],
+    [
+     "Family",
+     "$205",
+     "$102",
+     "$170"
+    ]
+   ]
+  },
+  {
+   "kind": "heading",
+   "text": "Medical plan features",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Spousal surcharge: $50 per paycheck if your spouse has access to medical coverage through their own employer.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Tobacco-free incentive: save $25 per paycheck by completing the tobacco-free attestation or a cessation program.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Care navigation: a concierge advocate helps you find providers, resolve claims and get second opinions.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Centers of excellence: enhanced coverage for joint replacement, spine, cancer and bariatric care.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Fertility and family-building: up to a $20,000 lifetime benefit for IVF, egg freezing, adoption and surrogacy.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "3. Dental and Vision",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "Dental",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "table",
+   "text": "",
+   "page": 4,
+   "header": [
+    "Feature",
+    "Dental Base",
+    "Dental Premier"
+   ],
+   "rows": [
+    [
+     "Annual deductible (individual / family)",
+     "$50 / $150",
+     "$50 / $150"
+    ],
+    [
+     "Preventive (cleanings, exams, X-rays)",
+     "100%, no deductible",
+     "100%, no deductible"
+    ],
+    [
+     "Basic (fillings, extractions)",
+     "80% after deductible",
+     "90% after deductible"
+    ],
+    [
+     "Major (crowns, bridges, implants)",
+     "50% after deductible",
+     "60% after deductible"
+    ],
+    [
+     "Orthodontia (children and adults)",
+     "Not covered",
+     "50% up to $2,500 lifetime"
+    ],
+    [
+     "Annual maximum per person",
+     "$1,500",
+     "$3,000"
+    ],
+    [
+     "Cost per paycheck: employee / family",
+     "$4 / $15",
+     "$9 / $32"
+    ]
+   ]
+  },
+  {
+   "kind": "heading",
+   "text": "Vision",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "table",
+   "text": "",
+   "page": 4,
+   "header": [
+    "Feature",
+    "Vision Plan"
+   ],
+   "rows": [
+    [
+     "Eye exam (every 12 months)",
+     "$10 copay"
+    ],
+    [
+     "Lenses (every 12 months)",
+     "$25 copay"
+    ],
+    [
+     "Frames (every 24 months)",
+     "$200 allowance, then 20% off"
+    ],
+    [
+     "Contact lenses (in place of glasses)",
+     "$200 allowance"
+    ],
+    [
+     "LASIK",
+     "15% discount at network providers"
+    ],
+    [
+     "Cost per paycheck: employee / family",
+     "$2.50 / $8"
+    ]
+   ]
+  },
+  {
+   "kind": "heading",
+   "text": "4. Health Savings and Flexible Spending Accounts",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "table",
+   "text": "",
+   "page": 5,
+   "header": null,
+   "rows": [
+    [
+     "",
+     "Health Savings Account (HSA)",
+     "Health Care FSA",
+     "Limited-Purpose FSA",
+     "Dependent Care FSA"
+    ],
+    [
+     "Who can use it",
+     "HDHP enrollees",
+     "PPO or EPO enrollees",
+     "HDHP enrollees",
+     "All eligible employees"
+    ],
+    [
+     "Eligible expenses",
+     "Medical, dental, vision, Rx",
+     "Medical, dental, vision, Rx",
+     "Dental and vision only",
+     "Child care under 13; elder care"
+    ],
+    [
+     "Company contribution",
+     "$750 / $1,500",
+     "None",
+     "None",
+     "None"
+    ],
+    [
+     "Annual limit",
+     "IRS limit (incl. company funds)",
+     "IRS limit",
+     "IRS limit",
+     "IRS limit per household"
+    ],
+    [
+     "Carries over?",
+     "Yes, 100% - you own it",
+     "Up to IRS carryover limit",
+     "Up to IRS carryover limit",
+     "No - use it or lose it"
+    ],
+    [
+     "Portable if you leave?",
+     "Yes",
+     "No",
+     "No",
+     "No"
+    ]
+   ]
+  },
+  {
+   "kind": "paragraph",
+   "text": "Contribution limits are set by the IRS each year and are posted on the benefits portal during open enrollment. HSA funds can be invested once your balance reaches $1,000 and are triple tax-advantaged.",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "5. Life and Disability Insurance",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "table",
+   "text": "",
+   "page": 5,
+   "header": [
+    "Benefit",
+    "Company-paid (automatic)",
+    "Optional (you pay)"
+   ],
+   "rows": [
+    [
+     "Basic life and AD&D",
+     "2x annual base salary, up to $750,000",
+     "-"
+    ],
+    [
+     "Supplemental employee life",
+     "-",
+     "1x-6x salary, up to $1,500,000"
+    ],
+    [
+     "Spouse/partner life",
+     "-",
+     "$10,000-$250,000 in $10,000 units"
+    ],
+    [
+     "Child life",
+     "-",
+     "$5,000, $10,000 or $20,000"
+    ],
+    [
+     "Short-term disability (STD)",
+     "60% of base pay, up to $2,500/week, for up to 26 weeks after a 7-day wait",
+     "Buy-up to 70%"
+    ],
+    [
+     "Long-term disability (LTD)",
+     "60% of monthly earnings, up to $15,000/month, after 180 days",
+     "Buy-up to 70%"
+    ]
+   ]
+  },
+  {
+   "kind": "paragraph",
+   "text": "Optional coverage above guaranteed-issue amounts ($500,000 employee; $50,000 spouse) requires an Evidence of Insurability form. Life insurance includes travel assistance, will preparation and grief counseling at no cost.",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "6. Retirement Savings: 401(k)",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Eligibility: immediate, from your first paycheck.",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Auto-enrollment: new hires are enrolled at 6% pre-tax, increasing 1% each year up to 10%, unless you opt out.",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Company match: 100% of the first 4% you contribute, plus 50% of the next 2% (up to 5% total).",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Vesting: your contributions are always 100% vested. Company match vests 100% after 2 years of service.",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Options: pre-tax, Roth and after-tax contributions, with catch-up contributions at age 50+.",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Investments: target-date funds (default), index funds and a self-directed brokerage window.",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Financial wellness: free one-on-one planning sessions and online tools through the recordkeeper.",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "Example: earn $90,000 and contribute 6% ($5,400). The company adds $4,500, for a total of $9,900 per year.",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "Employee Stock Purchase Plan (ESPP)",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "If your company is publicly traded, an ESPP lets you buy company stock at a 15% discount through payroll deductions, in six-month offering periods. Remove this section if it doesn't apply.",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "7. Time Off and Leave",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "table",
+   "text": "",
+   "page": 6,
+   "header": [
+    "Type",
+    "Benefit"
+   ],
+   "rows": [
+    [
+     "Paid time off (PTO)",
+     "0-2 years: 15 days; 3-5 years: 20 days; 6+ years: 25 days. Up to 5 days roll over."
+    ],
+    [
+     "Company holidays",
+     "11 paid holidays plus 2 floating holidays"
+    ],
+    [
+     "Sick time",
+     "Up to 10 days per year, or more where state or local law requires"
+    ],
+    [
+     "Parental leave",
+     "16 weeks at 100% pay for birth, adoption or foster placement (all parents)"
+    ],
+    [
+     "Birthing-parent recovery",
+     "Additional 6-8 weeks through STD"
+    ],
+    [
+     "Caregiver leave",
+     "Up to 4 weeks paid to care for a seriously ill family member"
+    ],
+    [
+     "Bereavement",
+     "Up to 10 days for immediate family; 3 days for extended family"
+    ],
+    [
+     "Volunteer time",
+     "2 paid days per year"
+    ],
+    [
+     "Jury duty and voting",
+     "Paid as needed"
+    ],
+    [
+     "Sabbatical",
+     "4 weeks paid after every 7 years of service"
+    ],
+    [
+     "FMLA / state leave",
+     "Job-protected leave per federal and state law; coordinated with paid leave"
+    ]
+   ]
+  },
+  {
+   "kind": "heading",
+   "text": "8. Wellbeing and Support Programs",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Employee Assistance Program (EAP): free, confidential, 24/7. Includes 8 free counseling sessions per issue for you and your household, plus legal and financial consultations.",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Mental health app and therapy network: on-demand therapy and coaching, with low or no copays.",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Wellness rewards: earn up to $400 per year (HSA deposit or gift card) for a biometric screening, annual physical and activity challenges.",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Fitness: $50 per month toward gym memberships or fitness subscriptions.",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Chronic condition programs: diabetes, hypertension and musculoskeletal (virtual physical therapy) at no cost.",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Caregiving support: 10 days of subsidized backup child or elder care per year, plus help finding care.",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Family planning and maternity support: a dedicated care team from preconception to return-to-work.",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "9. Additional and Voluntary Benefits",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "Company-paid",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Tuition assistance: up to $5,250 per year, tax-free, for approved degree and certification programs.",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Learning and development: online learning library, mentoring and leadership programs.",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Remote/hybrid stipend: $50 per month for internet and phone; one-time $500 home-office setup.",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Commuter benefits: pre-tax transit and parking, up to the IRS monthly limit.",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Employee resource groups and recognition programs.",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Employee discounts on travel, electronics, entertainment and more.",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "Voluntary (employee-paid, often at group rates)",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Accident, critical illness and hospital indemnity insurance",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Legal plan and identity theft protection",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Pet insurance",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Home and auto insurance (payroll deduction)",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Long-term care insurance",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Student loan refinancing and repayment support",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "10. Life Events, COBRA and Changes",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "Outside open enrollment, you can change elections only after a qualifying life event, and the change must be consistent with the event. Report changes within 31 days (60 days for birth or adoption, or for gaining or losing Medicaid/CHIP).",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "table",
+   "text": "",
+   "page": 7,
+   "header": null,
+   "rows": [
+    [
+     "Qualifying life event",
+     "Examples of allowed changes"
+    ],
+    [
+     "Marriage or domestic partnership",
+     "Add spouse/partner and their children; change plans"
+    ],
+    [
+     "Birth, adoption or placement",
+     "Add child; increase FSA or life insurance"
+    ],
+    [
+     "Divorce or legal separation",
+     "Remove ex-spouse; change tier"
+    ],
+    [
+     "Loss of other coverage",
+     "Enroll yourself and dependents"
+    ],
+    [
+     "Change in employment status",
+     "Gain or lose eligibility; change elections"
+    ],
+    [
+     "Move out of plan service area",
+     "Change medical plan (for example, from EPO to PPO)"
+    ],
+    [
+     "Death of a dependent",
+     "Remove dependent; update beneficiaries"
+    ]
+   ]
+  },
+  {
+   "kind": "heading",
+   "text": "COBRA continuation",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "If coverage ends because of termination, reduced hours, or a dependent losing eligibility, you and your covered dependents may continue medical, dental, vision and Health Care FSA coverage for up to 18 months (36 months in some cases). You pay the full premium plus a 2% administrative fee. A COBRA notice is mailed to your home address.",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "11. Contacts and Resources",
+   "page": 8,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "table",
+   "text": "",
+   "page": 8,
+   "header": [
+    "Benefit",
+    "Provider (placeholder)",
+    "Phone",
+    "Website / app"
+   ],
+   "rows": [
+    [
+     "Benefits enrollment and HR questions",
+     "HR Benefits Service Center",
+     "1-800-XXX-XXXX",
+     "benefits.[company].com"
+    ],
+    [
+     "Medical and Rx",
+     "[Medical Carrier]",
+     "1-800-XXX-XXXX",
+     "[carrier].com"
+    ],
+    [
+     "Dental",
+     "[Dental Carrier]",
+     "1-800-XXX-XXXX",
+     "[carrier].com"
+    ],
+    [
+     "Vision",
+     "[Vision Carrier]",
+     "1-800-XXX-XXXX",
+     "[carrier].com"
+    ],
+    [
+     "HSA / FSA",
+     "[Account Administrator]",
+     "1-800-XXX-XXXX",
+     "[administrator].com"
+    ],
+    [
+     "Life and disability",
+     "[Insurance Carrier]",
+     "1-800-XXX-XXXX",
+     "[carrier].com"
+    ],
+    [
+     "401(k)",
+     "[Recordkeeper]",
+     "1-800-XXX-XXXX",
+     "[recordkeeper].com"
+    ],
+    [
+     "EAP (24/7)",
+     "[EAP Provider]",
+     "1-800-XXX-XXXX",
+     "[eap].com"
+    ],
+    [
+     "Leave of absence",
+     "[Leave Administrator]",
+     "1-800-XXX-XXXX",
+     "[leave].com"
+    ],
+    [
+     "COBRA",
+     "[COBRA Administrator]",
+     "1-800-XXX-XXXX",
+     "[cobra].com"
+    ]
+   ]
+  },
+  {
+   "kind": "heading",
+   "text": "12. Required Notices and Glossary",
+   "page": 8,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "Annual notices",
+   "page": 8,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "U.S. employers of this size must provide several notices each year. They are available on the benefits portal, and paper copies are free on request:",
+   "page": 8,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Medicare Part D Creditable Coverage Notice",
+   "page": 8,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "HIPAA Notice of Privacy Practices and Special Enrollment Rights",
+   "page": 8,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Women's Health and Cancer Rights Act (WHCRA) Notice",
+   "page": 8,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Newborns' and Mothers' Health Protection Act Notice",
+   "page": 8,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Premium Assistance under Medicaid and CHIP (CHIPRA) Notice",
+   "page": 8,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Summary of Benefits and Coverage (SBC) for each medical plan",
+   "page": 8,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Summary Plan Descriptions (SPDs) and ERISA rights",
+   "page": 8,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "ACA Marketplace coverage notice and Form 1095-C (issued each January)",
+   "page": 8,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "No Surprises Act and Transparency in Coverage disclosures",
+   "page": 8,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "Glossary",
+   "page": 9,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "table",
+   "text": "",
+   "page": 9,
+   "header": [
+    "Term",
+    "Meaning"
+   ],
+   "rows": [
+    [
+     "Deductible",
+     "The amount you pay for covered services before the plan begins to pay."
+    ],
+    [
+     "Copay",
+     "A fixed amount you pay for a covered service, such as $25 for a doctor visit."
+    ],
+    [
+     "Coinsurance",
+     "Your share of costs after the deductible, shown as a percentage."
+    ],
+    [
+     "Out-of-pocket maximum",
+     "The most you pay in a plan year. After that, the plan pays 100% of covered in-network costs."
+    ],
+    [
+     "HDHP",
+     "High-deductible health plan. Lower premiums and a higher deductible; makes you eligible for an HSA."
+    ],
+    [
+     "In-network",
+     "Providers contracted with the plan at negotiated rates."
+    ],
+    [
+     "Vesting",
+     "When company contributions to your 401(k) become fully yours."
+    ],
+    [
+     "Evidence of Insurability (EOI)",
+     "A health questionnaire required for some optional life or disability coverage."
+    ]
+   ]
+  },
+  {
+   "kind": "paragraph",
+   "text": "This guide is a summary only. In the event of any discrepancy, the official plan documents and insurance contracts govern. Dummy Mock Test Inc. reserves the right to amend or terminate any plan at any time. All amounts are illustrative for a sample enterprise of 1,000-5,000 employees and should be replaced with your actual plan designs and rates.",
+   "page": 9,
+   "header": null,
+   "rows": []
+  }
+ ]
+}

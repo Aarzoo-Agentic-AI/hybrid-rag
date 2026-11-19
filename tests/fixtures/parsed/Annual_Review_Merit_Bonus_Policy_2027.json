@@ -1,0 +1,1060 @@
+{
+ "source": "Annual_Review_Merit_Bonus_Policy_2027.pdf",
+ "doc_hash": "e24481f965ac7473a8b1e7f35859aff27cfbf03a0990b06da51aed7ae23e3712",
+ "parser": "docling-v1",
+ "title": "Annual Review, Merit Increase and Performance Bonus Policy",
+ "pages": 8,
+ "warnings": [],
+ "blocks": [
+  {
+   "kind": "heading",
+   "text": "Annual Review, Merit Increase and Performance Bonus Policy",
+   "page": 1,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "Policy No. HR-COMP-002 | Effective January 1, 2027",
+   "page": 1,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "Dummy Mock Test Inc.",
+   "page": 1,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "Applies to all U.S. employees | Workforce of 1,000 - 5,000",
+   "page": 1,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "Sample template for illustration. Percentages and budgets are examples only. Review with Legal and Finance before adoption.",
+   "page": 1,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "Document Control",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "table",
+   "text": "",
+   "page": 2,
+   "header": [
+    "Item",
+    "Detail"
+   ],
+   "rows": [
+    [
+     "Policy number",
+     "HR-COMP-002"
+    ],
+    [
+     "Policy owner",
+     "VP, Total Rewards (on behalf of the Chief People Officer)"
+    ],
+    [
+     "Approved by",
+     "Compensation Committee of the Board; CEO; CFO"
+    ],
+    [
+     "Effective date",
+     "January 1, 2027 (applies from the 2027 performance year)"
+    ],
+    [
+     "Review cycle",
+     "Annually, before budgets are set each Q4"
+    ],
+    [
+     "Related policies",
+     "HR Policy Handbook (Sections 9 and 10); Employee Benefits Guide; Pay Equity Standard"
+    ]
+   ]
+  },
+  {
+   "kind": "heading",
+   "text": "1. Purpose",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "This policy explains how Dummy Mock Test Inc. reviews performance each year and how results connect to base pay increases (merit) and the annual performance bonus. It aims to:",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Reward results and behaviors that drive company success.",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Make pay decisions fair, consistent, explainable and free from bias.",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Keep pay competitive with the market while staying within the approved budget.",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Give employees clear, timely and actionable feedback.",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "2. Scope and Eligibility",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "table",
+   "text": "",
+   "page": 2,
+   "header": [
+    "Program",
+    "Who is eligible",
+    "Who is not eligible"
+   ],
+   "rows": [
+    [
+     "Annual review",
+     "All regular full-time and part-time employees",
+     "Temporary workers, interns, contractors"
+    ],
+    [
+     "Merit increase",
+     "Employees hired on or before September 30 of the performance year, in good standing",
+     "Hired after Sept 30; rated Does Not Meet; already at or above range maximum (see 6.4)"
+    ],
+    [
+     "Performance bonus",
+     "Employees in bonus-eligible roles hired on or before October 31, and employed on the payout date",
+     "Sales-incentive-plan participants; employees who resign or are terminated for cause before payout"
+    ]
+   ]
+  },
+  {
+   "kind": "paragraph",
+   "text": "Employees covered by a collective bargaining agreement or a sales commission plan follow those agreements or plans where they differ.",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "3. Annual Review Cycle and Timeline",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "table",
+   "text": "",
+   "page": 3,
+   "header": [
+    "When",
+    "Step",
+    "Owner"
+   ],
+   "rows": [
+    [
+     "January",
+     "Goal setting: 3-5 SMART goals plus development goals entered in the HR system",
+     "Employee and manager"
+    ],
+    [
+     "Ongoing",
+     "Biweekly 1:1s and real-time feedback",
+     "Manager"
+    ],
+    [
+     "July",
+     "Mid-year check-in (development-focused, no rating)",
+     "Employee and manager"
+    ],
+    [
+     "Nov 1-15",
+     "Self-assessment and optional peer feedback (3-5 reviewers)",
+     "Employee"
+    ],
+    [
+     "Nov 16-30",
+     "Manager assessment and proposed rating",
+     "Manager"
+    ],
+    [
+     "Dec 1-15",
+     "Calibration sessions by department and level",
+     "Leaders and HR"
+    ],
+    [
+     "Jan 5-20",
+     "Merit and bonus planning in the compensation tool",
+     "Managers and HR"
+    ],
+    [
+     "Jan 21-31",
+     "Approvals: VP, HR Total Rewards, CFO; Compensation Committee for executives",
+     "Leadership"
+    ],
+    [
+     "Feb 1-28",
+     "Review conversations and compensation statements delivered",
+     "Manager"
+    ],
+    [
+     "March 1",
+     "Merit increases effective; bonus paid by March 15",
+     "Payroll"
+    ]
+   ]
+  },
+  {
+   "kind": "heading",
+   "text": "4. Performance Rating Scale",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "Each employee receives one overall rating that reflects both what was achieved (goals, about 60%) and how it was achieved (company values and competencies, about 40%).",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "table",
+   "text": "",
+   "page": 3,
+   "header": [
+    "Rating",
+    "Label",
+    "Definition",
+    "Typical share*"
+   ],
+   "rows": [
+    [
+     "5",
+     "Exceptional",
+     "Far exceeded all goals; role-model behaviors; impact well beyond the role",
+     "5-10%"
+    ],
+    [
+     "4",
+     "Exceeds Expectations",
+     "Exceeded most goals; often goes beyond role expectations",
+     "20-25%"
+    ],
+    [
+     "3",
+     "Meets Expectations",
+     "Fully achieved goals; solid, reliable contributor",
+     "50-60%"
+    ],
+    [
+     "2",
+     "Partially Meets",
+     "Achieved some goals; specific gaps need improvement",
+     "8-12%"
+    ],
+    [
+     "1",
+     "Does Not Meet",
+     "Did not achieve most goals; performance must improve right away",
+     "2-5%"
+    ]
+   ]
+  },
+  {
+   "kind": "list_item",
+   "text": "The typical share is a calibration guideline, not a forced distribution. Departments may vary when evidence supports it, but large variances must be explained in calibration.",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "Special cases",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "New hires hired after September 30 receive a feedback conversation but no rating.",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Leave of absence: employees on leave for more than 6 months of the year may be rated Meets by default, or on the time worked. Protected leave never lowers a rating.",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Role or manager changes: the current manager gathers input from the previous manager before rating.",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "5. Calibration and Fairness Controls",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Calibration sessions are led by HR Business Partners and include each leader's direct-report managers.",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Ratings must be backed by evidence: goal results, examples and feedback, not personality or recency.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Before ratings are final, HR runs bias checks comparing rating distributions by gender, race/ethnicity, age band, work location (remote vs. on-site) and leave status.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Managers complete bias-awareness training before each review cycle.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Ratings may not be communicated until calibration is complete.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "6. Merit Increase Guidelines",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "6.1 Merit budget",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "Each year Finance and Total Rewards set the merit budget using market salary-increase surveys, company performance and affordability. For the illustrative 2027 cycle, the merit budget is 3.5% of eligible base payroll, plus a separate 0.5% pool for promotions and market or equity adjustments.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "6.2 Merit matrix",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "Merit increases are guided by performance rating and position in the salary range (compa-ratio = base salary ÷ range midpoint). Employees lower in their range with strong performance receive larger increases, helping them move toward market rate.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "table",
+   "text": "",
+   "page": 4,
+   "header": [
+    "Rating",
+    "Below 0.90 compa-ratio",
+    "0.90 - 1.10 compa-ratio",
+    "Above 1.10 compa-ratio"
+   ],
+   "rows": [
+    [
+     "5 - Exceptional",
+     "6.0% - 8.0%",
+     "5.0% - 6.5%",
+     "3.5% - 5.0%"
+    ],
+    [
+     "4 - Exceeds",
+     "4.5% - 6.0%",
+     "3.5% - 5.0%",
+     "2.5% - 3.5%"
+    ],
+    [
+     "3 - Meets",
+     "3.0% - 4.0%",
+     "2.5% - 3.5%",
+     "1.5% - 2.5%"
+    ],
+    [
+     "2 - Partially Meets",
+     "0% - 1.5%",
+     "0% - 1.0%",
+     "0%"
+    ],
+    [
+     "1 - Does Not Meet",
+     "0%",
+     "0%",
+     "0%"
+    ]
+   ]
+  },
+  {
+   "kind": "paragraph",
+   "text": "Ranges are guidelines. Managers may go above or below by up to 1 percentage point with a written reason and VP approval, as long as the department stays within budget.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "6.3 Proration",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Employees hired between January 1 and September 30 receive a merit increase prorated by full months worked in the performance year.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Employees promoted on or after July 1 are usually not eligible for an additional merit increase in the same cycle, because the promotion increase replaces it.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "6.4 Employees at or above range maximum",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "An employee whose salary is at or above range maximum receives the merit amount as a one-time lump sum instead of a base increase. If an increase takes salary above the maximum, the part above the maximum is paid as a lump sum.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "6.5 Promotions and market adjustments",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Promotion increases are usually 8%-12%, or enough to reach at least the minimum of the new range. They are reviewed in March and September.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Market and pay equity adjustments are funded from the separate pool and require Total Rewards approval.",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Adjustments identified in the annual pay equity analysis are made regardless of rating.",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "7. Annual Performance Bonus Plan",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "The bonus rewards results delivered during the performance year (January 1 - December 31). It is a variable payment, not part of base salary, and is not guaranteed.",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "7.1 Target bonus by level",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "table",
+   "text": "",
+   "page": 5,
+   "header": [
+    "Level",
+    "Example titles",
+    "Target bonus (% of base salary)"
+   ],
+   "rows": [
+    [
+     "L1 - L2",
+     "Associate, Analyst, Coordinator",
+     "5%"
+    ],
+    [
+     "L3 - L4",
+     "Senior Professional, Engineer II-III",
+     "8% - 10%"
+    ],
+    [
+     "L5",
+     "Lead, Principal, Manager",
+     "12% - 15%"
+    ],
+    [
+     "L6",
+     "Senior Manager, Architect, Director",
+     "20%"
+    ],
+    [
+     "L7",
+     "Senior Director",
+     "25%"
+    ],
+    [
+     "L8+",
+     "Vice President and above",
+     "30% - 50% (set by the Compensation Committee)"
+    ]
+   ]
+  },
+  {
+   "kind": "heading",
+   "text": "7.2 Bonus formula",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "Bonus = Eligible base salary x Target bonus % x Company Performance Factor x Individual Performance Multiplier",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "7.3 Company Performance Factor (bonus pool funding)",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "The Company Performance Factor (CPF) funds the overall bonus pool. It is based on audited annual results against Board-approved goals:",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "table",
+   "text": "",
+   "page": 5,
+   "header": [
+    "Metric",
+    "Weight",
+    "Threshold (funds 50%)",
+    "Target (funds 100%)",
+    "Maximum (funds 150%)"
+   ],
+   "rows": [
+    [
+     "Revenue",
+     "40%",
+     "90% of plan",
+     "100% of plan",
+     "115% of plan"
+    ],
+    [
+     "Operating income / EBITDA",
+     "40%",
+     "85% of plan",
+     "100% of plan",
+     "120% of plan"
+    ],
+    [
+     "Customer satisfaction (NPS)",
+     "20%",
+     "Plan - 5 pts",
+     "Plan",
+     "Plan + 10 pts"
+    ]
+   ]
+  },
+  {
+   "kind": "list_item",
+   "text": "Results between levels are interpolated in a straight line. Below threshold on a metric, that metric funds 0%.",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "The CPF ranges from 0% to 150%. If operating income is below 80% of plan, the bonus pool may be reduced or not funded at all.",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "The Compensation Committee may adjust the CPF for unusual events, such as acquisitions or one-time charges.",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "7.4 Individual Performance Multiplier",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "table",
+   "text": "",
+   "page": 6,
+   "header": [
+    "Performance rating",
+    "Individual multiplier (range)",
+    "Typical"
+   ],
+   "rows": [
+    [
+     "5 - Exceptional",
+     "130% - 150%",
+     "140%"
+    ],
+    [
+     "4 - Exceeds Expectations",
+     "110% - 130%",
+     "120%"
+    ],
+    [
+     "3 - Meets Expectations",
+     "90% - 110%",
+     "100%"
+    ],
+    [
+     "2 - Partially Meets",
+     "0% - 50%",
+     "25%"
+    ],
+    [
+     "1 - Does Not Meet",
+     "0%",
+     "0%"
+    ]
+   ]
+  },
+  {
+   "kind": "paragraph",
+   "text": "Departments must keep total payouts within their allocated pool. The pool equals the sum of eligible employees' targets times the CPF.",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "7.5 Worked example",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "table",
+   "text": "",
+   "page": 6,
+   "header": [
+    "Input",
+    "Value"
+   ],
+   "rows": [
+    [
+     "Eligible base salary",
+     "$120,000"
+    ],
+    [
+     "Level and target bonus",
+     "L5, 15% -> target bonus $18,000"
+    ],
+    [
+     "Company Performance Factor",
+     "105% (company slightly above plan)"
+    ],
+    [
+     "Individual rating and multiplier",
+     "4 - Exceeds Expectations -> 120%"
+    ],
+    [
+     "Bonus payout",
+     "$120,000 x 15% x 105% x 120% = $22,680"
+    ]
+   ]
+  },
+  {
+   "kind": "heading",
+   "text": "7.6 Proration and special situations",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "New hires (hired by October 31): prorated by days employed in the performance year.",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Level or salary changes: calculated in time-weighted segments using each period's salary and target %.",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Leave of absence: prorated for unpaid leave over 90 days, as permitted by law. Protected leave is never treated as a negative factor.",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Retirement, death, disability or reduction in force: prorated bonus paid at the normal time, based on actual company results.",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Voluntary resignation or termination for cause before the payout date: no bonus earned, unless state law requires otherwise.",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Employees on a PIP at year-end: individual multiplier capped at 50%.",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "7.7 Payment",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Paid as a separate payment by March 15 after the performance year, once audited results are available.",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Subject to applicable tax withholding (supplemental wage rules). Eligible for 401(k) deferral per plan rules.",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Bonus payments are recoverable under the company clawback policy in cases of financial restatement or misconduct.",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "8. Communicating Results",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Managers deliver ratings, merit and bonus together in a 1:1 conversation, supported by a written compensation statement.",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Explain the reasons: the evidence for the rating, how the merit matrix applied, and how the bonus was calculated.",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Discuss development goals and next steps. The conversation should be about growth, not just numbers.",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Compensation is confidential to the company, but employees may discuss their own pay (see the HR Policy Handbook, Section 9).",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "9. Review and Appeal Process",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "An employee who disagrees with a rating may first discuss it with their manager.",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "If unresolved, the employee may submit a written appeal to their HR Business Partner within 15 business days of the review conversation.",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "A skip-level leader and HR review the evidence and respond in writing within 20 business days. Their decision is final.",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Appeals are protected activity and do not result in retaliation.",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "10. Roles and Responsibilities",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "table",
+   "text": "",
+   "page": 7,
+   "header": [
+    "Role",
+    "Responsibilities"
+   ],
+   "rows": [
+    [
+     "Employee",
+     "Set goals, seek feedback, complete self-assessment, own development"
+    ],
+    [
+     "Manager",
+     "Coach all year, give fair evidence-based ratings, plan merit and bonus within budget, hold review conversations"
+    ],
+    [
+     "Senior leaders",
+     "Lead calibration, approve recommendations, keep departments consistent"
+    ],
+    [
+     "HR Business Partners",
+     "Facilitate calibration, coach managers, handle appeals"
+    ],
+    [
+     "Total Rewards",
+     "Design programs, set ranges and matrices, run pay equity and bias analysis, administer tools"
+    ],
+    [
+     "Finance",
+     "Set budgets, calculate the Company Performance Factor, approve the pool"
+    ],
+    [
+     "Compensation Committee",
+     "Approve the plan, the executive pay and the final CPF; may use discretion"
+    ]
+   ]
+  },
+  {
+   "kind": "heading",
+   "text": "11. Governance and Compliance",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "All pay decisions comply with equal pay laws, including the federal Equal Pay Act and state laws, and with pay transparency laws.",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "An annual pay equity analysis is reviewed with Legal under attorney-client privilege, and gaps are",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "corrected.",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Salary ranges are reviewed against market data every year.",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Bonus plan documents follow Section 409A short-term deferral rules.",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "The company may amend, suspend or end this policy or any plan at any time. Participation does not guarantee continued employment.",
+   "page": 8,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "12. Definitions",
+   "page": 8,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "table",
+   "text": "",
+   "page": 8,
+   "header": [
+    "Term",
+    "Meaning"
+   ],
+   "rows": [
+    [
+     "Base salary",
+     "Annual rate of pay, excluding bonuses, overtime, commissions and allowances"
+    ],
+    [
+     "Eligible base salary",
+     "Base salary actually earned during the performance year (used for bonus calculations)"
+    ],
+    [
+     "Compa-ratio",
+     "Base salary divided by the midpoint of the salary range"
+    ],
+    [
+     "Merit increase",
+     "A permanent increase to base salary based on performance"
+    ],
+    [
+     "Lump sum",
+     "A one-time payment that does not change base salary"
+    ],
+    [
+     "Calibration",
+     "A leadership review to keep ratings consistent across teams"
+    ],
+    [
+     "Company Performance Factor",
+     "Percentage (0%-150%) that funds the bonus pool based on company results"
+    ],
+    [
+     "Individual multiplier",
+     "Percentage (0%-150%) applied to individual bonus based on rating"
+    ],
+    [
+     "Performance year",
+     "January 1 to December 31"
+    ]
+   ]
+  },
+  {
+   "kind": "paragraph",
+   "text": "Sample template for illustration. All percentages, budgets, dates and thresholds are examples and should be replaced with values approved by Finance and the Compensation Committee. This document is not legal or tax advice.",
+   "page": 8,
+   "header": null,
+   "rows": []
+  }
+ ]
+}

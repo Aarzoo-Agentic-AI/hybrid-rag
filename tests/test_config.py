@@ -57,7 +57,8 @@ def test_api_keys_read_from_standard_names(monkeypatch: pytest.MonkeyPatch, tmp_
 
 
 def test_invalid_chunking_rejected(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
-    cfg = _write_yaml(tmp_path / "c.yaml", "chunking:\n  chunk_size: 100\n  chunk_overlap: 100\n")
+    yaml_text = "chunking:\n  target_tokens: 100\n  overlap_tokens: 100\n"
+    cfg = _write_yaml(tmp_path / "c.yaml", yaml_text)
     monkeypatch.setenv(CONFIG_ENV_VAR, str(cfg))
 
     with pytest.raises(ValidationError):

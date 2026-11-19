@@ -1,0 +1,617 @@
+{
+ "source": "Travel_Policy.pdf",
+ "doc_hash": "3d530b32b1a015e25491312525ece9fc0a08aeca6ca3b1e4af4de237198cc8d3",
+ "parser": "docling-v1",
+ "title": "Travel Policy",
+ "pages": 5,
+ "warnings": [],
+ "blocks": [
+  {
+   "kind": "heading",
+   "text": "Travel Policy",
+   "page": 1,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "Policy No. HR-TRV-003 | Effective January 1, 2027",
+   "page": 1,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "Dummy Mock Test Inc.",
+   "page": 1,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "Applies to all U.S. employees | Workforce of 1,000 - 5,000",
+   "page": 1,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "Sample template for illustration. Limits and rate caps are examples only. Review with Legal and Finance before adoption.",
+   "page": 1,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "Document Control",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "table",
+   "text": "",
+   "page": 2,
+   "header": [
+    "Item",
+    "Detail"
+   ],
+   "rows": [
+    [
+     "Policy number",
+     "HR-TRV-003"
+    ],
+    [
+     "Policy owner",
+     "Chief People Officer, with Finance (Handbook Section 20)"
+    ],
+    [
+     "Approved by",
+     "Executive Leadership Team; reviewed by Legal"
+    ],
+    [
+     "Effective date",
+     "January 1, 2027"
+    ],
+    [
+     "Review cycle",
+     "Annually, or sooner when laws or business needs change"
+    ],
+    [
+     "Applies to",
+     "All U.S. employees and interns; contractors only where their contract says so"
+    ],
+    [
+     "Related policies",
+     "HR Policy Handbook (Sections 3, 7, 8, 11, 12, 14, 16, 20); Expense Policy HR-EXP-004; Employee Benefits Guide"
+    ],
+    [
+     "Questions",
+     "HR Service Center: hr@dummymocktest.example | 1-800-XXX-XXXX"
+    ]
+   ]
+  },
+  {
+   "kind": "heading",
+   "text": "1. Purpose",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "This policy expands Section 20 (Travel and Expenses) of the HR Policy Handbook. It sets the standards for business travel at Dummy Mock Test Inc. so that employees travel safely and comfortably, and so that travel spend is managed responsibly. If this policy and the Handbook differ, the Handbook governs.",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "2. Principles",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Necessity: travel only when a virtual meeting cannot achieve the business objective.",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Economy: choose the lowest logical fare and preferred hotels in the travel tool.",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Safety: employee safety takes priority over cost.",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Integrity: claim only genuine, documented expenses (Handbook Section 11).",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "3. Roles and responsibilities",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "table",
+   "text": "",
+   "page": 2,
+   "header": null,
+   "rows": [
+    [
+     "Role",
+     "Responsibility"
+    ],
+    [
+     "Traveller",
+     "Book in the approved travel tool, stay within policy, keep receipts, submit expenses within 30 days."
+    ],
+    [
+     "Manager",
+     "Pre-approve every trip and its budget before booking; review expense claims."
+    ],
+    [
+     "Vice President",
+     "Approve international travel and trips over $3,000."
+    ],
+    [
+     "Finance and HR",
+     "Audit claims, reimburse, publish rate caps, and answer policy questions."
+    ]
+   ]
+  },
+  {
+   "kind": "heading",
+   "text": "4. Approval and booking",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Manager pre-approval is required for all travel. VP approval is required for international travel.",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Book through the travel tool, using preferred hotels and airlines.",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Book at least 14 days ahead where possible; late bookings need a stated reason.",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Working from another state or country, even temporarily, needs HR approval in advance for tax and legal reasons (Handbook Section 8).",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Personal travel may be added only at the employee's own cost, without raising the business fare.",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "5. Air travel",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "table",
+   "text": "",
+   "page": 3,
+   "header": [
+    "Flight length",
+    "Cabin class",
+    "Notes"
+   ],
+   "rows": [
+    [
+     "6 hours or less",
+     "Economy",
+     "Lowest logical fare; avoid unnecessary connections."
+    ],
+    [
+     "Over 6 hours",
+     "Premium economy",
+     "Per Handbook Section 20."
+    ],
+    [
+     "Any",
+     "Business class not permitted",
+     "Exceptions need written approval under section 14."
+    ]
+   ]
+  },
+  {
+   "kind": "list_item",
+   "text": "Upgrades with personal loyalty points are allowed; paid upgrades are not reimbursed.",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Loyalty points earned belong to the traveller.",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "6. Lodging",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "Use preferred hotels in the travel tool, within the city rate caps below (including taxes). Caps are illustrative and will be published by Finance each year.",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "table",
+   "text": "",
+   "page": 3,
+   "header": [
+    "City tier",
+    "Nightly cap (USD)",
+    "Examples"
+   ],
+   "rows": [
+    [
+     "Tier 1 (high-cost)",
+     "$300",
+     "New York, San Francisco, Boston"
+    ],
+    [
+     "Tier 2 (major)",
+     "$220",
+     "Chicago, Denver, Atlanta"
+    ],
+    [
+     "Tier 3 (other)",
+     "$160",
+     "Regional cities and towns"
+    ]
+   ]
+  },
+  {
+   "kind": "list_item",
+   "text": "Stays over 5 nights should be reviewed for serviced apartments.",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Minibar, entertainment, spa and personal laundry are not reimbursable.",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "7. Ground transportation",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Rental cars: compact or mid-size only; use only when cheaper or more practical than taxi or rideshare.",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Rideshare and taxi: standard service class only.",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Rail and transit: standard class.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Personal vehicle: reimbursed at the current IRS standard mileage rate with a mileage log.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Parking, tolls and rental fuel are reimbursed with receipts.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "8. Meals",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "table",
+   "text": "",
+   "page": 4,
+   "header": [
+    "Item",
+    "Limit",
+    "Notes"
+   ],
+   "rows": [
+    [
+     "Domestic travel",
+     "$75 per day",
+     "Itemized receipts required. Suggested split: breakfast $15, lunch $20, dinner $40."
+    ],
+    [
+     "International travel",
+     "Per Finance published rates",
+     "Itemized receipts required."
+    ],
+    [
+     "Alcohol",
+     "Not reimbursable",
+     "Alcohol is served only at approved company events (Handbook Section 15)."
+    ]
+   ]
+  },
+  {
+   "kind": "heading",
+   "text": "9. Corporate card and expense submission",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "The corporate card is for business use only; personal charges are prohibited.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Submit expenses within 30 days of the expense, with receipts for any item over $25.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Foreign currency is converted at the transaction-date rate.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "See the Expense Policy (HR-EXP-004) for approval limits and reimbursement timing.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "10. Travel time and working hours",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "Non-exempt employees must record all time worked, including travel time that the law treats as work time, and are paid for it. Overtime needs advance manager approval, but all hours worked are paid (Handbook Section 7).",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "11. Non-reimbursable expenses",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Personal entertainment, gym or spa fees, and alcohol.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Traffic or parking fines and lost personal items.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Spouse, partner or family travel costs.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Costs of personal trip extensions.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Any expense without required receipts.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "12. Health, safety and security",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Life insurance includes travel assistance at no cost (Employee Benefits Guide, Section 5). Keep the carrier's emergency number with you.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Report work-related injuries within 24 hours, and report incidents or lost documents to your manager at once (Handbook Section 14).",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Report lost devices, phishing or security incidents to the Security team within 1 hour. Use the company VPN on public Wi-Fi (Handbook Sections 8 and 16).",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "The anti-harassment policy applies during travel and company events (Handbook Section 3).",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Check government travel advisories before international trips. You may decline travel you reasonably believe is unsafe without penalty.",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Use the 24/7 ethics hotline to raise concerns about misuse of travel funds.",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "13. Cancellations and changes",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "Cancel unused bookings promptly and report unused tickets to Finance so credits can be reused. Cancellation costs for personal reasons are the traveller's responsibility.",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "14. Compliance and exceptions",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "Breaches may lead to non-reimbursement and corrective action under Handbook Section 22; falsified records count as serious misconduct. Exceptions need written approval from the Chief People Officer, with Finance concurrence (Handbook Section 24).",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "Acknowledgement",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "I acknowledge that I have received and read the Dummy Mock Test Inc. Travel Policy, effective January 1, 2027, and I agree to follow it.",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "Employee name (print): ____________________",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "Signature: ____________________",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "Employee ID: ______________",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "Date: ______________",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "Please sign electronically in the HR system within 14 days of receiving this policy. A copy is kept in your personnel file.",
+   "page": 5,
+   "header": null,
+   "rows": []
+  }
+ ]
+}

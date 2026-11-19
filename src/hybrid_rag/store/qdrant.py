@@ -39,6 +39,14 @@ PAYLOAD_INDEXES: dict[str, models.PayloadSchemaType] = {
     f"{METADATA_KEY}.file_type": models.PayloadSchemaType.KEYWORD,
     f"{METADATA_KEY}.chunk_index": models.PayloadSchemaType.INTEGER,
     f"{METADATA_KEY}.pii_scan.status": models.PayloadSchemaType.KEYWORD,
+    # Policy and section metadata, for the relevance filters and small-to-big retrieval.
+    f"{METADATA_KEY}.policy_id": models.PayloadSchemaType.KEYWORD,
+    f"{METADATA_KEY}.policy_category": models.PayloadSchemaType.KEYWORD,
+    f"{METADATA_KEY}.jurisdiction": models.PayloadSchemaType.KEYWORD,
+    f"{METADATA_KEY}.applies_to": models.PayloadSchemaType.KEYWORD,
+    f"{METADATA_KEY}.is_current": models.PayloadSchemaType.BOOL,
+    f"{METADATA_KEY}.section_id": models.PayloadSchemaType.KEYWORD,
+    f"{METADATA_KEY}.chunk_type": models.PayloadSchemaType.KEYWORD,
 }
 
 

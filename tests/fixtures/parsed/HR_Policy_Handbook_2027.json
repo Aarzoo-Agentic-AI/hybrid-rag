@@ -1,0 +1,1500 @@
+{
+ "source": "HR_Policy_Handbook_2027.pdf",
+ "doc_hash": "ac5e14a2523aec4630136b5431db1f5f458582555f40ee3d872f6bc09a339653",
+ "parser": "docling-v1",
+ "title": "HR Policy Handbook",
+ "pages": 10,
+ "warnings": [],
+ "blocks": [
+  {
+   "kind": "heading",
+   "text": "HR Policy Handbook",
+   "page": 1,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "Effective January 1, 2027 | Version 1.0",
+   "page": 1,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "Dummy Mock Test Inc.",
+   "page": 1,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "Applies to all U.S. employees | Workforce of 1,000 - 5,000",
+   "page": 1,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "Sample template for illustration. Review with legal counsel before adoption; state and local laws may require additional or different provisions.",
+   "page": 1,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "Document Control",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "table",
+   "text": "",
+   "page": 2,
+   "header": [
+    "Item",
+    "Detail"
+   ],
+   "rows": [
+    [
+     "Policy owner",
+     "Chief People Officer"
+    ],
+    [
+     "Approved by",
+     "Executive Leadership Team; reviewed by Legal"
+    ],
+    [
+     "Effective date",
+     "January 1, 2027"
+    ],
+    [
+     "Review cycle",
+     "Annually, or sooner when laws or business needs change"
+    ],
+    [
+     "Applies to",
+     "All employees, interns and, where noted, contractors"
+    ],
+    [
+     "Questions",
+     "HR Service Center: hr@dummymocktest.example | 1-800-XXX-XXXX"
+    ]
+   ]
+  },
+  {
+   "kind": "heading",
+   "text": "Contents",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Introduction and purpose",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Equal employment opportunity",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Anti-harassment and anti-discrimination",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Reasonable accommodation",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Employment classifications",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Recruitment, hiring and onboarding",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Working hours, attendance and timekeeping",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Remote and hybrid work",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Compensation and payroll",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Performance management and development",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Code of conduct and ethics",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Conflicts of interest and gifts",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Leave and time off",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "1. Introduction and Purpose",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "This handbook sets out the policies, expectations and practices that guide employment at Dummy Mock Test Inc.. It helps employees understand their rights and responsibilities, and helps managers apply policies consistently and fairly.",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Scope: applies to all U.S. employees. Where state or local law gives employees greater rights, that law applies.",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Not a contract: this handbook is not an employment contract and does not guarantee employment for any period.",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "At-will employment: unless an individual written agreement says otherwise, employment is at-will. Either the employee or the company may end it at any time, with or without cause or notice, subject to applicable law.",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Changes: the company may revise policies at any time. Employees will be notified of material changes.",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "2. Equal Employment Opportunity (EEO)",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "Dummy Mock Test Inc. provides equal employment opportunity to all employees and applicants. We make employment decisions based on qualifications, merit and business needs.",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "We prohibit discrimination based on race, color, religion, creed, sex, pregnancy, sexual orientation, gender identity or expression, national origin, ancestry, age, disability, genetic information, veteran or military status,",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Health, safety and security",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Drug- and alcohol-free workplace",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Information security and acceptable use",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Responsible use of AI tools",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Data privacy and confidentiality",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Social media and external communications",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Travel and expenses",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Speaking up: complaints and whistleblowing",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Corrective action",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Separation from employment",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Policy administration",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "Acknowledgment form marital status, or any other characteristic protected by federal, state or local law. This applies to recruiting, hiring, pay, promotion, training, discipline, termination and every other term of employment.",
+   "page": 2,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "3. Anti-Harassment and Anti-Discrimination",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "Everyone has the right to a workplace free of harassment, discrimination and retaliation. This policy covers conduct at work, at company events, during travel and online, including messaging and video tools.",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "Prohibited conduct includes",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Sexual harassment: unwelcome advances, requests for sexual favors, or other verbal, visual or physical conduct of a sexual nature.",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Harassment based on a protected characteristic: slurs, jokes, stereotypes, offensive images or intimidation.",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Bullying: repeated, unreasonable behavior that humiliates, intimidates or undermines a person.",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Retaliation against anyone who reports a concern in good faith or takes part in an investigation.",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "Reporting and investigation",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Report to your manager, any manager, HR, or the anonymous ethics hotline (24/7). You do not have to report to the person involved.",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Managers who receive or observe a report must escalate it to HR within one business day.",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "HR or a trained investigator will review promptly, impartially and as confidentially as possible.",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Confirmed violations lead to corrective action, up to and including termination.",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "All employees complete anti-harassment training within 30 days of hire and every year after. People managers complete additional training.",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "4. Reasonable Accommodation",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "We provide reasonable accommodations for qualified individuals with disabilities, for pregnancy and related conditions (including under the Pregnant Workers Fairness Act), for lactation, and for sincerely held religious beliefs, unless doing so causes undue hardship.",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Request an accommodation from HR verbally or in writing. HR will engage in an interactive process with you.",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Medical information is kept confidential and stored separately from personnel files.",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Private, non-restroom lactation spaces and reasonable break time are provided at all sites.",
+   "page": 3,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "5. Employment Classifications",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "table",
+   "text": "",
+   "page": 4,
+   "header": [
+    "Classification",
+    "Definition"
+   ],
+   "rows": [
+    [
+     "Full-time",
+     "Regularly scheduled 30 or more hours per week; eligible for full benefits"
+    ],
+    [
+     "Part-time",
+     "Regularly scheduled under 30 hours per week; eligible for selected benefits"
+    ],
+    [
+     "Temporary / seasonal",
+     "Hired for a defined period or project, usually under 6 months"
+    ],
+    [
+     "Intern",
+     "Enrolled student in a structured learning program"
+    ],
+    [
+     "Non-exempt",
+     "Eligible for overtime under the FLSA and state law; must record all hours worked"
+    ],
+    [
+     "Exempt",
+     "Meets FLSA salary and duties tests; not eligible for overtime"
+    ],
+    [
+     "Contractor",
+     "Not an employee; engaged through a contract and managed by Procurement"
+    ]
+   ]
+  },
+  {
+   "kind": "heading",
+   "text": "6. Recruitment, Hiring and Onboarding",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Job postings: open roles are posted internally for at least 5 business days. Employees in good standing after 12 months may apply.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Structured interviews: standardized questions and scorecards reduce bias. Panels should include diverse interviewers where possible.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Pay transparency: postings include a good-faith pay range where state or local law requires it.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Background checks: conducted after a conditional offer, in line with the FCRA and fair-chance hiring laws.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Employment eligibility: all new hires complete Form I-9 within 3 business days of starting.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Referrals: employees may earn a referral bonus for hires who complete 90 days.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Relatives and relationships: employees may not directly supervise or influence decisions about a relative or romantic partner. Relationships must be disclosed to HR.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Onboarding: a 90-day plan with a manager check-in at 30, 60 and 90 days, plus an assigned buddy.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "7. Working Hours, Attendance and Timekeeping",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Standard workweek: 40 hours, Sunday through Saturday. Core collaboration hours are 10:00 a.m.-3:00 p.m. local time.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Meal and rest breaks: provided according to state law. Non-exempt employees must take required breaks.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Overtime: non-exempt employees are paid overtime as required by law. Overtime needs manager approval in advance, but all hours actually worked are always paid.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Accurate time records: non-exempt employees record all time worked. Off-the-clock work and editing another person's time are prohibited.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Absence and lateness: notify your manager before your start time. Three consecutive days of absence without notice may be treated as voluntary resignation.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Absences protected by law (sick leave, FMLA and similar) are never counted against attendance.",
+   "page": 4,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "8. Remote and Hybrid Work",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "table",
+   "text": "",
+   "page": 5,
+   "header": [
+    "Work model",
+    "Description",
+    "Eligibility"
+   ],
+   "rows": [
+    [
+     "On-site",
+     "Work at a company location every scheduled day",
+     "Roles that need physical presence"
+    ],
+    [
+     "Hybrid",
+     "At least 3 anchor days per week in the office",
+     "Default for office-based roles"
+    ],
+    [
+     "Remote",
+     "Work from an approved home location",
+     "Approved by VP and HR"
+    ]
+   ]
+  },
+  {
+   "kind": "list_item",
+   "text": "Work from a safe, private space with a secure internet connection. Public Wi-Fi requires the company VPN.",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Working from another state or country, even temporarily, needs HR approval in advance because of tax and legal rules.",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Company equipment stays company property and must be returned at separation.",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Remote employees are held to the same performance, conduct and availability expectations as everyone else.",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "9. Compensation and Payroll",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Pay philosophy: pay is market-competitive, set by job architecture and salary ranges, and reviewed every year.",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Pay frequency: biweekly (26 pay periods) by direct deposit.",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Merit and promotion: annual merit increases are based on performance and position in range. Promotions are reviewed quarterly.",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Pay equity: an annual pay equity analysis is conducted with Legal, and gaps are corrected.",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Pay discussions: employees may discuss their own wages and working conditions. Retaliation for doing so is prohibited.",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Payroll errors: report them to Payroll right away. Underpayments are corrected no later than the next pay cycle.",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Benefits: see the separate Employee Benefits Guide.",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "10. Performance Management and Development",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "table",
+   "text": "",
+   "page": 5,
+   "header": [
+    "Activity",
+    "Timing",
+    "Purpose"
+   ],
+   "rows": [
+    [
+     "Goal setting",
+     "January",
+     "Agree on 3-5 goals tied to team and company objectives"
+    ],
+    [
+     "1:1 check-ins",
+     "At least biweekly",
+     "Ongoing feedback, coaching and removing obstacles"
+    ],
+    [
+     "Mid-year review",
+     "July",
+     "Check progress and adjust goals"
+    ],
+    [
+     "Annual review",
+     "December",
+     "Rating on a 5-point scale; informs merit and promotion"
+    ],
+    [
+     "Calibration",
+     "After reviews",
+     "Leaders align ratings to keep them fair and consistent"
+    ],
+    [
+     "Development plan",
+     "Ongoing",
+     "Skills, learning and career-path conversations"
+    ]
+   ]
+  },
+  {
+   "kind": "paragraph",
+   "text": "A Performance Improvement Plan (PIP) may be used when performance falls below expectations. It sets out specific goals, the support provided and a timeline, usually 30-90 days.",
+   "page": 5,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "11. Code of Conduct and Ethics",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "We act with integrity, respect and accountability. Every employee is expected to:",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Follow all laws, regulations and company policies.",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Treat colleagues, customers and partners with respect.",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Be honest in records, reports, expense claims and communications.",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Protect company assets, intellectual property and confidential information.",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Compete fairly and never offer or accept bribes or improper payments (FCPA and anti-bribery laws).",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Avoid insider trading if the company or its partners are publicly traded.",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Dress appropriately for your role, the work setting and safety requirements.",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Raise concerns when something doesn't seem right.",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "12. Conflicts of Interest and Gifts",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Disclose any personal, financial or family interest that could affect, or appear to affect, your business judgment.",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Outside employment and board seats need written approval when they relate to our industry, customers or suppliers.",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Gifts and entertainment: you may accept items worth up to $100 per source per year. Cash or cash equivalents are never allowed.",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Government officials: no gifts or hospitality without prior Legal approval.",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Disclosures are submitted every year in the compliance portal and whenever circumstances change.",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "13. Leave and Time Off",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "Full details of paid time off, holidays, parental leave and other leave are in the Employee Benefits Guide. Key policy rules are:",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Request planned PTO at least 2 weeks in advance through the HR system.",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "FMLA: eligible employees may take up to 12 weeks of job-protected leave (26 weeks for military caregiver leave) each year.",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "State paid family and medical leave programs are coordinated with company paid leave.",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Military leave: provided according to USERRA, with a pay differential for up to 4 weeks a year.",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Jury duty, voting, and crime-victim or domestic-violence leave are provided as required by law.",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Employees returning from leave are reinstated as required by law.",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "14. Health, Safety and Security",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Follow OSHA requirements and site safety rules. Report injuries, near misses and hazards right away.",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Workplace violence: threats, intimidation and violence are prohibited. Weapons are not allowed on company property, except where state law requires otherwise.",
+   "page": 6,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Wear your badge at all times on-site. Do not let others follow you through secured doors (tailgating).",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Emergency procedures and evacuation maps are posted at every site. Drills are held twice a year.",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Workers' compensation covers work-related injuries and illnesses. Report them within 24 hours.",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "15. Drug- and Alcohol-Free Workplace",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Using, possessing, selling or being impaired by illegal drugs, or by cannabis, during work time or on company property is prohibited.",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Alcohol may be served only at approved company events, and responsible behavior is expected.",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Testing may take place before employment, after an accident, or with reasonable suspicion, where the law allows.",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Employees seeking help are encouraged to contact the EAP. Asking for help before a violation is not grounds for discipline.",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "16. Information Security and Acceptable Use",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Company systems, devices and accounts are for business use. Limited personal use is allowed if it doesn't interfere with work.",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Activity on company systems may be monitored, as permitted by law. Do not expect privacy on company systems.",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Use multi-factor authentication and a password manager. Never share your credentials.",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Report suspected phishing, lost devices or security incidents to the Security team within 1 hour.",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Install only approved software. Store company data only in approved storage.",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Complete security awareness training every year.",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "17. Responsible Use of AI Tools",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "Generative AI can boost productivity, but it must be used safely, legally and transparently.",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Use only AI tools approved by IT and Security, and listed in the approved-tools register.",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Never enter confidential, customer, personal or regulated data into unapproved AI tools.",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "You are accountable for AI-assisted output. Review it for accuracy, bias, security and intellectual property before using it.",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Disclose AI assistance where it matters, such as customer-facing content or decisions that affect people.",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "AI must not be the sole decision-maker in hiring, performance, pay or termination decisions. A human reviews every such decision.",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Report AI incidents, such as data exposure or harmful output, through the security incident process.",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "18. Data Privacy and Confidentiality",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Protect confidential business information, trade secrets and personal data during and after employment.",
+   "page": 7,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Collect and use personal data only for legitimate business purposes, following applicable privacy laws (for example, CCPA/CPRA and HIPAA where relevant).",
+   "page": 8,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Employee personnel and medical records are restricted to authorized staff.",
+   "page": 8,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Employees may request access to their personnel file as provided by state law.",
+   "page": 8,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Nothing in this handbook stops employees from reporting possible violations of law to a government agency, or from discussing terms and conditions of employment.",
+   "page": 8,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "19. Social Media and External Communications",
+   "page": 8,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Only authorized spokespeople may speak to the media or analysts on behalf of the company.",
+   "page": 8,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "When posting about the company or industry, say that the views are your own.",
+   "page": 8,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Do not disclose confidential information or post harassing or discriminatory content about colleagues.",
+   "page": 8,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "This policy does not restrict employees' rights under the National Labor Relations Act.",
+   "page": 8,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "20. Travel and Expenses",
+   "page": 8,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "table",
+   "text": "",
+   "page": 8,
+   "header": [
+    "Item",
+    "Guideline"
+   ],
+   "rows": [
+    [
+     "Approval",
+     "Manager pre-approval for all travel; VP approval for international travel"
+    ],
+    [
+     "Air",
+     "Economy class; premium economy for flights over 6 hours"
+    ],
+    [
+     "Lodging",
+     "Use preferred hotels in the travel tool, within city rate caps"
+    ],
+    [
+     "Meals",
+     "Up to $75 per day for domestic travel, with itemized receipts"
+    ],
+    [
+     "Mileage",
+     "Reimbursed at the current IRS standard mileage rate"
+    ],
+    [
+     "Submission",
+     "Expenses submitted within 30 days with receipts for items over $25"
+    ],
+    [
+     "Corporate card",
+     "Business use only; personal charges are prohibited"
+    ]
+   ]
+  },
+  {
+   "kind": "heading",
+   "text": "21. Speaking Up: Complaints and Whistleblowing",
+   "page": 8,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Open door: raise concerns with your manager, skip-level manager, HR or Legal at any time.",
+   "page": 8,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Ethics hotline: available 24/7 by phone or web, run by a third party. Anonymous reports are accepted.",
+   "page": 8,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Reports are reviewed by Ethics and Compliance and investigated promptly and fairly.",
+   "page": 8,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "No retaliation: retaliating against anyone who raises a concern in good faith is strictly prohibited and leads to discipline.",
+   "page": 8,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Protected whistleblower rights under laws such as SOX and Dodd-Frank, and under state laws, are fully respected.",
+   "page": 8,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "22. Corrective Action",
+   "page": 8,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "Our goal is to correct issues fairly and consistently. Steps usually follow the order below, but the company may skip steps or go directly to termination for serious misconduct.",
+   "page": 8,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "table",
+   "text": "",
+   "page": 9,
+   "header": [
+    "Step",
+    "Description"
+   ],
+   "rows": [
+    [
+     "1. Coaching / verbal warning",
+     "Discuss the issue and expectations; recorded in manager notes"
+    ],
+    [
+     "2. Written warning",
+     "Formal document reviewed with HR and signed by the employee"
+    ],
+    [
+     "3. Final written warning",
+     "Clear notice that further issues may lead to termination"
+    ],
+    [
+     "4. Termination",
+     "Reviewed and approved by HR and, where appropriate, Legal"
+    ]
+   ]
+  },
+  {
+   "kind": "paragraph",
+   "text": "Examples of serious misconduct include violence, harassment, theft, fraud, falsifying records, serious safety violations and intentional data breaches.",
+   "page": 9,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "23. Separation from Employment",
+   "page": 9,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Resignation: please give at least 2 weeks' written notice (4 weeks for people managers and above).",
+   "page": 9,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Final pay: issued according to state law, including payout of accrued PTO where required.",
+   "page": 9,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Return of property: laptops, badges, cards and documents are due on or before your last day.",
+   "page": 9,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Exit interview: offered to all departing employees. Feedback is used to improve the workplace.",
+   "page": 9,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Benefits: coverage usually ends on the last day of the month of separation. COBRA information is mailed to your home.",
+   "page": 9,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Reductions in force: carried out under the WARN Act and state law, with severance under the company severance plan.",
+   "page": 9,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Rehire: former employees in good standing are eligible to apply again.",
+   "page": 9,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Confidentiality and intellectual property obligations continue after employment ends.",
+   "page": 9,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "24. Policy Administration",
+   "page": 9,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "HR owns this handbook and reviews it every year with Legal.",
+   "page": 9,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Managers must apply policies consistently and ask HR for guidance when unsure.",
+   "page": 9,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "Exceptions need written approval from the Chief People Officer.",
+   "page": 9,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "list_item",
+   "text": "State-specific supplements, for example for California, New York and Washington, are available on the HR portal and take precedence where they apply.",
+   "page": 9,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "heading",
+   "text": "Employee Acknowledgment",
+   "page": 10,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "I acknowledge that I have received and read the Dummy Mock Test Inc. HR Policy Handbook, effective January 1, 2027. I understand that I am responsible for following these policies and for asking HR when I have questions. I understand that the handbook is not a contract of employment, that my employment is at-will unless a separate written agreement says otherwise, and that the company may change these policies at any time.",
+   "page": 10,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "Employee name (print)",
+   "page": 10,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "Signature Employee ID",
+   "page": 10,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "Date",
+   "page": 10,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "Please sign electronically in the HR system within 14 days of receiving this handbook. A copy is kept in your personnel file.",
+   "page": 10,
+   "header": null,
+   "rows": []
+  },
+  {
+   "kind": "paragraph",
+   "text": "This document is a sample template for illustration. It is not legal advice. Employment laws vary by state and locality and change over time; have qualified employment counsel review it before adoption.",
+   "page": 10,
+   "header": null,
+   "rows": []
+  }
+ ]
+}

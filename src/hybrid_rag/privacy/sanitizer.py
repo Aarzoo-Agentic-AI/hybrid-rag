@@ -41,7 +41,7 @@ from hybrid_rag.tracing import traceable
 logger = logging.getLogger(__name__)
 
 # Bump when detection logic changes, so documents are re-scanned on the next ingest.
-SCANNER_VERSION = 1
+SCANNER_VERSION = 2
 
 PLACEHOLDERS = {
     "PERSON": "<PERSON>",

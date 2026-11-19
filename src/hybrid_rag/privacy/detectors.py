@@ -202,14 +202,16 @@ def lowercase_vocabulary(texts: Iterable[str]) -> frozenset[str]:
 def plausible_name(span: str, lowercase_words: frozenset[str]) -> bool:
     """Filter spaCy's PERSON guesses, which are noisy on policy text ("Roth", "Tier 2").
 
-    Accepted: at least two capitalised words, no digits, and no word that also appears in lower
-    case in the same document (real names rarely do; "Policy Handbook" and "Required Notices"
-    do). Measured on the HR policies in data/pdfs: 31 false positives down to 0, with all
-    planted test names still found.
+    Accepted: at least two capitalised words, no digits, no acronyms ("Generative AI"), and no
+    word that also appears in lower case in the same document (real names rarely do; "Policy
+    Handbook" and "Required Notices" do). Measured on the HR policies in data/pdfs: 31 false
+    positives down to 0, with all planted test names still found.
     """
     if re.search(r"\d", span):
         return False
     words = [w for w in _WORD.findall(span) if w.lower().rstrip(".") not in _TITLES]
     if len(words) < 2 or not all(w[0].isupper() for w in words):
         return False
+    if any(len(w) > 1 and w.isupper() for w in words):
+        return False  # acronyms: AI, HR, PTO, ESPP
     return not any(w.lower() in lowercase_words for w in words)

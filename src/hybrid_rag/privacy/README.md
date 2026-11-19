@@ -16,7 +16,9 @@ outcomes = ingest_paths(
 [o.path.name for o in outcomes if o.quarantined]  # files that were not indexed
 ```
 
-`scripts/ingest.py` does this for you. If no sanitizer is passed, `load_document()` uses `default_sanitizer()`, which runs the patterns only. So nothing is ever chunked without a scan by accident.
+`scripts/ingest.py` does this for you through `IngestionPipeline.from_settings()`. Without a sanitizer, `IngestionPipeline()` and `load_document()` use `default_sanitizer()`, which runs the patterns only. So nothing is ever chunked without a scan by accident.
+
+Pass ① runs on every **block** of the parsed document: each paragraph, list item and table row, plus the policy name. Table rows are scanned as a single line and split back into cells, so redaction never breaks a table. The lowercase-word list for the name filter is built from the whole document.
 
 ## Where it runs
 

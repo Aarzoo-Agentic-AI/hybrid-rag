@@ -39,14 +39,25 @@
 - **Reranking:** a cross-encoder re-scores the top ~20–50 fused results down to the top 5–10. This is usually the biggest quality gain for the effort. In LangChain this is a `ContextualCompressionRetriever` with a `CrossEncoderReranker`, wrapped around the hybrid retriever. The cross-encoder itself is our own small `BaseCrossEncoder` (from `langchain-core`) that runs the model with `sentence-transformers`.
 
 ## 4. Ingestion pipeline
-- **Document loader:** `PdfPageLoader`, our own subclass of LangChain's `BaseLoader` (built on `pypdf`), which produces LangChain `Document` objects.
-- **PDF handling:**
-  - One unit per page, split with `RecursiveCharacterTextSplitter`; chunks never cross page boundaries, so every chunk has an exact page number for citations. Words hyphenated across lines are re-joined. Pages without text (scanned pages) are skipped with a warning, since OCR isn't supported.
-  - Section-aware chunking across page breaks replaces this in step 3a (section 10).
-- **Metadata extraction:** document ID, source file name (never the local path), title, file type, chunk ID and position, content hash, and the page number. Filters depend on this. The full schema is in `src/hybrid_rag/ingestion/README.md`. HR policy metadata (section 10) and authorization metadata (section 11) are added on top, plus the privacy scan result (`pii_scan`) and a `pipeline_hash` of the chunking and privacy settings (section 12).
+- **Layout-aware parsing:**
+  - **Docling** (MIT licence) turns each PDF into headings, paragraphs, list items and tables (with rows and column headers), each with its page number. It also drops running page headers and footers.
+  - Results are cached by file hash, because Docling takes about 4 s per page on CPU.
+  - A fast `pypdf` parser (numbered headings only, built on our LangChain `PdfPageLoader`) stands in for tests and demos.
+  - Pages without text (scanned pages) are skipped with a warning, since OCR isn't supported.
+- **Section-aware chunking** (section 10):
+  - one chunk per section where it fits, measured in `bge-m3` tokens;
+  - splits only at paragraph, list-item or table-row boundaries, with overlap inside a section only;
+  - tables repeat their headers, rules keep their exceptions, and glossary terms become their own chunks.
+- **Metadata extraction:**
+  - **Document and chunk:** document ID, source file name (never the local path), file type, chunk ID and position, content hash.
+  - **Section:** section number, title, path and ID, and the page range.
+  - **Policy:** policy metadata from the registry (section 10).
+  - **Privacy and settings:** the privacy scan result (`pii_scan`), and a `pipeline_hash` of the parser, chunking, privacy and registry settings (section 12).
+  - Authorization metadata (section 11) comes in step 3b.
+  - The full schema is in `src/hybrid_rag/ingestion/README.md`.
 - **Sensitive-data sanitization:** before chunking, personal data is redacted and documents with high-risk data are quarantined; every chunk is checked again before embedding (section 12).
 - **Incremental indexing:** content hashing so unchanged documents aren't re-embedded, plus a way to delete or update documents. An unchanged file is skipped before it's even loaded; a change to the chunking or privacy settings re-processes it.
-- **Contextual chunk headers:** add the document name and location (for example `Document: Employee Handbook (handbook.pdf)` / `Location: page 3`) to each chunk before embedding. This is cheap and works well, and can be switched off in config.
+- **Contextual chunk headers:** add the policy and section path to each chunk before embedding, for example `Policy: Travel Policy (HR-TRV-003, effective 2027-01-01, US)` / `Section: 5 Air travel`. This is cheap and works well, and can be switched off in config.
 - **Batched and idempotent:** ingestion runs in batches and can be re-run safely.
 
 ## 5. Query-side intelligence
@@ -155,9 +166,13 @@ HR policies have a recognisable structure, and retrieval works best when chunks 
 | Many words for one thing | PTO, vacation, annual leave, holiday | Hybrid search, query rewriting and a glossary |
 
 **Chunking:**
-1. **Parse the layout, not just the text.** `pypdf` loses headings and tables, so a layout-aware parser (Docling or `pymupdf4llm`) produces Markdown with headings and tables. Repeated page headers and footers ("Confidential – Page 3 of 40") are removed.
-2. **Chunk by section, across page breaks.** A section is the unit and stays whole if it fits. A longer section is split on paragraphs, then list items, then sentences, with about 10–15% overlap inside the section only and none across sections. Each chunk still records the page (or pages) it came from, for citations.
-3. **Size:** about 300–500 tokens, with 800 as the hard maximum. The current 800 characters (about 200 tokens) is too small for policies, because a rule and its conditions end up in different chunks.
+1. **Parse the layout, not just the text.** `pypdf` loses headings and tables, so the layout-aware parser **Docling** is used. Docling and `pymupdf4llm` were compared on the 5 policies:
+   - both recovered headings and tables;
+   - only Docling dropped the running page headers;
+   - Docling is MIT-licensed, whereas PyMuPDF is AGPL-3.0;
+   - Docling is slower, so its results are cached.
+2. **Chunk by section, across page breaks.** A section is the unit and stays whole if it fits. A longer section is split on paragraphs, then list items, then sentences, with about 10–15% overlap inside the section only and none across sections. Each chunk records the page (or pages) it came from, for citations.
+3. **Size, in `bge-m3` tokens:** a target of 400 when splitting, and 800 as the hard maximum. On the 5 policies, every section fits whole, at 44–488 tokens.
 4. **Never split** a table row (column headers are repeated in each row chunk), a list item, a rule together with its "unless / except / provided that" clause, or a definition.
 5. **The heading path goes in the contextual header.** This is the biggest improvement for the least effort:
    ```

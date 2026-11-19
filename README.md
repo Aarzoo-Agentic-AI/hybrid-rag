@@ -1,8 +1,20 @@
 # hybrid-rag
 
-Hybrid RAG built with LangChain: dense + sparse retrieval in Qdrant, cross-encoder reranking and LLM failover (OpenAI and Anthropic) over PDF documents, served as an API.
+Hybrid RAG for HR policies, built with LangChain: dense + sparse retrieval in Qdrant, cross-encoder reranking and LLM failover (OpenAI and Anthropic) over PDF documents, served as an API.
 
 See [FEATURE.md](FEATURE.md) for the design and [PLAN.md](PLAN.md) for the implementation plan. Full documentation comes in step 8.
+
+## Indexing the HR policies
+
+```bash
+docker compose up -d                  # start Qdrant
+uv run python scripts/ingest.py       # index data/pdfs (unchanged files are skipped)
+uv run python scripts/ingest.py --list
+```
+
+- **How the PDFs are processed:** Docling parses them, keeping headings and tables and dropping page headers. Each section becomes a chunk (split only when it's long), with its heading path, page range and the policy's metadata from [data/pdfs/registry.yaml](data/pdfs/registry.yaml).
+- **First run:** it downloads Docling's layout models and `bge-m3`, and parses at about 4 s per page. Parsed PDFs are cached in `.cache/parsed/`.
+- **Details:** see the [ingestion README](src/hybrid_rag/ingestion/README.md).
 
 ## Sensitive data
 

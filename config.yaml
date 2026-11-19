@@ -19,10 +19,23 @@ reranker:
   model: BAAI/bge-reranker-v2-m3
   device: cpu
 
+documents:
+  path: data/pdfs                    # default folder for scripts/ingest.py
+  registry: data/pdfs/registry.yaml  # policy metadata per file (name, category, dates, ...)
+  parser: docling                    # docling (layout-aware) | pypdf (fast, text only)
+  cache_dir: .cache/parsed           # parsed PDFs, keyed by file hash (Docling is slow)
+
 chunking:
-  chunk_size: 800        # characters
-  chunk_overlap: 120
-  contextual_headers: true   # prepend the document name and page to each chunk
+  # Section-aware: a section up to max_tokens stays whole; longer ones are split near
+  # target_tokens at paragraph, list-item or table-row boundaries, with overlap only
+  # inside the section. Tokens are counted with the embedding model's tokenizer.
+  target_tokens: 400
+  max_tokens: 800
+  overlap_tokens: 60
+  tokenizer: BAAI/bge-m3     # or "approx" (4 characters per token)
+  contextual_headers: true   # prepend "Policy: ... / Section: ..." to each chunk
+  skip_sections: ['^contents$', "^what's inside$", 'acknowledge?ment']   # not indexed
+  definition_sections: ['definitions?', 'glossary']   # table rows -> one chunk per term
 
 privacy:
   # Sensitive data is handled before chunking and checked again after; nothing sensitive is

@@ -9,7 +9,7 @@ from qdrant_client import QdrantClient
 from hybrid_rag.config import ChunkingSettings, EmbeddingSettings, PrivacySettings
 from hybrid_rag.embedding import build_embeddings
 from hybrid_rag.indexing import ingest_paths
-from hybrid_rag.ingestion import load_document
+from hybrid_rag.ingestion import IngestionPipeline, load_document
 from hybrid_rag.privacy import (
     PatternDetector,
     SensitiveDataError,
@@ -20,10 +20,14 @@ from hybrid_rag.privacy import (
     plausible_name,
 )
 from hybrid_rag.store import DocumentIndex
+from tests.parse_fixtures import DoclingFixtureParser
 from tests.pdf_fixture import write_pdf
 
 PDFS = Path(__file__).resolve().parents[1] / "data" / "pdfs"
-CHUNKING = ChunkingSettings(chunk_size=400, chunk_overlap=40)
+CHUNKING = ChunkingSettings(
+    target_tokens=100, max_tokens=200, overlap_tokens=12, tokenizer="approx"
+)
+PIPELINE = IngestionPipeline(CHUNKING)
 ALL = ["EMAIL_ADDRESS", "PHONE_NUMBER", "EMPLOYEE_ID", "US_SSN", "CREDIT_CARD", "IBAN_CODE"]
 
 
@@ -240,7 +244,7 @@ def test_quarantined_file_is_reported_and_not_indexed(tmp_path: Path) -> None:
         QdrantClient(":memory:"), "t", build_embeddings(EmbeddingSettings(provider="hashing"))
     )
 
-    outcomes = {o.path.name: o for o in ingest_paths([tmp_path], index, CHUNKING)}
+    outcomes = {o.path.name: o for o in ingest_paths([tmp_path], index, PIPELINE)}
 
     assert outcomes["good.pdf"].ok
     bad = outcomes["payroll_export.pdf"]
@@ -258,9 +262,9 @@ def test_changed_privacy_settings_reindex_unchanged_files(tmp_path: Path) -> Non
     strict = build_sanitizer(PrivacySettings(detector="patterns"))
     relaxed = build_sanitizer(PrivacySettings(detector="patterns", allowlist=["payroll@acme.com"]))
 
-    ingest_paths([tmp_path], index, CHUNKING, sanitizer=strict)
-    same = ingest_paths([tmp_path], index, CHUNKING, sanitizer=strict)
-    changed = ingest_paths([tmp_path], index, CHUNKING, sanitizer=relaxed)
+    ingest_paths([tmp_path], index, IngestionPipeline(CHUNKING, sanitizer=strict))
+    same = ingest_paths([tmp_path], index, IngestionPipeline(CHUNKING, sanitizer=strict))
+    changed = ingest_paths([tmp_path], index, IngestionPipeline(CHUNKING, sanitizer=relaxed))
 
     assert same[0].result.status == "unchanged"
     assert changed[0].result.status == "updated"
@@ -277,5 +281,10 @@ def test_hr_policies_are_clean_and_keep_their_content(presidio) -> None:
     assert len(pdfs) == 5
 
     for pdf in pdfs:
-        doc = load_document(pdf, ChunkingSettings(), sanitizer=presidio)
+        doc = load_document(
+            pdf,
+            ChunkingSettings(tokenizer="approx"),
+            sanitizer=presidio,
+            parser=DoclingFixtureParser(),
+        )
         assert doc.pii_scan["status"] == "clean", (pdf.name, doc.pii_scan["redactions"])
