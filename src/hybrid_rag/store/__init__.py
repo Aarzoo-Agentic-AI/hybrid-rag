@@ -7,9 +7,6 @@ from qdrant_client import QdrantClient
 from hybrid_rag.config import Settings
 from hybrid_rag.embedding import EmbeddingModels, build_embeddings
 from hybrid_rag.store.qdrant import (
-    DENSE_VECTOR,
-    PAYLOAD_INDEXES,
-    SPARSE_VECTOR,
     CollectionConfigError,
     DocumentIndex,
     DocumentInfo,
@@ -17,6 +14,8 @@ from hybrid_rag.store.qdrant import (
     StoreError,
     ensure_collection,
 )
+from hybrid_rag.store.schema import DENSE_VECTOR, PAYLOAD_INDEXES, SPARSE_VECTOR
+from hybrid_rag.store.security import scoped, security_filter
 
 
 def create_client(settings: Settings) -> QdrantClient:
@@ -50,4 +49,6 @@ __all__ = [
     "build_document_index",
     "create_client",
     "ensure_collection",
+    "scoped",
+    "security_filter",
 ]

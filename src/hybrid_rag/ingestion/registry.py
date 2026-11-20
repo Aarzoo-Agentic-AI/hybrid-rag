@@ -1,20 +1,35 @@
 """The policy registry: metadata for each policy file, kept next to the PDFs.
 
 Values come from the registry, not from guessing at the text: the owner of each policy
-decides its category, version, effective date, jurisdiction and audience. A file that isn't
-listed still loads, with the registry defaults and its PDF title, and a warning.
+decides its category, version, effective date, jurisdiction and audience, and who may read
+it. A file that isn't listed still loads, with the registry defaults and its PDF title, and a
+warning.
 
 ```yaml
 defaults:                  # applied to every policy, overridden per file
   jurisdiction: US
   language: en
+  access:                  # merged key by key with each entry's access block
+    classification: internal
+    visibility: tenant
 policies:
   Travel_Policy.pdf:
     policy_id: HR-TRV-003
     policy_name: Travel Policy
     policy_category: travel
     effective_date: 2027-01-01
+  Salary_Bands.pdf:
+    policy_name: Salary Bands
+    access:
+      classification: confidential
+      visibility: restricted
+      allowed_groups: [hr-compensation]
 ```
+
+Access is kept apart from the rest of the entry: it is not part of ``entry_hash`` (so a
+permission change never re-embeds a document), and it never reaches the contextual header.
+With no ``access`` block anywhere, a document is readable by tenant admins only (deny by
+default).
 """
 
 from __future__ import annotations
@@ -28,7 +43,10 @@ from typing import Any
 import yaml
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator
 
+from hybrid_rag.access import AccessPolicy
 from hybrid_rag.ingestion.types import IngestionError
+
+ACCESS_KEY = "access"
 
 
 class RegistryError(IngestionError):
@@ -71,6 +89,9 @@ class PolicyRegistry:
         self._policies = {name.lower(): dict(entry) for name, entry in (policies or {}).items()}
         for name in self._policies:  # validate every entry up front, not on first use
             self.lookup(name, title=name)
+            self.access(name)
+        if not self._policies:
+            self.access("")  # still validate the defaults
 
     @classmethod
     def empty(cls) -> PolicyRegistry:
@@ -103,7 +124,7 @@ class PolicyRegistry:
             if self._policies:  # only worth a warning when a registry is in use
                 warnings.append(f"{source} is not in the policy registry; using defaults")
             entry = {}
-        fields = {**self.defaults, **entry}
+        fields = {k: v for k, v in {**self.defaults, **entry}.items() if k != ACCESS_KEY}
         fields.setdefault("policy_name", title or Path(source).stem.replace("_", " "))
         try:
             return PolicyInfo(**fields), warnings
@@ -113,9 +134,40 @@ class PolicyRegistry:
             )
             raise RegistryError(f"Invalid registry entry for {source}: {problems}") from None
 
+    def access(self, source: str) -> tuple[AccessPolicy, list[str]]:
+        """Who may read ``source``: the default access block, overridden key by key by the
+        file's own. Unset fields take the most closed value. Returns warnings too."""
+        entry = self._policies.get(source.lower()) or {}
+        try:
+            fields = {**(self.defaults.get(ACCESS_KEY) or {}), **(entry.get(ACCESS_KEY) or {})}
+            policy = AccessPolicy(**fields)
+        except (ValidationError, TypeError) as exc:
+            problems = (
+                "; ".join(f"{'.'.join(map(str, e['loc']))}: {e['msg']}" for e in exc.errors())
+                if isinstance(exc, ValidationError)
+                else str(exc)
+            )
+            where = f"for {source}" if source else "in the defaults"
+            raise RegistryError(f"Invalid access rules {where}: {problems}") from None
+        warnings = []
+        if not policy.has_readers and (self._policies or self.defaults):
+            warnings.append(
+                f"{source} has no readers (visibility restricted, no grants): "
+                "only tenant admins can see it"
+            )
+        return policy, warnings
+
     def entry_hash(self, source: str) -> str:
-        """Changes whenever this file's registry entry (or the defaults) change."""
-        data = {"defaults": self.defaults, "entry": self._policies.get(source.lower())}
+        """Changes whenever this file's registry entry (or the defaults) change, except for
+        the access rules: those are applied without re-processing the file."""
+        data = {
+            "defaults": _without_access(self.defaults),
+            "entry": _without_access(self._policies.get(source.lower())),
+        }
         return hashlib.sha256(json.dumps(data, sort_keys=True, default=str).encode()).hexdigest()[
             :12
         ]
+
+
+def _without_access(entry: dict[str, Any] | None) -> dict[str, Any] | None:
+    return None if entry is None else {k: v for k, v in entry.items() if k != ACCESS_KEY}

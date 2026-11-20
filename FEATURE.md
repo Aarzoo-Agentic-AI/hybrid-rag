@@ -53,10 +53,10 @@
   - **Section:** section number, title, path and ID, and the page range.
   - **Policy:** policy metadata from the registry (section 10).
   - **Privacy and settings:** the privacy scan result (`pii_scan`), and a `pipeline_hash` of the parser, chunking, privacy and registry settings (section 12).
-  - Authorization metadata (section 11) comes in step 3b.
+  - **Access:** tenant, classification, visibility and grants from the registry, with an access hash and version (section 11). Never part of the text.
   - The full schema is in `src/hybrid_rag/ingestion/README.md`.
 - **Sensitive-data sanitization:** before chunking, personal data is redacted and documents with high-risk data are quarantined; every chunk is checked again before embedding (section 12).
-- **Incremental indexing:** content hashing so unchanged documents aren't re-embedded, plus a way to delete or update documents. An unchanged file is skipped before it's even loaded; a change to the chunking or privacy settings re-processes it.
+- **Incremental indexing:** content hashing so unchanged documents aren't re-embedded, plus a way to delete or update documents. An unchanged file is skipped before it's even loaded; a change to the chunking or privacy settings re-processes it; a change to its permissions alone updates the stored chunks without re-embedding.
 - **Contextual chunk headers:** add the policy and section path to each chunk before embedding, for example `Policy: Travel Policy (HR-TRV-003, effective 2027-01-01, US)` / `Section: 5 Air travel`. This is cheap and works well, and can be switched off in config.
 - **Batched and idempotent:** ingestion runs in batches and can be re-run safely.
 
@@ -220,7 +220,7 @@ Permissions are enforced **inside the vector search**, as a Qdrant filter built 
 
 | # | Field | Type | Example | Purpose |
 |---|---|---|---|---|
-| 1 | `tenant_id` | keyword, required | `"lumen"` | Hard isolation between organisations; always filtered on |
+| 1 | `tenant_id` | keyword, required | `"dummymocktest"` | Hard isolation between organisations; always filtered on |
 | 2 | `doc_id`, `chunk_id` | keyword | UUIDs | Tenant-scoped: `doc_id = uuid5(tenant_id + source)`, so two tenants can both have a `handbook.pdf` |
 | 3 | `classification` | keyword | `"confidential"` | Sensitivity level: `public`, `internal`, `confidential`, `restricted` |
 | 4 | `classification_rank` | integer | `2` | The same level as a number (0–3), so the filter can check `rank <= caller.clearance` |
@@ -249,6 +249,9 @@ AND ( visibility == "tenant"
 | Manager guide to performance reviews | restricted | role `people_manager` | internal |
 | Salary bands | restricted | group `hr-compensation`, role `hr_director` | confidential |
 | Investigation procedures | restricted | group `hr-employee-relations` | restricted |
+| **Annual Review, Merit Increase and Bonus Policy** (in `data/pdfs`) | restricted | group `hr-compensation`, roles `people_manager`, `hr_director` | confidential |
+
+The other four HR PDFs are `internal` and visible to the whole tenant, through the registry's `defaults.access`.
 
 **Deliberately left out:**
 
@@ -261,11 +264,11 @@ AND ( visibility == "tenant"
 
 **Rules:**
 1. **Permissions come from a policy registry** (a YAML file, later the upload API), never from the document's own content or metadata.
-2. **Deny by default, fail closed.** A document without permissions is visible only to its owner. A caller without a tenant or clearance gets nothing.
+2. **Deny by default, fail closed.** A document without permissions gets the most closed values (`restricted`, no grants) and is visible only to tenant admins; the upload API (step 6) will also grant it to its uploader. A principal can't be created without a tenant, a user and a valid clearance, and chunks missing the access fields match nobody.
 3. **Documents store grants, not memberships.** Who belongs to a group comes from the caller's identity at query time (an API-key mapping now, JWT/OIDC claims later), so group changes never need re-indexing.
 4. **Permission changes don't re-embed.** Qdrant's `set_payload`, filtered by `doc_id`, updates every chunk in one call and bumps `access_version`. Indexing compares `access_hash` as well as `doc_hash`, so a file with unchanged content but changed permissions is still updated.
 5. **Security filters are built on the server** from a `Principal` (tenant, user, groups, roles, clearance), never from request fields. They are kept apart from the relevance filters.
-6. **The same filter applies everywhere:** search, list, get, delete, health counts and citations.
+6. **The same filter applies everywhere:** search, list, get, chunk counts, delete and citations. Delete also needs a tenant-admin principal. `/health` reports only the collection status and total, for operations.
 7. **Permissions are never embedded.** They stay out of the contextual header.
 8. **Payload indexes:** `tenant_id` with Qdrant's `is_tenant=True` (per-tenant index layout), keyword indexes on `visibility` and the allow lists, and an integer index on `classification_rank`.
 9. **Audit log:** who asked, which `chunk_id`s were retrieved, and each one's `access_version`.

@@ -8,6 +8,8 @@ from pathlib import Path
 
 from langchain_core.documents import Document
 
+from hybrid_rag.access import AccessPolicy
+
 
 class FileType(StrEnum):
     """Supported file types. PDF is the only data source."""
@@ -43,7 +45,7 @@ class EmptyDocumentError(IngestionError):
 class IngestedDocument:
     """A loaded, chunked file, ready to be embedded and stored."""
 
-    doc_id: str  # stable for a given source name, so re-ingesting a file replaces it
+    doc_id: str  # stable per tenant and source name, so re-ingesting a file replaces it
     source: str  # file name, used in citations
     file_type: FileType
     doc_hash: str  # SHA-256 of the file bytes, used to skip unchanged files
@@ -54,3 +56,6 @@ class IngestedDocument:
     # Result of the sensitive-data scan: status, detector, policy and redaction counts.
     pii_scan: dict = field(default_factory=dict)
     pipeline_hash: str = ""  # chunking settings + privacy policy; see pipeline_hash()
+    tenant_id: str = "default"
+    # Who may read it; copied onto every chunk. The default is deny (tenant admins only).
+    access: AccessPolicy = field(default_factory=AccessPolicy)

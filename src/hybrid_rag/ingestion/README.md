@@ -110,7 +110,25 @@ policies:
 - Entries are validated, and a typo (`efective_date`) or an invalid value is an error, not silently ignored.
 - A file that isn't listed loads with the defaults and its PDF title, plus a warning.
 - The registry also supplies the policy name when the PDF's title is an image, as with the Expense Policy.
-- Step 3b adds the access-control fields here.
+
+**Access rules.** Each entry may have an `access:` block saying who may read the policy ([`hybrid_rag/access.py`](../access.py), FEATURE.md section 11). It is merged key by key with the `access:` block in `defaults`:
+
+```yaml
+defaults:
+  access: {classification: internal, visibility: tenant}   # every policy, unless overridden
+policies:
+  Annual_Review_Merit_Bonus_Policy_2027.pdf:
+    access:
+      classification: confidential
+      visibility: restricted
+      allowed_groups: [hr-compensation]
+      allowed_roles: [people_manager, hr_director]
+```
+
+- **Deny by default:** an unset field takes the most closed value (`restricted`, no grants). A file with no access rules anywhere is readable by tenant admins only, with a warning.
+- **Validated:** an unknown classification, a misspelt key (`allowed_group`) or a grant containing a space is an error.
+- **Kept apart from the content:** access rules aren't part of `entry_hash` or the `pipeline_hash`, and never appear in the text or the contextual header. Changing them updates the stored chunks in place, without parsing or embedding anything (see the store README).
+- **The tenant** comes from `documents.tenant_id` (or `scripts/ingest.py --tenant`), not from the registry. A pipeline belongs to one tenant.
 
 ## Chunk metadata
 
@@ -118,7 +136,7 @@ Flat and JSON-friendly, stored as the Qdrant payload. It never contains a local 
 
 | Key | Example | Notes |
 |---|---|---|
-| `doc_id` / `doc_hash` | `"a63a…"` / `"3d53…"` | UUID from the source name / SHA-256 of the file |
+| `doc_id` / `doc_hash` | `"a63a…"` / `"3d53…"` | UUID from the tenant and source name / SHA-256 of the file. Two tenants can both have a `handbook.pdf` |
 | `source`, `file_type`, `title` | `"Travel_Policy.pdf"`, `"pdf"`, `"Travel Policy"` | `title` is the policy name |
 | `chunk_id`, `chunk_index`, `chunk_count` | | Deterministic UUID; position in the file |
 | `chunk_type` | `"section"` / `"definition"` | |
@@ -130,17 +148,19 @@ Flat and JSON-friendly, stored as the Qdrant payload. It never contains a local 
 | `policy_name`, `policy_id`, `policy_category`, `version`, `effective_date`, `is_current`, `jurisdiction`, `applies_to`, `owner_department`, `review_date`, `language` | | From the registry |
 | `content_hash` | | SHA-256 of `page_content` (after redaction) |
 | `pii_scan` | `{"status": "clean", …}` | Privacy scan result (types and counts, never values) |
-| `pipeline_hash` | `"6577…"` | Fingerprint of the parser, tokenizer, chunking settings, privacy policy and this file's registry entry |
+| `pipeline_hash` | `"6577…"` | Fingerprint of the parser, tokenizer, chunking settings, privacy policy and this file's registry entry (without its access rules) |
+| `tenant_id`, `classification`, `classification_rank`, `visibility`, `allowed_groups`, `allowed_roles`, `allowed_users`, `access_hash` | `"dummymocktest"`, `"internal"`, `1`, `"tenant"`, … | Access rules from the registry. The store adds `access_version` and `access_updated_at` |
 
 `citation(metadata)` gives `Travel Policy §5 Air travel (Travel_Policy.pdf, page 3)`. An unnumbered sub-section also names its numbered parent: `HR Policy Handbook §3 Anti-Harassment and Anti-Discrimination > Prohibited conduct includes (…)`.
 
-**When is a document processed again?** Whenever its `pipeline_hash` changes: a new parser version, other chunking settings, other privacy rules, or an edited registry entry. Otherwise an unchanged file is skipped before it's even parsed. Re-chunking reads the parse cache, so it doesn't run Docling again.
+**When is a document processed again?** Whenever its `pipeline_hash` changes: a new parser version, other chunking settings, other privacy rules, or an edited registry entry. Otherwise an unchanged file is skipped before it's even parsed. Re-chunking reads the parse cache, so it doesn't run Docling again. A change to the access rules alone only updates the permissions on the stored chunks.
 
 ## Configuration
 
 ```yaml
 documents:
   path: data/pdfs
+  tenant_id: dummymocktest     # part of every document ID and access check
   registry: data/pdfs/registry.yaml
   parser: docling              # or pypdf
   cache_dir: .cache/parsed
@@ -162,7 +182,7 @@ All inherit from `IngestionError`.
 |---|---|
 | `UnsupportedFileTypeError` | The extension isn't `.pdf` (case-insensitive) |
 | `EmptyDocumentError` | No page has extractable text (scanned PDFs need OCR, which isn't supported) |
-| `RegistryError` | The registry is missing, isn't valid YAML, or has an invalid entry |
+| `RegistryError` | The registry is missing, isn't valid YAML, or has an invalid entry or access rule |
 | `IngestionError` | A damaged or password-protected PDF |
 | `SensitiveDataError` | High-risk data found: the document is quarantined (from `hybrid_rag.privacy`) |
 
@@ -171,7 +191,8 @@ All inherit from `IngestionError`.
 | File | Covers |
 |---|---|
 | `tests/test_ingestion.py` | The pypdf parser (headings, wrapped lines, running headers removed), section levels and paths, skipped sections, every chunking rule, metadata and headers, IDs, the registry (validation, defaults, hash), table sanitization, the parse cache, the fingerprint |
-| `tests/test_hr_policies.py` | The full pipeline on the 5 HR PDFs using **Docling's saved output** (`tests/fixtures/parsed/`), so no models are needed: registry metadata on every chunk, tables intact, nested paths, 17 definitions, boilerplate left out, size limit, page ranges, a clean privacy scan |
+| `tests/test_hr_policies.py` | The full pipeline on the 5 HR PDFs using **Docling's saved output** (`tests/fixtures/parsed/`), so no models are needed: registry metadata on every chunk, tables intact, nested paths, 17 definitions, boilerplate left out, size limit, page ranges, a clean privacy scan, access rules on every chunk |
+| `tests/test_access.py` | The registry's access rules (merging, validation, deny by default, not in the entry hash); see the store README for the leakage tests |
 | `tests/test_ingestion_live.py` (`-m integration`) | Real Docling output matches the fixtures; chunk sizes in real `bge-m3` tokens |
 
 The fixtures come from `uv run python scripts/make_parse_fixtures.py`. If a PDF changes or `DoclingParser.VERSION` is bumped, the tests fail until it's run again.

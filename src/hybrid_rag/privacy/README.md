@@ -5,14 +5,14 @@ This package keeps personal and high-risk data out of the index. Every PDF is sc
 ```python
 from hybrid_rag.config import get_settings
 from hybrid_rag.indexing import ingest_paths
+from hybrid_rag.ingestion import IngestionPipeline
 from hybrid_rag.privacy import build_sanitizer
 from hybrid_rag.store import build_document_index
 
 settings = get_settings()
 sanitizer = build_sanitizer(settings.privacy)  # build once; Presidio loads on first use
-outcomes = ingest_paths(
-    ["data/pdfs"], build_document_index(settings), settings.chunking, sanitizer=sanitizer
-)
+pipeline = IngestionPipeline(settings.chunking, sanitizer=sanitizer)
+outcomes = ingest_paths(["data/pdfs"], build_document_index(settings), pipeline)
 [o.path.name for o in outcomes if o.quarantined]  # files that were not indexed
 ```
 

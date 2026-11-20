@@ -3,6 +3,7 @@ from pathlib import Path
 import pytest
 from qdrant_client import QdrantClient, models
 
+from hybrid_rag.access import Principal
 from hybrid_rag.config import ChunkingSettings, EmbeddingSettings
 from hybrid_rag.embedding import build_embeddings
 from hybrid_rag.indexing import ingest_paths
@@ -15,6 +16,8 @@ from hybrid_rag.store import (
     ensure_collection,
 )
 from tests.pdf_fixture import write_pdf
+
+ADMIN = Principal.tenant_admin("default")  # sees every document of the test tenant
 
 SAMPLES = Path(__file__).resolve().parents[1] / "data" / "samples"
 CHUNKING = ChunkingSettings(target_tokens=60, max_tokens=120, overlap_tokens=12, tokenizer="approx")
@@ -82,7 +85,7 @@ def test_new_document_is_added(index: DocumentIndex, tmp_path: Path) -> None:
     result = index.index(doc)
 
     assert (result.status, result.chunks, result.removed) == ("added", len(doc.chunks), 0)
-    assert index.count_chunks() == len(doc.chunks)
+    assert index.count_chunks(ADMIN) == len(doc.chunks)
     point = index.client.retrieve("test", [doc.chunks[0].id], with_payload=True)[0]
     assert point.payload["page_content"] == doc.chunks[0].page_content
     assert point.payload["metadata"]["source"] == "a.pdf"
@@ -113,7 +116,7 @@ def test_changed_document_replaces_old_chunks(index: DocumentIndex, tmp_path: Pa
 
     assert result.status == "updated"
     assert result.removed == len(first.chunks) - len(second.chunks)
-    assert index.count_chunks() == len(second.chunks)
+    assert index.count_chunks(ADMIN) == len(second.chunks)
     hashes = {
         p.payload["metadata"]["doc_hash"]
         for p in index.client.scroll("test", limit=100, with_payload=True)[0]
@@ -136,7 +139,7 @@ def test_interrupted_write_is_repaired_on_next_run(index: DocumentIndex, tmp_pat
     result = index.index(doc)
 
     assert result.status == "updated"
-    assert index.count_chunks(doc.doc_id) == len(doc.chunks)
+    assert index.count_chunks(ADMIN, doc.doc_id) == len(doc.chunks)
 
 
 def test_delete_removes_only_that_document(index: DocumentIndex, tmp_path: Path) -> None:
@@ -145,9 +148,9 @@ def test_delete_removes_only_that_document(index: DocumentIndex, tmp_path: Path)
     index.index(a)
     index.index(b)
 
-    assert index.delete(a.doc_id) == len(a.chunks)
-    assert index.delete(a.doc_id) == 0
-    assert [d.source for d in index.list_documents()] == ["b.pdf"]
+    assert index.delete(a.doc_id, ADMIN) == len(a.chunks)
+    assert index.delete(a.doc_id, ADMIN) == 0
+    assert [d.source for d in index.list_documents(ADMIN)] == ["b.pdf"]
 
 
 def test_list_and_get_documents(index: DocumentIndex, tmp_path: Path) -> None:
@@ -155,13 +158,13 @@ def test_list_and_get_documents(index: DocumentIndex, tmp_path: Path) -> None:
     a = load_document(write(tmp_path, "a.pdf", "Short."), CHUNKING)
     index.index(a)
 
-    documents = index.list_documents()
+    documents = index.list_documents(ADMIN)
 
     assert [d.source for d in documents] == ["a.pdf", "b.pdf"]
-    info = index.get_document(a.doc_id)
+    info = index.get_document(a.doc_id, ADMIN)
     assert info is not None
     assert (info.file_type, info.chunk_count, info.doc_hash) == ("pdf", 1, a.doc_hash)
-    assert index.get_document("missing") is None
+    assert index.get_document("missing", ADMIN) is None
 
 
 def test_reset_empties_the_collection(index: DocumentIndex, tmp_path: Path) -> None:
@@ -169,8 +172,8 @@ def test_reset_empties_the_collection(index: DocumentIndex, tmp_path: Path) -> N
 
     index.reset()
 
-    assert index.count_chunks() == 0
-    assert index.list_documents() == []
+    assert index.count_chunks(ADMIN) == 0
+    assert index.list_documents(ADMIN) == []
 
 
 def test_health_reports_point_count(index: DocumentIndex, tmp_path: Path) -> None:
@@ -194,8 +197,8 @@ def test_ingest_samples_then_rerun_is_a_no_op(index: DocumentIndex) -> None:
     assert {o.result.status for o in first} == {"added"}
     assert {o.result.status for o in second} == {"unchanged"}
     assert index.embeddings.encoder.encoded_count == embedded
-    assert len(index.list_documents()) == len(first)
-    assert index.count_chunks() == sum(o.result.chunks for o in first)
+    assert len(index.list_documents(ADMIN)) == len(first)
+    assert index.count_chunks(ADMIN) == sum(o.result.chunks for o in first)
 
 
 def test_ingest_reports_bad_files_without_stopping(index: DocumentIndex, tmp_path: Path) -> None:
@@ -245,4 +248,4 @@ def test_changed_chunking_settings_reindex_unchanged_files(
     (outcome,) = ingest_paths([tmp_path], index, bigger)
 
     assert outcome.result.status == "updated"
-    assert index.count_chunks() == outcome.result.chunks
+    assert index.count_chunks(ADMIN) == outcome.result.chunks

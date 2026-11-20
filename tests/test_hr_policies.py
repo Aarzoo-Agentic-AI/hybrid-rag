@@ -21,6 +21,7 @@ def docs():
         parser=DoclingFixtureParser(),
         sanitizer=build_sanitizer(PrivacySettings(allowlist=["hr@dummymocktest.example"])),
         registry=PolicyRegistry.load(PDFS / "registry.yaml"),
+        tenant_id="dummymocktest",
     )
     return {pdf.name: pipeline.load(pdf) for pdf in sorted(PDFS.glob("*.pdf"))}
 
@@ -50,6 +51,19 @@ def test_every_policy_loads_clean_with_registry_metadata(docs) -> None:
                 "US",
                 "2027-01-01",
             )
+
+
+def test_access_rules_from_the_registry_are_on_every_chunk(docs) -> None:
+    for name, doc in docs.items():
+        restricted = name == "Annual_Review_Merit_Bonus_Policy_2027.pdf"
+        for c in doc.chunks:
+            m = c.metadata
+            assert m["tenant_id"] == "dummymocktest"
+            assert (m["classification"], m["visibility"]) == (
+                ("confidential", "restricted") if restricted else ("internal", "tenant")
+            )
+            assert m["access_hash"] == doc.access.hash
+            assert "people_manager" not in c.page_content  # never in the text or header
 
 
 def test_policy_names_come_from_the_registry(docs) -> None:

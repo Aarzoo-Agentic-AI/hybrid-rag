@@ -7,12 +7,7 @@ from collections.abc import Iterable
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from hybrid_rag.ingestion import (
-    IngestionError,
-    IngestionPipeline,
-    find_supported_files,
-    make_doc_id,
-)
+from hybrid_rag.ingestion import IngestionError, IngestionPipeline, find_supported_files
 from hybrid_rag.ingestion.text import sha256_bytes
 from hybrid_rag.privacy import SensitiveDataError
 from hybrid_rag.store import DocumentIndex, IndexResult
@@ -63,11 +58,13 @@ def ingest_file(
 ) -> IngestOutcome:
     """Load, sanitize, chunk and index one file.
 
+    An unchanged file is skipped without loading it; if only its access rules changed, they
+    are updated in place (``access_updated``), still without loading or embedding anything.
     File problems, including quarantined files, are reported in the outcome, not raised.
     """
     path = Path(path)
     if not force and (unchanged := _unchanged(path, source, index, pipeline)):
-        return IngestOutcome(path, result=unchanged)
+        return unchanged
     try:
         document = pipeline.load(path, source=source)
     except IngestionError as exc:
@@ -82,19 +79,35 @@ def _unchanged(
     source: str | None,
     index: DocumentIndex,
     pipeline: IngestionPipeline,
-) -> IndexResult | None:
-    """Skip a file that is already indexed exactly as it would be now, without loading it."""
+) -> IngestOutcome | None:
+    """Skip a file whose content is already indexed exactly as it would be now, without
+    loading it; apply its new access rules if only those changed."""
     try:
         doc_hash = sha256_bytes(path.read_bytes())
     except OSError:
         return None  # let load_document report the problem
     source = source or path.name
-    doc_id = make_doc_id(source)
+    doc_id = pipeline.doc_id(source)
     existing = index.current_version(doc_id, doc_hash, pipeline.fingerprint(source))
     if existing is None:
         return None
-    logger.info("%s unchanged, skipped", source)
-    return IndexResult(doc_id, source, "unchanged", existing.chunk_count)
+    access, warnings = pipeline.access_for(source)
+    if existing.access_hash == access.hash:
+        logger.info("%s unchanged, skipped", source)
+        result = IndexResult(
+            doc_id,
+            source,
+            "unchanged",
+            existing.chunk_count,
+            access_version=existing.access_version,
+        )
+        warnings = []  # reported when the file was indexed; don't repeat them on every run
+    else:
+        version = index.set_access(doc_id, access)
+        result = IndexResult(
+            doc_id, source, "access_updated", existing.chunk_count, access_version=version
+        )
+    return IngestOutcome(path, result=result, warnings=warnings)
 
 
 def expand_paths(paths: Iterable[str | Path]) -> list[Path]:
