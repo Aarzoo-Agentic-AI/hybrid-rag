@@ -9,11 +9,14 @@ from pathlib import Path
 
 import pytest
 
+from hybrid_rag.access import Principal
 from hybrid_rag.config import ChunkingSettings, EmbeddingSettings, get_settings
 from hybrid_rag.embedding import build_embeddings
 from hybrid_rag.indexing import ingest_paths
 from hybrid_rag.ingestion import IngestionPipeline
 from hybrid_rag.store import DocumentIndex, create_client
+
+ADMIN = Principal.tenant_admin("default")  # sees every document of the test tenant
 
 pytestmark = pytest.mark.integration
 
@@ -58,8 +61,35 @@ def test_samples_are_indexed_in_real_qdrant(embeddings) -> None:
         )
 
         assert all(o.ok for o in outcomes)
-        assert len(index.list_documents()) == len(outcomes)
-        hits = index.vector_store.similarity_search("How long is parental leave?", k=3)
+        assert len(index.list_documents(ADMIN)) == len(outcomes)
+        hits = index.search("How long is parental leave?", ADMIN, k=3)
         assert any("Parental leave" in h.page_content for h in hits)
+    finally:
+        client.delete_collection(collection)
+
+
+def test_access_rules_hold_in_real_qdrant(tmp_path: Path) -> None:
+    """The leakage matrix from test_access.py, against the Qdrant server (with its payload
+    indexes, including the is_tenant index), using the fast hashing encoder."""
+    from tests.test_access import DOCUMENTS, EXPECTED, index_world
+
+    client = create_client(get_settings())
+    collection = f"test_{uuid.uuid4().hex[:8]}"
+    try:
+        index = DocumentIndex(
+            client, collection, build_embeddings(EmbeddingSettings(provider="hashing"))
+        )
+        index_world(index, tmp_path)
+        schema = client.get_collection(collection).payload_schema
+        assert schema["metadata.tenant_id"].params.is_tenant is True
+
+        for principal, visible in EXPECTED:
+            assert {d.source for d in index.list_documents(principal)} == visible
+            for source, term in DOCUMENTS.items():
+                hits = index.search(term, principal, k=50)
+                assert {h.metadata["source"] for h in hits} <= visible, (principal, term)
+                assert all(principal.can_read(h.metadata) for h in hits)
+                if principal.tenant_id == "acme" and source in visible:
+                    assert hits[0].metadata["source"] == source
     finally:
         client.delete_collection(collection)

@@ -55,14 +55,20 @@ Each step ends with something working and tested. Features and design decisions 
 - **Tests:** Docling's output for the 5 policies is saved as test fixtures (`scripts/make_parse_fixtures.py`), so unit tests check real structure without models. An integration test confirms that live Docling still matches.
 - **Done when:** tests show sections kept whole, tables and exceptions not split, correct heading paths and page ranges, and registry metadata on every chunk. ✅
 
-## Step 3b: Authorization metadata
+## Step 3b: Authorization metadata ✅
 - The access fields from FEATURE.md section 11 on every chunk: `tenant_id`, `classification` and `classification_rank`, `visibility`, `allowed_groups`, `allowed_roles`, `allowed_users`, `access_version`, `access_hash` and `access_updated_at`, read from the policy registry. Deny by default.
 - Tenant-scoped `doc_id` (`uuid5(tenant_id + source)`). This changes existing IDs, so the collection is re-created with `scripts/ingest.py --reset`.
 - Payload indexes: `tenant_id` with `is_tenant=True`, keyword indexes on `visibility` and the allow lists, an integer index on `classification_rank`.
 - `index()` compares `access_hash` as well as `doc_hash`. `set_access(doc_id, …)` changes permissions through `set_payload`, with no re-embedding.
 - A `Principal` (tenant, user, groups, roles, clearance) and one function that builds the Qdrant security filter from it. `list_documents`, `get_document`, `delete` and `count_chunks` require a principal.
 - `scripts/ingest.py` gains `--tenant` and `--registry`.
-- **Done when:** leakage tests pass for every rule (tenant, classification ceiling, each kind of grant, deny by default), including exact-match queries and list/get; a permission change updates all chunks without embedding anything.
+- **Built:**
+  - `hybrid_rag/access.py`: `AccessPolicy` (the registry's `access:` block, closed by default and validated) and `Principal` (with `tenant_admin()` and `can_read()`, the rule in Python).
+  - `store/security.py`: `security_filter()` and `scoped()`.
+  - `DocumentIndex.search(query, principal)`: the base for the step 4 retrievers.
+  - Ingestion applies a permission-only change before loading the file (`access_updated`).
+  - The tenant is `documents.tenant_id` (`dummymocktest`). In the HR set, the merit and bonus policy is `confidential`, restricted to `hr-compensation`, `people_manager` and `hr_director`; the other four are `internal` and tenant-wide.
+- **Done when:** leakage tests pass for every rule (tenant, classification ceiling, each kind of grant, deny by default), including exact-match queries and list/get; a permission change updates all chunks without embedding anything. ✅ 12 callers × 6 documents in `tests/test_access.py`, and the same matrix against the Qdrant server in `tests/test_store_live.py`. A mutation check (removing the tenant or classification condition from the filter) makes them fail.
 
 ## Step 3c: Sensitive-data sanitization ✅
 *Built before steps 3a and 3b, because it changes what may enter the index at all.*
@@ -117,10 +123,11 @@ hybrid-rag/
 │   ├── ingestion/    # Docling/pypdf parsers, sections, chunking, policy registry
 │   ├── privacy/      # sensitive-data detection and redaction
 │   ├── embedding/    # bge-m3 dense + sparse LangChain wrapper
-│   ├── store/        # QdrantVectorStore setup and indexing
+│   ├── store/        # QdrantVectorStore setup, indexing, security filter
 │   ├── retrieval/    # hybrid retriever, reranker
 │   ├── generation/   # prompts, LCEL chain, citations
 │   ├── api/          # FastAPI routes
+│   ├── access.py     # AccessPolicy and Principal
 │   └── config.py
 ├── tests/
 │   └── fixtures/     # Docling output for the HR PDFs (scripts/make_parse_fixtures.py)

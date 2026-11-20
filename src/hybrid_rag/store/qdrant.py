@@ -1,18 +1,23 @@
-"""The Qdrant collection and ``DocumentIndex``: add, update, skip, delete and list documents.
+"""The Qdrant collection and ``DocumentIndex``: add, update, skip, delete, list and search.
 
-One collection holds every chunk as a point with:
+One collection holds every chunk of every tenant as a point with:
 - a named dense vector ``dense`` (cosine) and a named sparse vector ``sparse``,
 - the payload LangChain's ``QdrantVectorStore`` uses: ``page_content`` plus ``metadata``
-  (the chunk metadata from ingestion, and ``ingested_at``).
+  (the chunk metadata from ingestion, including the access fields, plus ``ingested_at``,
+  ``access_version`` and ``access_updated_at``).
 
 Writes go through ``QdrantVectorStore.add_documents`` so the LangChain store, which the
 retrievers use in step 4, sees exactly the same data.
+
+Every read that returns or counts chunks takes a ``Principal`` and applies the security
+filter (``security.py``). Ingestion's own bookkeeping (``index``, ``current_version``,
+``set_access``) works by tenant-scoped ``doc_id`` and is not exposed to callers.
 """
 
 from __future__ import annotations
 
 import logging
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from typing import Any, Literal
 
@@ -20,34 +25,21 @@ from langchain_core.documents import Document
 from langchain_qdrant import QdrantVectorStore, RetrievalMode
 from qdrant_client import QdrantClient, models
 
+from hybrid_rag.access import ACCESS_FIELDS, AccessDeniedError, AccessPolicy, Principal
 from hybrid_rag.embedding import EmbeddingModels
 from hybrid_rag.ingestion import IngestedDocument
+from hybrid_rag.store.schema import (
+    CONTENT_KEY,
+    DENSE_VECTOR,
+    METADATA_KEY,
+    PAYLOAD_INDEXES,
+    SPARSE_VECTOR,
+    match,
+)
+from hybrid_rag.store.security import scoped
 from hybrid_rag.tracing import traceable
 
 logger = logging.getLogger(__name__)
-
-DENSE_VECTOR = "dense"
-SPARSE_VECTOR = "sparse"
-CONTENT_KEY = "page_content"
-METADATA_KEY = "metadata"
-
-# Fields we filter on get a payload index, so filtered searches and deletes stay fast.
-PAYLOAD_INDEXES: dict[str, models.PayloadSchemaType] = {
-    f"{METADATA_KEY}.doc_id": models.PayloadSchemaType.KEYWORD,
-    f"{METADATA_KEY}.doc_hash": models.PayloadSchemaType.KEYWORD,
-    f"{METADATA_KEY}.source": models.PayloadSchemaType.KEYWORD,
-    f"{METADATA_KEY}.file_type": models.PayloadSchemaType.KEYWORD,
-    f"{METADATA_KEY}.chunk_index": models.PayloadSchemaType.INTEGER,
-    f"{METADATA_KEY}.pii_scan.status": models.PayloadSchemaType.KEYWORD,
-    # Policy and section metadata, for the relevance filters and small-to-big retrieval.
-    f"{METADATA_KEY}.policy_id": models.PayloadSchemaType.KEYWORD,
-    f"{METADATA_KEY}.policy_category": models.PayloadSchemaType.KEYWORD,
-    f"{METADATA_KEY}.jurisdiction": models.PayloadSchemaType.KEYWORD,
-    f"{METADATA_KEY}.applies_to": models.PayloadSchemaType.KEYWORD,
-    f"{METADATA_KEY}.is_current": models.PayloadSchemaType.BOOL,
-    f"{METADATA_KEY}.section_id": models.PayloadSchemaType.KEYWORD,
-    f"{METADATA_KEY}.chunk_type": models.PayloadSchemaType.KEYWORD,
-}
 
 
 class StoreError(Exception):
@@ -70,23 +62,26 @@ class DocumentInfo:
     pii_status: str = ""  # clean / redacted / not_scanned
     pii_policy: str = ""  # privacy settings the document was scanned with
     pipeline_hash: str = ""  # chunking + privacy settings the chunks were made with
+    tenant_id: str = ""
+    classification: str = ""
+    visibility: str = ""
+    allowed_groups: list[str] = field(default_factory=list)
+    allowed_roles: list[str] = field(default_factory=list)
+    allowed_users: list[str] = field(default_factory=list)
+    access_hash: str = ""
+    access_version: int = 0  # 1 when first indexed, +1 on every permission change
+    access_updated_at: str = ""
 
 
 @dataclass(frozen=True)
 class IndexResult:
     doc_id: str
     source: str
-    status: Literal["added", "updated", "unchanged"]
+    # "access_updated": same content, new permissions; written without re-embedding.
+    status: Literal["added", "updated", "unchanged", "access_updated"]
     chunks: int
     removed: int = 0  # stale chunks deleted from the previous version
-
-
-def _field(key: str) -> str:
-    return f"{METADATA_KEY}.{key}"
-
-
-def _match(key: str, value: Any) -> models.FieldCondition:
-    return models.FieldCondition(key=_field(key), match=models.MatchValue(value=value))
+    access_version: int = 0
 
 
 def ensure_collection(client: QdrantClient, name: str, dense_dim: int) -> bool:
@@ -130,6 +125,10 @@ def _validate_collection(client: QdrantClient, name: str, dense_dim: int) -> Non
         )
 
 
+def _now() -> str:
+    return datetime.now(UTC).isoformat(timespec="seconds")
+
+
 class DocumentIndex:
     """Stores ingested documents in Qdrant and keeps one version of each document."""
 
@@ -169,7 +168,14 @@ class DocumentIndex:
             "force": i["force"],
         },
         process_outputs=lambda r: (
-            {"status": r.status, "chunks": r.chunks, "removed": r.removed} if r else {}
+            {
+                "status": r.status,
+                "chunks": r.chunks,
+                "removed": r.removed,
+                "access_version": r.access_version,
+            }
+            if r
+            else {}
         ),
     )
     def index(self, document: IngestedDocument, *, force: bool = False) -> IndexResult:
@@ -178,17 +184,46 @@ class DocumentIndex:
         New chunks are written first (their IDs are deterministic, so they overwrite the old
         chunks in place), and only then are leftover chunks of the old version deleted. A
         failure part-way therefore never leaves the document missing from the index.
-        """
-        existing = self.get_document(document.doc_id)
-        if existing is not None and not force and self._is_complete(existing, document):
-            logger.info("%s unchanged, skipped", document.source)
-            return IndexResult(document.doc_id, document.source, "unchanged", existing.chunk_count)
 
-        ingested_at = datetime.now(UTC).isoformat(timespec="seconds")
+        If only the permissions changed, they are updated in place, without embedding.
+        """
+        existing = self._stored(document.doc_id)
+        access_hash = document.access.hash
+        if existing is not None and not force and self._is_complete(existing, document):
+            if existing.access_hash == access_hash:
+                logger.info("%s unchanged, skipped", document.source)
+                return IndexResult(
+                    document.doc_id,
+                    document.source,
+                    "unchanged",
+                    existing.chunk_count,
+                    access_version=existing.access_version,
+                )
+            version = self.set_access(document.doc_id, document.access)
+            return IndexResult(
+                document.doc_id,
+                document.source,
+                "access_updated",
+                existing.chunk_count,
+                access_version=version,
+            )
+
+        now = _now()
+        if existing is None:
+            version, access_updated_at = 1, now
+        elif existing.access_hash != access_hash:
+            version, access_updated_at = existing.access_version + 1, now
+        else:
+            version, access_updated_at = existing.access_version, existing.access_updated_at
         chunks = [
             Document(
                 page_content=c.page_content,
-                metadata={**c.metadata, "ingested_at": ingested_at},
+                metadata={
+                    **c.metadata,
+                    "ingested_at": now,
+                    "access_version": version,
+                    "access_updated_at": access_updated_at,
+                },
                 id=c.id,
             )
             for c in document.chunks
@@ -197,61 +232,105 @@ class DocumentIndex:
         # Leftovers are this document's chunks that aren't part of the new version: from an
         # older file, or from the same file chunked differently (new chunking/privacy rules).
         removed = self._delete_where(
-            must=[_match("doc_id", document.doc_id)],
+            must=[match("doc_id", document.doc_id)],
             must_not=[models.HasIdCondition(has_id=[c.id for c in chunks])],
         )
         status: Literal["added", "updated"] = "added" if existing is None else "updated"
         logger.info(
             "%s %s: %d chunk(s), %d stale removed", document.source, status, len(chunks), removed
         )
-        return IndexResult(document.doc_id, document.source, status, len(chunks), removed)
+        return IndexResult(
+            document.doc_id, document.source, status, len(chunks), removed, access_version=version
+        )
 
-    def delete(self, doc_id: str) -> int:
-        """Delete every chunk of a document. Returns the number of chunks deleted."""
-        return self._delete_where(must=[_match("doc_id", doc_id)])
+    @traceable(
+        name="set_access",
+        process_inputs=lambda i: {
+            "doc_id": i["doc_id"],
+            "classification": i["access"].classification,
+            "visibility": i["access"].visibility,
+            "groups": len(i["access"].allowed_groups),
+            "roles": len(i["access"].allowed_roles),
+            "users": len(i["access"].allowed_users),
+        },
+        process_outputs=lambda v: {"access_version": v},
+    )
+    def set_access(self, doc_id: str, access: AccessPolicy) -> int:
+        """Change a document's permissions on all its chunks, without re-embedding anything.
+
+        One ``set_payload`` call, filtered by ``doc_id``, overwrites the access fields and
+        bumps ``access_version``. The tenant never changes: it is part of the ``doc_id``.
+        Returns the new ``access_version``.
+        """
+        existing = self._stored(doc_id)
+        if existing is None:
+            raise StoreError(f"No document with ID {doc_id} is indexed")
+        payload = {
+            k: v
+            for k, v in access.metadata(existing.tenant_id).items()
+            if k in ACCESS_FIELDS and k != "tenant_id"
+        }
+        version = existing.access_version + 1
+        payload |= {"access_version": version, "access_updated_at": _now()}
+        self.client.set_payload(
+            self.collection,
+            payload=payload,
+            points=models.Filter(
+                must=[match("doc_id", doc_id), match("tenant_id", existing.tenant_id)]
+            ),
+            key=METADATA_KEY,  # update fields inside "metadata", keep the rest
+            wait=True,
+        )
+        logger.info("%s permissions changed (access_version %d)", existing.source, version)
+        return version
+
+    def delete(self, doc_id: str, principal: Principal) -> int:
+        """Delete every chunk of a document. Only tenant admins may delete, and only within
+        their tenant. Returns the number of chunks deleted (0 if the document isn't visible)."""
+        if not principal.admin:
+            raise AccessDeniedError("Only tenant administrators can delete documents")
+        return self._delete_where(must=[scoped(principal, match("doc_id", doc_id))])
 
     def reset(self) -> None:
-        """Delete the whole collection and create it again, empty."""
+        """Delete the whole collection (every tenant) and create it again, empty."""
         self.client.delete_collection(self.collection)
         ensure_collection(self.client, self.collection, self.embeddings.dense_dim)
 
     # ------------------------------------------------------------- reads
 
-    def current_version(
-        self, doc_id: str, doc_hash: str, pipeline_hash: str
-    ) -> DocumentInfo | None:
-        """The stored document if it is this exact file, made with these settings, and complete.
+    def search(
+        self,
+        query: str,
+        principal: Principal,
+        *,
+        k: int = 4,
+        conditions: list[models.Condition] | None = None,
+    ) -> list[Document]:
+        """Hybrid search over the chunks ``principal`` may read. ``conditions`` are relevance
+        filters; they are ANDed with the security filter, so they can only narrow it."""
+        return self.vector_store.similarity_search(
+            query, k=k, filter=scoped(principal, *(conditions or []))
+        )
 
-        Lets ingestion skip an unchanged file before loading, scanning or chunking it.
-        """
-        existing = self.get_document(doc_id)
-        if (
-            existing is not None
-            and existing.doc_hash == doc_hash
-            and existing.pipeline_hash == pipeline_hash
-            and self.count_chunks(doc_id) == existing.chunk_count
-        ):
-            return existing
-        return None
-
-    def get_document(self, doc_id: str) -> DocumentInfo | None:
+    def get_document(self, doc_id: str, principal: Principal) -> DocumentInfo | None:
+        """The document, or ``None`` if it doesn't exist or ``principal`` may not read it."""
         points, _ = self.client.scroll(
             self.collection,
-            scroll_filter=models.Filter(must=[_match("doc_id", doc_id), _match("chunk_index", 0)]),
+            scroll_filter=scoped(principal, match("doc_id", doc_id), match("chunk_index", 0)),
             limit=1,
             with_payload=True,
             with_vectors=False,
         )
         return _document_info(points[0].payload) if points else None
 
-    def list_documents(self) -> list[DocumentInfo]:
-        """One entry per document (read from each document's first chunk), sorted by source."""
+    def list_documents(self, principal: Principal) -> list[DocumentInfo]:
+        """The documents ``principal`` may read (from each one's first chunk), sorted by source."""
         documents: list[DocumentInfo] = []
         offset = None
         while True:
             points, offset = self.client.scroll(
                 self.collection,
-                scroll_filter=models.Filter(must=[_match("chunk_index", 0)]),
+                scroll_filter=scoped(principal, match("chunk_index", 0)),
                 limit=256,
                 offset=offset,
                 with_payload=True,
@@ -261,12 +340,14 @@ class DocumentIndex:
             if offset is None:
                 return sorted(documents, key=lambda d: d.source)
 
-    def count_chunks(self, doc_id: str | None = None) -> int:
-        count_filter = models.Filter(must=[_match("doc_id", doc_id)]) if doc_id else None
-        return self.client.count(self.collection, count_filter=count_filter, exact=True).count
+    def count_chunks(self, principal: Principal, doc_id: str | None = None) -> int:
+        """Chunks ``principal`` may read: of one document, or all of them."""
+        conditions = [match("doc_id", doc_id)] if doc_id else []
+        selector = scoped(principal, *conditions)
+        return self.client.count(self.collection, count_filter=selector, exact=True).count
 
     def health(self) -> dict[str, Any]:
-        """Collection status for ``/health``. Raises if Qdrant can't be reached."""
+        """Collection status for ``/health`` (operations only: no per-tenant data)."""
         info = self.client.get_collection(self.collection)
         return {
             "collection": self.collection,
@@ -274,7 +355,39 @@ class DocumentIndex:
             "points": info.points_count,
         }
 
-    # ----------------------------------------------------------- helpers
+    # ------------------------------------------------- ingestion internals
+
+    def current_version(
+        self, doc_id: str, doc_hash: str, pipeline_hash: str
+    ) -> DocumentInfo | None:
+        """The stored document if it is this exact file, made with these settings, and complete.
+
+        Lets ingestion skip an unchanged file before loading, scanning or chunking it. The
+        caller compares ``access_hash`` itself, to update permissions without re-embedding.
+        """
+        existing = self._stored(doc_id)
+        if (
+            existing is not None
+            and existing.doc_hash == doc_hash
+            and existing.pipeline_hash == pipeline_hash
+            and self._count(doc_id) == existing.chunk_count
+        ):
+            return existing
+        return None
+
+    def _stored(self, doc_id: str) -> DocumentInfo | None:
+        points, _ = self.client.scroll(
+            self.collection,
+            scroll_filter=models.Filter(must=[match("doc_id", doc_id), match("chunk_index", 0)]),
+            limit=1,
+            with_payload=True,
+            with_vectors=False,
+        )
+        return _document_info(points[0].payload) if points else None
+
+    def _count(self, doc_id: str) -> int:
+        selector = models.Filter(must=[match("doc_id", doc_id)])
+        return self.client.count(self.collection, count_filter=selector, exact=True).count
 
     @traceable(
         name="qdrant_upsert",
@@ -295,7 +408,7 @@ class DocumentIndex:
             existing.doc_hash == document.doc_hash
             and existing.pipeline_hash == document.pipeline_hash
             and existing.chunk_count == len(document.chunks)
-            and self.count_chunks(document.doc_id) == len(document.chunks)
+            and self._count(document.doc_id) == len(document.chunks)
         )
 
     def _delete_where(
@@ -314,6 +427,7 @@ class DocumentIndex:
 
 def _document_info(payload: dict[str, Any] | None) -> DocumentInfo:
     metadata = (payload or {}).get(METADATA_KEY, {})
+    pii = metadata.get("pii_scan", {})
     return DocumentInfo(
         doc_id=metadata["doc_id"],
         source=metadata["source"],
@@ -322,7 +436,16 @@ def _document_info(payload: dict[str, Any] | None) -> DocumentInfo:
         chunk_count=metadata["chunk_count"],
         doc_hash=metadata["doc_hash"],
         ingested_at=metadata.get("ingested_at", ""),
-        pii_status=metadata.get("pii_scan", {}).get("status", ""),
-        pii_policy=metadata.get("pii_scan", {}).get("policy", ""),
+        pii_status=pii.get("status", ""),
+        pii_policy=pii.get("policy", ""),
         pipeline_hash=metadata.get("pipeline_hash", ""),
+        tenant_id=metadata.get("tenant_id", ""),
+        classification=metadata.get("classification", ""),
+        visibility=metadata.get("visibility", ""),
+        allowed_groups=list(metadata.get("allowed_groups", [])),
+        allowed_roles=list(metadata.get("allowed_roles", [])),
+        allowed_users=list(metadata.get("allowed_users", [])),
+        access_hash=metadata.get("access_hash", ""),
+        access_version=metadata.get("access_version", 0),
+        access_updated_at=metadata.get("access_updated_at", ""),
     )

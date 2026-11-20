@@ -18,7 +18,7 @@ Chunk metadata (flat and JSON-friendly, stored as the Qdrant payload):
 
 | Key | Example | Notes |
 |---|---|---|
-| ``doc_id`` / ``doc_hash`` | ``"5c1f..."`` | Stable per source name / SHA-256 of the file |
+| ``doc_id`` / ``doc_hash`` | ``"5c1f..."`` | Per tenant and source name / SHA-256 of the file |
 | ``source`` / ``file_type`` | ``"Travel_Policy.pdf"`` / ``"pdf"`` | File name only, never a path |
 | ``title`` | ``"Travel Policy"`` | The policy name |
 | ``chunk_id`` / ``chunk_index`` / ``chunk_count`` | | Deterministic UUID / position |
@@ -32,6 +32,8 @@ Chunk metadata (flat and JSON-friendly, stored as the Qdrant payload):
 | ``policy_*``, ``version``, ``effective_date`` ... | | From the policy registry |
 | ``content_hash`` | ``"77c2..."`` | SHA-256 of ``page_content`` (after redaction) |
 | ``pii_scan`` / ``pipeline_hash`` | | Privacy scan result / settings fingerprint |
+| ``tenant_id``, ``classification``, ``visibility``, ``allowed_*``, ``access_hash`` | | Access
+  rules (``hybrid_rag.access``); never part of the text or the header |
 """
 
 from __future__ import annotations
@@ -62,8 +64,10 @@ _EXCEPTION_START = re.compile(
 _SENTENCE_SEPARATORS = ["\n\n", "\n", ". ", "? ", "! ", "; ", ", ", " ", ""]
 
 
-def make_doc_id(source: str) -> str:
-    return str(uuid.uuid5(ID_NAMESPACE, f"doc:{source}"))
+def make_doc_id(tenant_id: str, source: str) -> str:
+    """Tenant-scoped: two tenants can both have a ``handbook.pdf``. Chunk and section IDs
+    derive from it, so they are tenant-scoped too."""
+    return str(uuid.uuid5(ID_NAMESPACE, f"doc:{tenant_id}:{source}"))
 
 
 def make_chunk_id(doc_id: str, chunk_index: int) -> str:
@@ -338,8 +342,10 @@ def finalize_chunks(
     contextual_headers: bool,
     pii_scan: dict | None = None,
     pipeline_hash: str | None = None,
+    access: Mapping[str, Any] | None = None,
 ) -> list[Document]:
-    """Add IDs, hashes, policy and section metadata, and headers. Returns LangChain Documents."""
+    """Add IDs, hashes, policy, section and access metadata, and headers. Returns LangChain
+    Documents. Access fields are added after the header and hash, so they never affect them."""
     final: list[Document] = []
     for index, draft in enumerate(drafts):
         section = draft.section
@@ -373,5 +379,7 @@ def finalize_chunks(
             metadata["pii_scan"] = pii_scan
         if pipeline_hash is not None:
             metadata["pipeline_hash"] = pipeline_hash
+        if access is not None:
+            metadata.update(access)
         final.append(Document(page_content=body, metadata=metadata, id=metadata["chunk_id"]))
     return final

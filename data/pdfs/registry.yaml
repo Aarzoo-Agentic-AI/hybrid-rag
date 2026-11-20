@@ -5,14 +5,25 @@
 # entry re-indexes that policy on the next `scripts/ingest.py` run (no re-parsing needed).
 #
 # Fields: policy_name, policy_id, policy_category, version, effective_date, is_current,
-# jurisdiction, applies_to, owner_department, review_date, language.
-# Access-control fields (tenant, classification, groups, roles) are added in step 3b.
+# jurisdiction, applies_to, owner_department, review_date, language, and access.
+#
+# access: who may read the policy (FEATURE.md section 11). Merged key by key with the access
+# block in `defaults`; anything unset takes the most closed value (deny by default).
+#   classification: public | internal | confidential | restricted   (a ceiling: the caller's
+#                   clearance must be at least this)
+#   visibility:     tenant (everyone in the tenant) | restricted (only the grants below)
+#   allowed_groups / allowed_roles / allowed_users: grants; any one is enough
+# Changing only `access` updates the stored chunks in place on the next ingest: nothing is
+# parsed or embedded again. The tenant comes from documents.tenant_id (or --tenant).
 
 defaults:
   jurisdiction: US
   language: en
   is_current: true
   applies_to: [employees, interns]
+  access:
+    classification: internal       # for employees, not for the public
+    visibility: tenant
 
 policies:
   HR_Policy_Handbook_2027.pdf:
@@ -56,3 +67,8 @@ policies:
     applies_to: [employees]
     owner_department: Total Rewards
     review_date: 2027-10-01          # annually, before budgets are set each Q4
+    access:                          # merit matrix, bonus targets and calibration rules
+      classification: confidential
+      visibility: restricted
+      allowed_groups: [hr-compensation]
+      allowed_roles: [people_manager, hr_director]

@@ -2,9 +2,12 @@
 
 ```
 PDF ─► parse (Docling, cached) ─► registry ─► sanitize ─► sections ─► chunks ─► verify
-       blocks + pages             policy      ① redact /   heading     section-   ② re-check
-                                  metadata    quarantine   paths       aware      each chunk
+       blocks + pages             policy +    ① redact /   heading     section-   ② re-check
+                                  access      quarantine   paths       aware      each chunk
 ```
+
+A pipeline belongs to one tenant: document IDs are scoped to it, and every chunk carries its
+``tenant_id`` and the document's access rules from the registry.
 
 ``IngestionPipeline.from_settings(settings)`` builds the production pipeline (Docling, the
 Presidio sanitizer, the policy registry, the bge-m3 tokenizer). ``IngestionPipeline()``
@@ -23,6 +26,7 @@ from typing import TYPE_CHECKING
 
 from langchain_core.documents import Document
 
+from hybrid_rag.access import AccessPolicy, validate_tenant_id
 from hybrid_rag.config import ChunkingSettings, Settings
 from hybrid_rag.ingestion.blocks import Block, ParsedDocument
 from hybrid_rag.ingestion.chunking import SectionChunker, finalize_chunks, make_doc_id
@@ -54,9 +58,11 @@ class IngestionPipeline:
         sanitizer: Sanitizer | None = None,
         registry: PolicyRegistry | None = None,
         cache_dir: Path | None = None,
+        tenant_id: str = "default",
     ) -> None:
         from hybrid_rag.privacy import default_sanitizer
 
+        self.tenant_id = validate_tenant_id(tenant_id)
         self.chunking = chunking or ChunkingSettings()
         self.parser = parser or PypdfParser()
         self.sanitizer = sanitizer or default_sanitizer()
@@ -66,17 +72,26 @@ class IngestionPipeline:
         self.chunker = SectionChunker(self.chunking, self.tokens)
 
     @classmethod
-    def from_settings(cls, settings: Settings) -> IngestionPipeline:
+    def from_settings(
+        cls,
+        settings: Settings,
+        *,
+        tenant_id: str | None = None,
+        registry_path: Path | None = None,
+    ) -> IngestionPipeline:
+        """The production pipeline. ``tenant_id`` and ``registry_path`` override
+        ``documents.tenant_id`` and ``documents.registry`` (``scripts/ingest.py --tenant``)."""
         from hybrid_rag.privacy import build_sanitizer
 
         docs = settings.documents
-        if docs.registry is None:
+        registry_file = registry_path or docs.registry
+        if registry_file is None:
             registry = PolicyRegistry.empty()
-        elif docs.registry.exists():
-            registry = PolicyRegistry.load(docs.registry)
+        elif registry_file.exists():
+            registry = PolicyRegistry.load(registry_file)
         else:
             raise RegistryError(
-                f"Policy registry {docs.registry} not found. Create it, or set "
+                f"Policy registry {registry_file} not found. Create it, or set "
                 "documents.registry to null in config.yaml to use defaults for every file."
             )
         return cls(
@@ -85,11 +100,21 @@ class IngestionPipeline:
             sanitizer=build_sanitizer(settings.privacy),
             registry=registry,
             cache_dir=docs.cache_dir,
+            tenant_id=tenant_id or docs.tenant_id,
         )
+
+    def doc_id(self, source: str) -> str:
+        return make_doc_id(self.tenant_id, source)
+
+    def access_for(self, source: str) -> tuple[AccessPolicy, list[str]]:
+        """Who may read ``source``, from the registry, plus warnings. Cheap: no file access,
+        so the store can apply a permission change without loading the document."""
+        return self.registry.access(source)
 
     def fingerprint(self, source: str) -> str:
         """Everything besides the file that shapes its chunks. Stored as ``pipeline_hash``;
-        when it changes, an unchanged file is processed again."""
+        when it changes, an unchanged file is processed again. Access rules are not part of
+        it: they are compared separately (``access_hash``) and updated without re-embedding."""
         data = {
             "v": PIPELINE_VERSION,
             "parser": self.parser.name,
@@ -113,6 +138,8 @@ class IngestionPipeline:
                 "warnings": d.warnings,
                 "pii": d.pii_scan["status"],
                 "redactions": d.pii_scan["redactions"],
+                "classification": d.access.classification,
+                "visibility": d.access.visibility,
             }
             if d
             else {}  # the call raised; LangSmith records the error
@@ -131,6 +158,7 @@ class IngestionPipeline:
 
         parsed = self._parse(path, doc_hash, source=source)
         policy, registry_warnings = self.registry.lookup(source, title=parsed.title)
+        access, access_warnings = self.access_for(source)
 
         # ① Sanitize before chunking: every paragraph, list item and table row, and the name.
         blocks, title, report = self._sanitize(parsed.blocks, policy.policy_name, source)
@@ -138,7 +166,7 @@ class IngestionPipeline:
 
         sections = build_sections(blocks, self.chunking.skip_sections)
         drafts = self.chunker.chunk(sections)
-        doc_id = make_doc_id(source)
+        doc_id = self.doc_id(source)
         fingerprint = self.fingerprint(source)
         chunks = finalize_chunks(
             drafts,
@@ -151,10 +179,11 @@ class IngestionPipeline:
             contextual_headers=self.chunking.contextual_headers,
             pii_scan=report.as_metadata(),
             pipeline_hash=fingerprint,
+            access=access.metadata(self.tenant_id),
         )
         self.sanitizer.verify(chunks, source=source)  # ② re-check the finished chunks
 
-        warnings = [*parsed.warnings, *registry_warnings]
+        warnings = [*parsed.warnings, *registry_warnings, *access_warnings]
         for warning in warnings:
             logger.warning("%s: %s", source, warning)
         stats = {
@@ -177,6 +206,8 @@ class IngestionPipeline:
             stats=stats,
             pii_scan=report.as_metadata(),
             pipeline_hash=fingerprint,
+            tenant_id=self.tenant_id,
+            access=access,
         )
 
     # ------------------------------------------------------------- steps

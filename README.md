@@ -16,6 +16,12 @@ uv run python scripts/ingest.py --list
 - **First run:** it downloads Docling's layout models and `bge-m3`, and parses at about 4 s per page. Parsed PDFs are cached in `.cache/parsed/`.
 - **Details:** see the [ingestion README](src/hybrid_rag/ingestion/README.md).
 
+## Access control
+
+Every policy belongs to a tenant (`documents.tenant_id` in [config.yaml](config.yaml), `dummymocktest` for the HR PDFs). Its `access:` block in the registry sets its classification and who may read it: the whole tenant, or named groups, roles or users. Searches are filtered by the caller's permissions inside Qdrant, so a chunk the caller can't read is never retrieved. A policy without access rules is visible only to tenant admins.
+
+In the sample set, the merit and bonus policy is restricted to HR compensation, people managers and the HR director; the other four are visible to all employees. To change who can read a policy, edit its `access:` block and run `scripts/ingest.py` again. The permissions are updated in place, with nothing re-embedded. Details are in the [store README](src/hybrid_rag/store/README.md#access-control).
+
 ## Sensitive data
 
 Before a PDF is chunked, personal data is replaced with placeholders such as `<PERSON>` and `<EMAIL>`. A document containing high-risk data, such as an SSN or a card number, is quarantined and not indexed. Every chunk is checked again before it is embedded. Settings are in the `privacy:` section of [config.yaml](config.yaml), and the details are in the [privacy README](src/hybrid_rag/privacy/README.md).

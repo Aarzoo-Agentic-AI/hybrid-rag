@@ -21,6 +21,7 @@ reranker:
 
 documents:
   path: data/pdfs                    # default folder for scripts/ingest.py
+  tenant_id: dummymocktest           # the organisation these policies belong to
   registry: data/pdfs/registry.yaml  # policy metadata per file (name, category, dates, ...)
   parser: docling                    # docling (layout-aware) | pypdf (fast, text only)
   cache_dir: .cache/parsed           # parsed PDFs, keyed by file hash (Docling is slow)

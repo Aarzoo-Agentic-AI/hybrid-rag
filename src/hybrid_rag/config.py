@@ -23,13 +23,15 @@ from pathlib import Path
 from typing import Literal
 
 from dotenv import dotenv_values
-from pydantic import AliasChoices, BaseModel, Field, SecretStr, model_validator
+from pydantic import AliasChoices, BaseModel, Field, SecretStr, field_validator, model_validator
 from pydantic_settings import (
     BaseSettings,
     PydanticBaseSettingsSource,
     SettingsConfigDict,
     YamlConfigSettingsSource,
 )
+
+from hybrid_rag.access import validate_tenant_id
 
 CONFIG_ENV_VAR = "HYBRID_RAG_CONFIG"
 DOTENV_PATH = Path(".env")
@@ -67,11 +69,18 @@ class DocumentsSettings(BaseModel):
     """Where the policy PDFs are and how they are parsed."""
 
     path: Path = Path("data/pdfs")  # default folder for scripts/ingest.py
+    # The organisation these documents belong to; part of every document ID and access check.
+    tenant_id: str = "default"
     registry: Path | None = Path("data/pdfs/registry.yaml")  # policy metadata per file
     # "docling": layout-aware (headings, tables, page headers removed). "pypdf": fast text-only
     # fallback with heading heuristics, used by unit tests.
     parser: Literal["docling", "pypdf"] = "docling"
     cache_dir: Path | None = Path(".cache/parsed")  # parsed documents, keyed by file hash
+
+    @field_validator("tenant_id")
+    @classmethod
+    def _tenant(cls, value: str) -> str:
+        return validate_tenant_id(value)
 
 
 class ChunkingSettings(BaseModel):

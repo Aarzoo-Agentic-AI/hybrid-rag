@@ -6,6 +6,7 @@ import pytest
 from langchain_core.documents import Document
 from qdrant_client import QdrantClient
 
+from hybrid_rag.access import Principal
 from hybrid_rag.config import ChunkingSettings, EmbeddingSettings, PrivacySettings
 from hybrid_rag.embedding import build_embeddings
 from hybrid_rag.indexing import ingest_paths
@@ -22,6 +23,8 @@ from hybrid_rag.privacy import (
 from hybrid_rag.store import DocumentIndex
 from tests.parse_fixtures import DoclingFixtureParser
 from tests.pdf_fixture import write_pdf
+
+ADMIN = Principal.tenant_admin("default")  # sees every document of the test tenant
 
 PDFS = Path(__file__).resolve().parents[1] / "data" / "pdfs"
 CHUNKING = ChunkingSettings(
@@ -249,7 +252,7 @@ def test_quarantined_file_is_reported_and_not_indexed(tmp_path: Path) -> None:
     assert outcomes["good.pdf"].ok
     bad = outcomes["payroll_export.pdf"]
     assert bad.quarantined and not bad.ok
-    assert [d.source for d in index.list_documents()] == ["good.pdf"]
+    assert [d.source for d in index.list_documents(ADMIN)] == ["good.pdf"]
     stored = [p.payload["page_content"] for p in index.client.scroll("t", limit=100)[0]]
     assert not any("123-45-6789" in text for text in stored)
 
@@ -268,7 +271,7 @@ def test_changed_privacy_settings_reindex_unchanged_files(tmp_path: Path) -> Non
 
     assert same[0].result.status == "unchanged"
     assert changed[0].result.status == "updated"
-    (info,) = index.list_documents()
+    (info,) = index.list_documents(ADMIN)
     assert (info.pii_status, info.pii_policy) == ("clean", relaxed.policy)
 
 
