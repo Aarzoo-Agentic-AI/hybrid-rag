@@ -94,15 +94,17 @@ Each step ends with something working and tested. Features and design decisions 
 - **Results:** the leakage matrix (12 callers × 6 documents) passes in all four modes with small-to-big on; removing the security filter from `search()` fails 50 tests. On the HR PDFs no section is split, so small-to-big doesn't change results yet; it's tested on a synthetic long section.
 - **Reranker speed:** `bge-reranker-v2-m3` took about 60 s per query on the development laptop's CPU (20 candidates of about 450 tokens; 568M parameters). The default is now `ms-marco-MiniLM-L-6-v2` (about 1.5 s per query on the HR policies); `bge-reranker-v2-m3` stays one config line away for a GPU. Step 7 measures what each costs in quality. Warm timings for the other modes: dense 0.5 s, sparse and hybrid under 0.05 s.
 
-## Step 5: Answer generation (LCEL chain)
+## Step 5: Answer generation (LCEL chain) ✅
 - An LCEL chain: retriever → format numbered sources → `ChatPromptTemplate` → `FailoverChatModel` → output parser.
 - Context building: removes duplicates, keeps within a token budget, and orders the chunks.
 - A confidence threshold for "I don't know" answers.
 - Answer parsing that links citations back to the policy, section, page and effective date.
 - Privacy on the query side: personal data in questions is redacted before it reaches the LLM, traces and logs; answers get a final pattern check before they're returned.
-- HR answer rules: the more specific policy wins over the global one (and the answer says so), weak evidence gives "please contact HR", and no advice on an individual's situation.
+- HR answer rules: follow what the policies say about precedence (the Travel and Expense policies say the Handbook governs if they differ), otherwise the more specific policy wins, and the answer says so; weak evidence gives "please contact HR"; no advice on an individual's situation.
 - One LangSmith trace per question: query rewrite, retrieval, reranking, context building, prompt, `FailoverChatModel` and citation parsing, each as a nested run.
 - **Done when:** questions end to end return grounded answers with correct citations, and still do when failover to Anthropic is forced (once that key is added).
+- **Built:** `hybrid_rag/generation/` (`AnswerService` with `answer()` and `stream()`, prompts, context building, citation parsing), `Sanitizer.redact_text()` and `check_output()`, `reasoning_effort` per model in `llm:`, and `scripts/ask.py`.
+- **Results:** real `gpt-5` answers on the HR policies are grounded and correctly cited (live tests: PTO, an out-of-scope question, and the merit policy as employee and as manager). The confidence threshold (−8.5 for MiniLM) stops 7 of 9 unanswerable test questions without an LLM call and lets all 14 answerable ones through. `reasoning_effort: low` cut answer latency from about 26 s to about 7 s. Failover to Anthropic is tested with fake models only, because `ANTHROPIC_API_KEY` is empty.
 
 ## Step 6: FastAPI service
 - `POST /ingest`, `POST /query` (with `debug` and `stream` options), `GET /documents`, `DELETE /documents/{id}`, `PUT /documents/{id}/access` and `GET /health`, which reports Qdrant and circuit-breaker states.

@@ -32,12 +32,14 @@ def build_provider_model(target: ModelTarget, settings: Settings) -> BaseChatMod
             return None
         from langchain_openai import ChatOpenAI
 
+        extra = {"reasoning_effort": target.reasoning_effort} if target.reasoning_effort else {}
         return ChatOpenAI(
             model=target.model,
             api_key=settings.openai_api_key,
             timeout=timeout,
             max_retries=0,
             stream_usage=True,
+            **extra,
         )
 
     if target.provider == "anthropic":

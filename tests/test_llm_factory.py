@@ -91,3 +91,19 @@ def test_fake_provider_needs_no_key(settings_from) -> None:
     model = LLMFactory(settings).for_task("answer")
 
     assert "fake:demo" in model.invoke("hi").content
+
+
+def test_reasoning_effort_is_passed_to_openai_only_when_set(settings_from) -> None:
+    yaml_text = """
+llm:
+  answer:
+    - {provider: openai, model: gpt-test, reasoning_effort: low}
+  query_rewrite:
+    - {provider: openai, model: gpt-test}
+"""
+    factory = LLMFactory(settings_from(yaml_text, OPENAI_API_KEY="sk-1"))
+
+    (answer,) = factory.for_task("answer").slots
+    (rewrite,) = factory.for_task("query_rewrite").slots
+    assert isinstance(answer.model, ChatOpenAI) and answer.model.reasoning_effort == "low"
+    assert rewrite.model.reasoning_effort is None

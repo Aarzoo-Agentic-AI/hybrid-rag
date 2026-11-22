@@ -110,9 +110,15 @@ An entity can't be both redacted and quarantined; the settings refuse that.
 | [`detectors.py`](detectors.py) | `PatternDetector`, `PresidioDetector`, `plausible_name()`, `lowercase_vocabulary()` |
 | [`sanitizer.py`](sanitizer.py) | `Sanitizer` (both passes), `ScanReport`, `SensitiveDataError`, `build_sanitizer()`, `default_sanitizer()`, `disabled_sanitizer()` |
 
+## Questions and answers
+
+The same sanitizer protects the query side (used by `hybrid_rag.generation`):
+
+- `redact_text(text)` masks personal data in a question or a chat turn before the LLM, traces or logs see it. Unlike documents, nothing is refused: high-risk values typed into a question (an SSN, a card number) are masked too, as `<US_SSN>` and so on. It returns the counts per type, never the values.
+- `check_output(text)` is the final check on a generated answer. It uses the pattern detector only, so it's fast and needs no model, and it keeps allowlisted contacts.
+
 ## Not covered yet
 
-- **Questions and answers:** redacting personal data in user questions, and checking LLM answers, comes in step 5.
 - **LangSmith anonymizer and audit-log counts:** these come in step 6.
 - **Non-US identifiers:** national IDs from other countries (UK NI number and so on) need extra recognisers.
 - **Scanned PDFs:** these aren't supported, because there's no OCR, so their text isn't scanned either.

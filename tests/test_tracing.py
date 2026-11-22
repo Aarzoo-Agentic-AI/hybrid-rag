@@ -204,3 +204,19 @@ def test_retrieval_traces_scores_but_no_chunk_text(traced, index, tmp_path: Path
     assert SECRET_SENTENCE not in repr(runs.outputs(rerank_run))
     (expand_run,) = runs.named("expand_sections")
     assert runs.outputs(expand_run) == {"results": 1, "expanded": 0}
+
+
+def test_answer_trace_has_the_redacted_question_only(traced) -> None:
+    from tests.llm_fakes import Script
+    from tests.test_generation import EMPLOYEE, index_for_tracing, service
+
+    index = index_for_tracing()
+    svc = service(index, Script(["15 days [1]."]))
+
+    answer, runs = traced(lambda: svc.answer("I'm jane.doe@gmail.com. PTO days?", EMPLOYEE))
+
+    (run,) = runs.named("answer_question")
+    assert "<EMAIL>" in run["inputs"]["question"]
+    assert runs.outputs(run)["status"] == "answered"
+    assert "jane.doe@gmail.com" not in runs.everything_sent
+    assert answer.redactions == {"EMAIL_ADDRESS": 1}

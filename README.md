@@ -26,6 +26,16 @@ uv run python scripts/search.py "COBRA" --compare             # dense, sparse, h
 
 Hybrid search (dense + sparse `bge-m3`, fused with RRF in Qdrant) finds 20 candidates, and a cross-encoder reranker keeps the best 6. The default reranker, `ms-marco-MiniLM-L-6-v2` (90 MB), takes about 1.5 s per question on the HR policies on a laptop CPU; `bge-reranker-v2-m3` is stronger but needs a GPU to be usable (about a minute per question on a laptop CPU). Details are in the [retrieval README](src/hybrid_rag/retrieval/README.md).
 
+## Asking questions
+
+```bash
+uv run python scripts/ask.py "How many PTO days do I get after 4 years?"
+uv run python scripts/ask.py "What merit increase does a Meets rating get?" --as manager
+uv run python scripts/ask.py "And what about shorter flights?" --history "Can I fly premium economy on a 9 hour flight?"
+```
+
+Answers come only from the policies the caller may read, and every statement cites its policy, section, page and effective date. When the policies don't answer a question, the assistant says so and points to HR. Personal data in questions is masked before it reaches the LLM or the traces. Each question makes one `gpt-5` call (about 7 s); follow-ups also make a short `gpt-5-mini` call to rewrite them. Details are in the [generation README](src/hybrid_rag/generation/README.md).
+
 ## Access control
 
 Every policy belongs to a tenant (`documents.tenant_id` in [config.yaml](config.yaml), `dummymocktest` for the HR PDFs). Its `access:` block in the registry sets its classification and who may read it: the whole tenant, or named groups, roles or users. Searches are filtered by the caller's permissions inside Qdrant, so a chunk the caller can't read is never retrieved. A policy without access rules is visible only to tenant admins.
@@ -76,7 +86,7 @@ It appears as one `ingest` trace: `ingest_file` for each PDF, with `load_documen
 |---|---|---|
 | Ingestion | `ingest` → `ingest_file` → `load_document`, `index_document` → `qdrant_upsert` → `embed` | Built |
 | LLM call | `FailoverChatModel` → one run per provider attempt | Built |
-| Query | rewrite, retrieval, reranking, prompt, LLM and citations, as one trace | Steps 4–5 |
+| Answer | `answer_question`: rewrite, retrieval, reranking, sources, prompt, LLM and citations, as one trace (with the redacted question) | Built |
 
 ### Notes
 - **How the settings are loaded.** LangSmith reads its settings from environment variables. `get_settings()` in [config.py](src/hybrid_rag/config.py) copies the `LANGSMITH_*` and `LANGCHAIN_*` values from `.env` into the environment; no other values are copied. A value already set in your shell takes priority over `.env`.

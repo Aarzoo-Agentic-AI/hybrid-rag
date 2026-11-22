@@ -65,15 +65,23 @@ retrieval:
   expand_sections: true  # small-to-big: return the whole section for a hit on part of it
   max_section_tokens: 1500
 
+answer:
+  context_max_tokens: 3000   # sources in the prompt, in tokens
+  # Below this top rerank score: "not found", without calling the LLM. The scale depends on
+  # reranker.model; -8.5 is calibrated for ms-marco-MiniLM-L-6-v2. null to turn it off.
+  min_rerank_score: -8.5
+  max_history_turns: 6       # chat history used to rewrite follow-up questions
+  contact: the HR Service Center
+
 llm:
   # Ordered lists: the first entry is the primary, the rest are fallbacks.
   # Providers without an API key in .env are skipped, so Anthropic stays inactive until
   # ANTHROPIC_API_KEY is set.
   answer:
-    - {provider: openai, model: gpt-5}        # set to an OpenAI model your key can use
+    - {provider: openai, model: gpt-5, reasoning_effort: low}  # answers come from given sources
     - {provider: anthropic, model: claude-sonnet-5-5}
   query_rewrite:
-    - {provider: openai, model: gpt-5-mini}   # set to an OpenAI model your key can use
+    - {provider: openai, model: gpt-5-mini, reasoning_effort: minimal}
     - {provider: anthropic, model: claude-haiku-5-5}
   request_timeout_s: 60
   overall_deadline_s: 120

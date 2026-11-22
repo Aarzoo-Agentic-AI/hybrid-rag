@@ -124,6 +124,12 @@ def contextual_header(metadata: Mapping[str, Any]) -> str:
     return "\n".join(lines)
 
 
+def chunk_body(text: str, metadata: Mapping[str, Any]) -> str:
+    """A chunk's text without its contextual header (if it has one)."""
+    header = contextual_header(metadata) + "\n\n"
+    return text[len(header) :] if text.startswith(header) else text
+
+
 # --------------------------------------------------------------- chunking
 
 

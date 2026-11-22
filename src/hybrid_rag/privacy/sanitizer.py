@@ -171,6 +171,43 @@ class Sanitizer:
         value = value.strip().lower()
         return value in self._allow_exact or any(p.search(value) for p in self._allow_patterns)
 
+    # ------------------------------------------------------------ query side
+
+    def redact_text(self, text: str) -> tuple[str, dict[str, int]]:
+        """Mask personal and high-risk data in free text (a question, a chat turn).
+
+        Unlike documents, nothing is refused: high-risk values (an SSN typed into a question)
+        are masked too, as ``<US_SSN>`` and so on. Returns the text and counts per entity type,
+        never the values.
+        """
+        if not self.enabled or not text:
+            return text, {}
+        vocabulary = lowercase_vocabulary([text])
+        findings = [
+            f
+            for f in self._findings(text)
+            if not self._allowed(text[f.start : f.end])
+            and (f.entity != "PERSON" or plausible_name(text[f.start : f.end], vocabulary))
+        ]
+        kept = _non_overlapping(findings)
+        for f in reversed(kept):
+            text = text[: f.start] + PLACEHOLDERS.get(f.entity, f"<{f.entity}>") + text[f.end :]
+        return text, dict(sorted(Counter(f.entity for f in kept).items()))
+
+    def check_output(self, text: str) -> tuple[str, dict[str, int]]:
+        """The final check on generated text: the pattern detector only (fast, no model),
+        masking anything found that isn't allowlisted."""
+        if not self.enabled or self.verifier is None or not text:
+            return text, {}
+        kept = [
+            f
+            for f in _non_overlapping(self.verifier.detect(text))
+            if not self._allowed(text[f.start : f.end])
+        ]
+        for f in reversed(kept):
+            text = text[: f.start] + PLACEHOLDERS.get(f.entity, f"<{f.entity}>") + text[f.end :]
+        return text, dict(sorted(Counter(f.entity for f in kept).items()))
+
     # --------------------------------------------------------------- pass 2
 
     def verify(self, chunks: list[Document], *, source: str) -> None:

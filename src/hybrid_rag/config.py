@@ -200,6 +200,22 @@ class RetrievalSettings(BaseModel):
 class ModelTarget(BaseModel):
     provider: ProviderName
     model: str
+    # OpenAI reasoning models (gpt-5 family) only: how long the model thinks before answering.
+    # Lower is faster and cheaper; answering from given sources needs little reasoning.
+    reasoning_effort: Literal["minimal", "low", "medium", "high"] | None = None
+
+
+class AnswerSettings(BaseModel):
+    """Answer generation (step 5)."""
+
+    context_max_tokens: int = Field(default=3000, gt=0)  # numbered sources in the prompt
+    # Below this top rerank score, the question is answered "not found" without an LLM call.
+    # The scale belongs to reranker.model: -8.5 was calibrated for ms-marco-MiniLM-L-6-v2 on
+    # the HR policies (see the generation README). null turns the check off.
+    min_rerank_score: float | None = -8.5
+    max_history_turns: int = Field(default=6, ge=0)  # earlier messages used for query rewriting
+    # Shown when the policies don't answer a question.
+    contact: str = "the HR Service Center"
 
 
 class RetrySettings(BaseModel):
@@ -244,6 +260,7 @@ class Settings(BaseSettings):
     chunking: ChunkingSettings = Field(default_factory=ChunkingSettings)
     privacy: PrivacySettings = Field(default_factory=PrivacySettings)
     retrieval: RetrievalSettings = Field(default_factory=RetrievalSettings)
+    answer: AnswerSettings = Field(default_factory=AnswerSettings)
     llm: LLMSettings = Field(default_factory=LLMSettings)
 
     anthropic_api_key: SecretStr | None = Field(

@@ -26,16 +26,14 @@ from langchain_core.retrievers import BaseRetriever
 from pydantic import ConfigDict, Field
 
 from hybrid_rag.access import Principal
-from hybrid_rag.ingestion.chunking import contextual_header
+from hybrid_rag.ingestion.chunking import chunk_body, contextual_header
 from hybrid_rag.ingestion.tokens import TokenCounter
 from hybrid_rag.store import DocumentIndex
 from hybrid_rag.tracing import traceable
 
 
 def _body(doc: Document) -> str:
-    header = contextual_header(doc.metadata) + "\n\n"
-    text = doc.page_content
-    return text[len(header) :] if text.startswith(header) else text
+    return chunk_body(doc.page_content, doc.metadata)
 
 
 def _join(previous: str, following: str) -> str:
