@@ -306,3 +306,19 @@ def test_a_hidden_run_that_reveals_restricted_facts_is_wrong() -> None:
     hidden = next(r for r in runs if r.hidden)
     assert not hidden.correct and hidden.leaked == [("Merit.pdf", "6.2 Merit matrix")]
     assert "contains restricted facts: 2.5%" in render_answers(g, runs, {})
+
+
+def test_rescore_rechecks_saved_answers_after_a_fact_is_corrected() -> None:
+    from hybrid_rag.evaluation.runner import load_answer_runs, rescore
+
+    g = _golden_for_runs()
+    answer = Answer("q", "The cap is 300 dollars [1].", "answered",
+                    citations=[_citation("Travel.pdf", "6 Lodging")])  # fmt: skip
+    (run,) = run_answers(g.select(["trv-hotel"]), lambda question, caller: answer)
+    assert not run.correct  # the fact says "$300"
+
+    corrected = golden(q(facts=["$300|300 dollars"]))
+    saved = {"runs": [run.to_dict()]}
+    (again,) = rescore(corrected, load_answer_runs(saved))
+
+    assert again.correct and again.facts == [True] and again.cited == [("Travel.pdf", "6 Lodging")]

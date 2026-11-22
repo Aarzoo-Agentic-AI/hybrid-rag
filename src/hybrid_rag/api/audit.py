@@ -61,6 +61,7 @@ class AuditLog:
             "answer_status": answer.status,
             "grounded": answer.grounded,
             "rewritten": answer.rewritten,
+            "searches": len(answer.queries),  # a count only: queries are derived from the question
             "provider": provider.get("provider"),
             "model": provider.get("model"),
             "failed_over": provider.get("failed_over"),

@@ -55,6 +55,13 @@ class Answer:
     redactions: dict[str, int] = field(default_factory=dict)  # removed from question / history
     output_redactions: dict[str, int] = field(default_factory=dict)  # removed from the answer
     rewritten: bool = False  # the question was rewritten from chat history
+    strategy: str = "single"  # single or agentic retrieval
+    queries: list[str] = field(default_factory=list)  # every search run, in order
+    # The numbered sources exactly as the LLM saw them, for the runtime faithfulness check.
+    # Internal: never in API responses, the audit log or to_dict().
+    context: str = field(default="", repr=False, compare=False)
 
     def to_dict(self) -> dict[str, Any]:
-        return asdict(self)
+        data = asdict(self)
+        data.pop("context")
+        return data

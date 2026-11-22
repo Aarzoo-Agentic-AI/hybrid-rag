@@ -11,19 +11,32 @@ from contextlib import nullcontext
 from pathlib import Path
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends, File, Form, HTTPException, Request, Security, UploadFile
+from fastapi import (
+    APIRouter,
+    BackgroundTasks,
+    Depends,
+    File,
+    Form,
+    HTTPException,
+    Request,
+    Security,
+    UploadFile,
+)
 from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.security import APIKeyHeader
 from langsmith import tracing_context
 
 from hybrid_rag.access import AccessPolicy
 from hybrid_rag.api.auth import Caller
+from hybrid_rag.api.feedback import RecentRequest, run_id_for
 from hybrid_rag.api.jobs import FileResult, Job
 from hybrid_rag.api.logs import request_id_var, tenant_var
 from hybrid_rag.api.schemas import (
     AccessOut,
     DocumentOut,
     ErrorOut,
+    FeedbackRequest,
+    FeedbackResponse,
     JobOut,
     QueryRequest,
     QueryResponse,
@@ -119,7 +132,13 @@ def query(
     mode = body.mode or svc.settings.retrieval.mode
     request_id = request_id_var.get() or ""
     started = time.perf_counter()
-    kwargs = {"history": history, "mode": body.mode, "filters": filters}
+    kwargs = {
+        "history": history,
+        "mode": body.mode,
+        "filters": filters,
+        "strategy": body.strategy,
+        "run_id": run_id_for(request_id) if request_id else None,  # for feedback on the trace
+    }
 
     def audit(answer: Answer, status_code: int = 200) -> None:
         svc.audit.write(
@@ -127,11 +146,22 @@ def query(
                 **_audit_base(who, "/query"),
                 "status_code": status_code,
                 "mode": mode,
+                "strategy": answer.strategy,
                 "stream": body.stream,
                 "latency_ms": round((time.perf_counter() - started) * 1000),
                 **svc.audit.answer_fields(answer),
             }
         )
+        p = who.principal
+        svc.recent.remember(
+            RecentRequest(
+                request_id, p.tenant_id, p.user_id, answer.question, answer.status, time.time()
+            )
+        )
+        if svc.runtime_eval is not None:
+            svc.runtime_eval.maybe_check(
+                request_id=request_id, tenant_id=p.tenant_id, user_id=p.user_id, answer=answer
+            )
 
     if not body.stream:
         with _trace_context(svc, who, "/query", mode=mode):
@@ -156,6 +186,57 @@ def query(
 
 def _sse(event: str, data: dict[str, Any]) -> str:
     return f"event: {event}\ndata: {json.dumps(data)}\n\n"
+
+
+@router.post(
+    "/feedback",
+    response_model=FeedbackResponse,
+    responses={**_ERRORS, 409: {"model": ErrorOut, "description": "Already rated"}},
+    tags=["query"],
+)
+def feedback(
+    body: FeedbackRequest,
+    background: BackgroundTasks,
+    who: Annotated[Caller, Depends(caller)],
+    svc: Annotated[Services, Depends(services)],
+) -> FeedbackResponse:
+    """Rate an answer you received: `up` or `down`, with an optional comment.
+
+    Only the caller who asked can rate, within `api.feedback_window_hours`, once per answer.
+    The comment is masked like questions. **A thumbs-down also stores your (masked) question**,
+    so it can be added to the evaluation set.
+    """
+    p = who.principal
+    asked = svc.recent.lookup(body.request_id, p.tenant_id, p.user_id)
+    if asked is None:
+        raise HTTPException(404, "No such recent request of yours")
+    if not svc.recent.mark_rated(body.request_id):
+        raise HTTPException(409, "This answer has already been rated")
+    comment = svc.sanitizer.redact_text(body.comment)[0] if body.comment else None
+    record = {
+        "request_id": body.request_id,
+        "tenant_id": p.tenant_id,
+        "user_id": p.user_id,
+        "key": who.key_name,
+        "rating": body.rating,
+        "comment": comment,
+        "answer_status": asked.answer_status,
+    }
+    if body.rating == "down":
+        record["question"] = asked.question  # already masked; for the golden set
+    svc.feedback.write(record)
+    svc.audit.write(
+        {
+            **_audit_base(who, "/feedback"),
+            "rated_request_id": body.request_id,
+            "rating": body.rating,
+            "has_comment": comment is not None,
+        }
+    )
+    if svc.langsmith is not None:
+        score = 1 if body.rating == "up" else 0
+        background.add_task(svc.langsmith.send, body.request_id, "user_rating", score, comment)
+    return FeedbackResponse(request_id=body.request_id, rating=body.rating)
 
 
 # -------------------------------------------------------------- documents

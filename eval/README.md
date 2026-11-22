@@ -10,6 +10,8 @@ uv run python eval/evaluate.py --answers             # also answer every questio
 uv run python eval/evaluate.py --only trv-hotel-boston --only na-ceo --mode hybrid_rerank
 uv run python eval/evaluate.py --reranker BAAI/bge-reranker-v2-m3 --out eval/results/bge-v2-m3
 uv run python eval/evaluate.py --answers --no-retrieval --min-rerank-score off --out /tmp/gate-off
+uv run python eval/evaluate.py --answers --no-retrieval --strategy agentic --out eval/results/agentic
+uv run python eval/evaluate.py --rescore eval/results    # after fixing a fact: re-check saved answers, no LLM
 ```
 
 - **What it needs:** Qdrant with `data/pdfs` indexed (`scripts/ingest.py`). It reads the same `config.yaml` and `.env` as the API.

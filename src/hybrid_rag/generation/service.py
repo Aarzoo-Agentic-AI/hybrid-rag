@@ -23,6 +23,7 @@ from collections.abc import Iterator, Sequence
 from datetime import date
 from operator import itemgetter
 from typing import Any
+from uuid import UUID
 
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import AIMessage, AIMessageChunk, BaseMessage, HumanMessage
@@ -36,7 +37,8 @@ from langchain_core.runnables import (
 from langsmith.run_helpers import get_current_run_tree
 
 from hybrid_rag.access import Principal
-from hybrid_rag.config import RetrievalMode, Settings
+from hybrid_rag.config import AnswerStrategy, RetrievalMode, Settings
+from hybrid_rag.generation.agent import build_agent, run_agent
 from hybrid_rag.generation.citations import parse_citations
 from hybrid_rag.generation.context import Source, format_sources, select_sources
 from hybrid_rag.generation.prompts import ANSWER_PROMPT, NOT_FOUND, REWRITE_PROMPT
@@ -94,6 +96,7 @@ class AnswerService:
         answer_llm: BaseChatModel,
         *,
         rewrite_llm: BaseChatModel | None = None,
+        agent_llm: BaseChatModel | None = None,  # agentic retrieval's grader (llm.agent)
         sanitizer: Sanitizer | None = None,
         tokens: TokenCounter | None = None,
         cross_encoder: Any = None,  # tests pass a fake reranker
@@ -103,6 +106,7 @@ class AnswerService:
         self.index = index
         self.answer_llm = answer_llm
         self.rewrite_llm = rewrite_llm
+        self.agent_llm = agent_llm
         self.sanitizer = sanitizer or build_sanitizer(settings.privacy)
         self.tokens = tokens or get_token_counter(settings.chunking.tokenizer)
         self.cross_encoder = cross_encoder
@@ -122,6 +126,7 @@ class AnswerService:
             index,
             factory.for_task("answer"),
             rewrite_llm=factory.for_task("query_rewrite"),
+            agent_llm=factory.for_task("agent"),
         )
 
     @property
@@ -138,10 +143,24 @@ class AnswerService:
         history: History | None = None,
         mode: RetrievalMode | None = None,
         filters: RelevanceFilters | None = None,
+        run_id: UUID | None = None,
+        strategy: AnswerStrategy | None = None,
     ) -> Answer:
-        """Answer ``question`` for ``principal`` from the policies they may read."""
+        """Answer ``question`` for ``principal`` from the policies they may read.
+
+        ``run_id`` becomes the LangSmith trace's ID (when tracing is on), so feedback can be
+        attached to it later without a lookup."""
         clean, messages, redactions = self._redact(question, history)
-        return self._answer(clean, principal, messages, redactions, mode, filters)
+        return self._answer(
+            clean,
+            principal,
+            messages,
+            redactions,
+            mode,
+            filters,
+            self._strategy(strategy),
+            langsmith_extra=_extra(run_id),
+        )
 
     def stream(
         self,
@@ -151,14 +170,31 @@ class AnswerService:
         history: History | None = None,
         mode: RetrievalMode | None = None,
         filters: RelevanceFilters | None = None,
+        run_id: UUID | None = None,
+        strategy: AnswerStrategy | None = None,
     ) -> Iterator[dict[str, Any]]:
         """Yield ``{"type": "token", "text": ...}`` events while the answer is written, then
         one ``{"type": "answer", "answer": Answer}``. The final answer is authoritative: its
         text has invalid citation markers removed and has passed the output check."""
         clean, messages, redactions = self._redact(question, history)
-        yield from self._stream(clean, principal, messages, redactions, mode, filters)
+        yield from self._stream(
+            clean,
+            principal,
+            messages,
+            redactions,
+            mode,
+            filters,
+            self._strategy(strategy),
+            langsmith_extra=_extra(run_id),
+        )
 
     # ------------------------------------------------------------- steps
+
+    def _strategy(self, strategy: AnswerStrategy | None) -> AnswerStrategy:
+        strategy = strategy or self.settings.answer.strategy
+        if strategy == "agentic" and self.agent_llm is None:
+            raise ValueError("The agentic strategy needs an agent LLM (llm.agent)")
+        return strategy
 
     def _redact(
         self, question: str, history: History | None
@@ -184,9 +220,14 @@ class AnswerService:
         return clean(question.strip()), messages, total
 
     def _chain(
-        self, principal: Principal, mode: RetrievalMode | None, filters: RelevanceFilters | None
+        self,
+        principal: Principal,
+        mode: RetrievalMode | None,
+        filters: RelevanceFilters | None,
+        strategy: AnswerStrategy = "single",
     ) -> tuple[Runnable, Runnable]:
-        """Two LCEL runnables: retrieve + build the sources, then answer (or not)."""
+        """Two LCEL runnables: retrieve + build the sources, then answer (or not). With the
+        agentic strategy, retrieval is the LangGraph loop in ``generation/agent.py``."""
         retriever = build_retriever(
             self.settings,
             self.index,
@@ -196,9 +237,26 @@ class AnswerService:
             cross_encoder=self.cross_encoder,
             tokens=self.tokens,
         )
-        prepare = RunnablePassthrough.assign(
-            docs=itemgetter("question") | retriever
-        ) | RunnableLambda(self._prepare).with_config(run_name="build_context")
+        build_context = RunnableLambda(self._prepare).with_config(run_name="build_context")
+        if strategy == "agentic":
+            assert self.agent_llm is not None
+            agent = build_agent(
+                retriever.invoke,  # the caller's retriever: the agent only chooses query text
+                self.agent_llm,
+                self._render_sources,
+                max_rounds=self.settings.answer.agent_max_rounds,
+                max_queries=self.settings.answer.agent_max_queries,
+            )
+
+            def gather(x: dict[str, Any]) -> dict[str, Any]:
+                state = run_agent(agent, x["question"])
+                return {**x, "docs": state.get("docs") or [], "queries": state.get("asked") or []}
+
+            prepare = RunnableLambda(gather) | build_context
+        else:
+            prepare = (
+                RunnablePassthrough.assign(docs=itemgetter("question") | retriever) | build_context
+            )
         return prepare, RunnableBranch(
             (lambda x: x["gate"] is not None, RunnableLambda(self._without_llm)),
             RunnablePassthrough.assign(message=self.generate)
@@ -219,6 +277,12 @@ class AnswerService:
         rewritten, _ = self.sanitizer.redact_text(rewritten)  # the rewrite is new text
         return rewritten or question
 
+    def _render_sources(self, docs: list[Any]) -> str:
+        """The numbered sources as the answering LLM would see them (for the agent's grader)."""
+        return format_sources(
+            select_sources(docs, self.tokens, self.settings.answer.context_max_tokens)
+        )
+
     def _prepare(self, x: dict[str, Any]) -> dict[str, Any]:
         sources = select_sources(x["docs"], self.tokens, self.settings.answer.context_max_tokens)
         gate: AnswerStatus | None = None
@@ -236,6 +300,7 @@ class AnswerService:
             "gate": gate,
             "today": self.today.isoformat(),
             "contact": self.settings.answer.contact,
+            "queries": x.get("queries") or [x["question"]],
         }
 
     def _without_llm(self, x: dict[str, Any]) -> Answer:
@@ -281,6 +346,7 @@ class AnswerService:
             sources=_used(sources, cited={c.number for c in citations}),
             provider=provider,
             output_redactions=output_redactions,
+            context=x["sources_text"],
         )
 
     # ------------------------------------------------------- traced runs
@@ -293,6 +359,7 @@ class AnswerService:
             "tenant": i["principal"].tenant_id,
             "history_turns": len(i["history"]),
             "mode": i["mode"],
+            "strategy": i["strategy"],
         },
         process_outputs=_answer_summary,
     )
@@ -304,13 +371,15 @@ class AnswerService:
         redactions: dict[str, int],
         mode: RetrievalMode | None,
         filters: RelevanceFilters | None,
+        strategy: AnswerStrategy = "single",
     ) -> Answer:
         standalone = self._rewrite(question, history)
-        prepare, respond = self._chain(principal, mode, filters)
+        prepare, respond = self._chain(principal, mode, filters, strategy)
         x = prepare.invoke({"question": standalone})
         answer: Answer = respond.invoke(x)
         answer.redactions = redactions
         answer.rewritten = standalone != question
+        answer.strategy, answer.queries = strategy, x["queries"]
         _tag_run(answer)
         return answer
 
@@ -322,6 +391,7 @@ class AnswerService:
             "tenant": i["principal"].tenant_id,
             "history_turns": len(i["history"]),
             "mode": i["mode"],
+            "strategy": i["strategy"],
             "stream": True,
         },
         reduce_fn=lambda events: _answer_summary(events[-1]["answer"]) if events else {},
@@ -334,9 +404,10 @@ class AnswerService:
         redactions: dict[str, int],
         mode: RetrievalMode | None,
         filters: RelevanceFilters | None,
+        strategy: AnswerStrategy = "single",
     ) -> Iterator[dict[str, Any]]:
         standalone = self._rewrite(question, history)
-        prepare, _ = self._chain(principal, mode, filters)
+        prepare, _ = self._chain(principal, mode, filters, strategy)
         x = prepare.invoke({"question": standalone})
         if x["gate"] is not None:
             answer = self._without_llm(x)
@@ -363,8 +434,13 @@ class AnswerService:
             answer = self._build_answer(x, raw, metadata)
         answer.redactions = redactions
         answer.rewritten = standalone != question
+        answer.strategy, answer.queries = strategy, x["queries"]
         _tag_run(answer)
         yield {"type": "answer", "answer": answer}
+
+
+def _extra(run_id: UUID | None) -> dict[str, Any] | None:
+    return {"run_id": run_id} if run_id is not None else None
 
 
 def _tag_run(answer: Answer) -> None:

@@ -5,6 +5,7 @@ Usage:
     uv run python eval/evaluate.py --answers            # also answer every question (OpenAI calls)
     uv run python eval/evaluate.py --mode hybrid --mode hybrid_rerank --only trv-hotel-boston
     uv run python eval/evaluate.py --reranker BAAI/bge-reranker-v2-m3 --out eval/results/bge-v2-m3
+    uv run python eval/evaluate.py --rescore eval/results        # re-check saved answers, no LLM
 
 Writes retrieval.md / retrieval.json (and answers.md / answers.json) to --out. Needs Qdrant with
 data/pdfs indexed (scripts/ingest.py). Questions are asked as demo principals in
@@ -40,6 +41,7 @@ from hybrid_rag.evaluation import (
     run_retrieval,
 )
 from hybrid_rag.evaluation.report import overall_table
+from hybrid_rag.evaluation.runner import load_answer_runs, rescore
 from hybrid_rag.generation import AnswerService
 from hybrid_rag.generation.types import Answer
 from hybrid_rag.retrieval import MODES, build_retriever
@@ -70,6 +72,11 @@ def main() -> int:
     parser.add_argument("--only", action="append", metavar="ID", help="only these questions")
     parser.add_argument("--answers", action="store_true", help="also answer (calls the LLM)")
     parser.add_argument("--answer-mode", choices=MODES, help="default: retrieval.mode")
+    parser.add_argument(
+        "--strategy",
+        choices=["single", "agentic"],
+        help="with --answers (default: answer.strategy)",
+    )
     parser.add_argument("--reranker", help="reranker model (default: reranker.model)")
     parser.add_argument(
         "--no-retrieval", action="store_true", help="with --answers: skip retrieval"
@@ -78,6 +85,11 @@ def main() -> int:
         "--min-rerank-score",
         metavar="SCORE|off",
         help="override answer.min_rerank_score for --answers ('off': no confidence gate)",
+    )
+    parser.add_argument(
+        "--rescore",
+        metavar="DIR",
+        help="re-check DIR/answers.json against the golden set (after fixing a fact), no LLM",
     )
     args = parser.parse_args()
     logging.basicConfig(level=logging.WARNING, format="  [%(levelname)s] %(message)s")
@@ -89,6 +101,8 @@ def main() -> int:
     except (GoldenError, OSError) as exc:
         print(f"error: {exc}")
         return 1
+    if args.rescore:
+        return rescore_saved(golden, Path(args.rescore))
 
     settings = get_settings()
     if args.reranker:
@@ -169,11 +183,16 @@ def main() -> int:
     if args.answers:
         service = AnswerService.from_settings(settings, index)
         mode = args.answer_mode or settings.retrieval.mode
+        strategy = args.strategy or settings.answer.strategy
 
         def ask(q: GoldenQuestion, caller: str) -> Answer:
             try:
                 return service.answer(
-                    q.question, principals[caller], history=list(q.history), mode=mode
+                    q.question,
+                    principals[caller],
+                    history=list(q.history),
+                    mode=mode,
+                    strategy=strategy,  # type: ignore[arg-type]
                 )
             except Exception as exc:  # one failure shouldn't lose the whole run
                 return Answer(question=q.question, text=f"error: {exc}", status="error")  # type: ignore[arg-type]
@@ -182,6 +201,11 @@ def main() -> int:
         answers_meta = {
             **meta,
             "answer mode": f"`{mode}`",
+            "strategy": f"`{strategy}`",
+            "sources sent": (
+                f"top {settings.retrieval.top_k} chunks, "
+                f"at most {settings.answer.context_max_tokens} tokens"
+            ),
             "llm": llm_targets(settings),
             "confidence gate": f"min_rerank_score {settings.answer.min_rerank_score}",
         }
@@ -196,6 +220,25 @@ def main() -> int:
         print(f"\nAnswers: {correct}/{len(answer_runs)} correct. Wrote {out / 'answers.md'}")
 
     flush_traces()
+    return 0
+
+
+def rescore_saved(golden: GoldenSet, folder: Path) -> int:
+    path = folder / "answers.json"
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as exc:
+        print(f"error: can't read {path}: {exc}")
+        return 1
+    runs = rescore(golden, load_answer_runs(data))
+    meta = {
+        **data["meta"],
+        "golden set": f"v{golden.version}, sha256 {golden.sha256[:12]}",
+        "rescored": datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC") + " (same answers)",
+    }
+    (folder / "answers.md").write_text(render_answers(golden, runs, meta), encoding="utf-8")
+    write_json(path, {"meta": meta, "runs": [r.to_dict() for r in runs]})
+    print(f"Rescored {len(runs)} answers: {sum(r.correct for r in runs)} correct. Wrote {folder}")
     return 0
 
 

@@ -32,6 +32,7 @@ Startup loads `bge-m3`, the reranker and Presidio (about 30 s warm, several minu
 | `GET /ingest/{job_id}` | admin | A job's status and each file's result: `added`, `updated`, `unchanged`, `quarantined` or `failed` |
 | `DELETE /documents/{doc_id}` | admin | Deletes a document and its chunks, within your tenant |
 | `PUT /documents/{doc_id}/access` | admin | Replaces a document's permissions without re-embedding (body: an `AccessPolicy`) |
+| `POST /feedback` | any | Rates an answer you received (`up` or `down`, optional comment). Only the caller who asked, once, within a week. See [Runtime evaluation](#runtime-evaluation) |
 | `GET /health` | none | The status of Qdrant and of each LLM provider's circuit breaker. No tenant data. 503 if Qdrant is down |
 
 **Example:**
@@ -86,7 +87,8 @@ Every error has the same shape, with the request ID:
 |---|---|
 | 401 | Missing or unknown key |
 | 403 | An admin route without a tenant-admin key |
-| 404 | The document or job doesn't exist, **or you may not see it**. The two look the same, so nothing hidden is revealed |
+| 404 | The document or job doesn't exist, **or you may not see it**. The two look the same, so nothing hidden is revealed. Also feedback on a request that isn't yours or isn't recent |
+| 409 | Feedback on an answer you've already rated |
 | 413 / 422 | An upload over `api.max_upload_mb`, a file that isn't a PDF, an invalid body (an unknown field is an error) |
 | 503 | Qdrant or every LLM provider is unavailable |
 
@@ -137,6 +139,44 @@ The change is also saved as an **override** in `documents.access_overrides` (`.d
   - **Tags:** `route:…`, `tenant:…`, `status:…`, `provider:…`.
 - **The LangSmith anonymizer:** when tracing is on, the API sends traces through a LangSmith client with an anonymizer. It runs the privacy pattern check (emails, phone numbers, IDs) over every string before it leaves, as a last line of defence. Questions are already redacted before tracing.
 
+## Runtime evaluation
+
+Three parts, so the quality of live answers can be watched, not only tested offline.
+
+**1. User feedback: `POST /feedback`.**
+
+```bash
+curl -s localhost:8000/feedback -H "X-API-Key: $KEY" -H "Content-Type: application/json"   -d '{"request_id": "2d509d83…", "rating": "down", "comment": "It missed the Tier 2 rate"}'
+```
+
+- **Who may rate:** the caller who asked, once per answer, for `api.feedback_window_hours` (a week). The API remembers recent requests and their callers in memory (`api.recent_requests`, 10,000); after a restart, older answers can't be rated. Anything else answers 404, like a missing request.
+- **What's stored** in `logs/feedback.jsonl` (`api.feedback_log`, git-ignored): the rating, the comment masked like questions, and the answer's status. **A thumbs-down also stores the masked question**, so it can become a golden-set question. The question's text is kept nowhere else.
+- **LangSmith:** with tracing on, the rating is attached to the answer's trace as `user_rating` feedback (1 or 0). Each answer trace's ID is derived from the request ID (`run_id_for()`), so no lookup is needed.
+
+**2. The faithfulness check (`runtime_eval`, off by default).**
+
+```yaml
+runtime_eval:
+  enabled: true
+  sample_rate: 0.1     # share of answered questions checked
+```
+
+- After a sampled answer, a background thread asks the judge (`llm.judge`, `gpt-5-mini`) whether the sources the answer was written from support every claim in it. The response is never delayed.
+- The score (0 to 1) and the unsupported claims go to the audit log as a `runtime_eval` line and, with tracing on, to LangSmith as `faithfulness` feedback on the trace.
+- Cost: one `gpt-5-mini` call per checked answer. When more than `max_pending` checks are waiting, new ones are skipped rather than queued.
+- LangSmith also offers online evaluators configured in its web interface, which need no code but only see traced runs. This in-app check works with tracing off and is covered by tests.
+
+**3. The report: `scripts/runtime_report.py`.**
+
+```bash
+uv run python scripts/runtime_report.py --since 2026-11-01
+docker compose exec api python scripts/runtime_report.py       # inside the Docker stack
+```
+
+- **Per day:** questions, answer status, ungrounded answers, failovers, latency (p50 and p95), ratings, and the faithfulness scores.
+- **To look at:** the thumbs-down answers and the scores below 0.8.
+- **Golden-set candidates:** the thumbs-down questions are drafted as `eval/golden.yaml` entries, ready for their expected sections to be filled in. Live failures become offline tests.
+
 ## Files
 
 | File | Contents |
@@ -148,6 +188,8 @@ The change is also saved as an **override** in `documents.access_overrides` (`.d
 | [`auth.py`](auth.py) | `KeyStore`, `add_key()`, `hash_key()` |
 | [`audit.py`](audit.py) | `AuditLog` |
 | [`jobs.py`](jobs.py) | `IngestJobs`, the background ingestion worker |
+| [`feedback.py`](feedback.py) | `RecentRequests`, `FeedbackLog`, `run_id_for()` |
+| [`runtime_eval.py`](runtime_eval.py) | `RuntimeEvaluator`, the sampled faithfulness check |
 | [`logs.py`](logs.py) | JSON logging with the request ID and tenant |
 
 ## Tests
@@ -158,6 +200,8 @@ The change is also saved as an **override** in `documents.access_overrides` (`.d
 - **Permission changes:** applied with nothing re-embedded, and kept by a later ingest.
 - **Queries:** cited answers; the audit log, which keeps no question text or raw email; debug output without unreadable sources; streaming events; 422 on invalid queries; 503 when the LLM is down.
 - **Uploads:** background ingest; jobs hidden from other tenants; quarantine reported without values; refused files.
+
+`tests/test_runtime_eval.py` covers feedback (only the asker, once, masked, sent to LangSmith), the faithfulness check (sampling, background, failures recorded, never raised), the judge's reply parsing and the report.
 
 ## Not built
 

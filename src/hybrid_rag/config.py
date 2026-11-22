@@ -178,6 +178,7 @@ class PrivacySettings(BaseModel):
 
 
 RetrievalMode = Literal["dense", "sparse", "hybrid", "hybrid_rerank"]
+AnswerStrategy = Literal["single", "agentic"]
 
 
 class RetrievalSettings(BaseModel):
@@ -187,7 +188,7 @@ class RetrievalSettings(BaseModel):
     dense_limit: int = Field(default=50, gt=0)  # hybrid: candidates from dense search
     sparse_limit: int = Field(default=50, gt=0)  # hybrid: candidates from sparse search
     fused_limit: int = Field(default=20, gt=0)  # hybrid_rerank: candidates for the reranker
-    top_k: int = Field(default=6, gt=0)  # chunks returned (sent to the LLM)
+    top_k: int = Field(default=8, gt=0)  # chunks returned (sent to the LLM)
     # Small-to-big: a hit on one part of a split section is replaced by the whole section,
     # if the section is at most max_section_tokens long.
     expand_sections: bool = True
@@ -211,7 +212,7 @@ class ModelTarget(BaseModel):
 class AnswerSettings(BaseModel):
     """Answer generation (step 5)."""
 
-    context_max_tokens: int = Field(default=3000, gt=0)  # numbered sources in the prompt
+    context_max_tokens: int = Field(default=4000, gt=0)  # numbered sources in the prompt
     # Below this top rerank score, the question is answered "not found" without an LLM call:
     # a cost floor, not a quality filter. The scale belongs to reranker.model: -12 is for
     # ms-marco-MiniLM-L-6-v2, from the golden-set evaluation (eval/). null turns it off.
@@ -219,6 +220,11 @@ class AnswerSettings(BaseModel):
     max_history_turns: int = Field(default=6, ge=0)  # earlier messages used for query rewriting
     # Shown when the policies don't answer a question.
     contact: str = "the HR Service Center"
+    # single: one retrieval pass. agentic: a LangGraph loop that judges whether the sources
+    # are enough (llm.agent) and searches again if not (generation/agent.py).
+    strategy: AnswerStrategy = "single"
+    agent_max_rounds: int = Field(default=2, ge=0)  # extra searches after the first
+    agent_max_queries: int = Field(default=2, ge=1)  # new queries per extra search
 
 
 class ApiSettings(BaseModel):
@@ -233,6 +239,20 @@ class ApiSettings(BaseModel):
     max_files_per_upload: int = Field(default=10, gt=0)
     warmup: bool = True  # load the models at startup, not on the first question
     json_logs: bool = True  # structured logs with request_id
+    # User feedback on answers (POST /feedback): one JSON line per rating; git-ignored.
+    feedback_log: Path = Path("logs/feedback.jsonl")
+    # Feedback is accepted only from the caller who asked, for a recent request.
+    feedback_window_hours: float = Field(default=168, gt=0)
+    recent_requests: int = Field(default=10_000, gt=0)  # remembered for feedback, in memory
+
+
+class RuntimeEvalSettings(BaseModel):
+    """Runtime evaluation: a faithfulness check on a sample of live answers."""
+
+    # Off by default: each checked answer costs one llm.judge call, in a background thread.
+    enabled: bool = False
+    sample_rate: float = Field(default=0.1, ge=0, le=1)  # share of answered questions checked
+    max_pending: int = Field(default=50, gt=0)  # checks waiting; more are skipped, not queued
 
 
 class RetrySettings(BaseModel):
@@ -252,6 +272,16 @@ class LLMSettings(BaseModel):
         min_length=1,
     )
     query_rewrite: list[ModelTarget] = Field(
+        default_factory=lambda: [ModelTarget(provider="openai", model="gpt-5-mini")],
+        min_length=1,
+    )
+    # Agentic retrieval: judges whether the sources are enough and writes new queries.
+    agent: list[ModelTarget] = Field(
+        default_factory=lambda: [ModelTarget(provider="openai", model="gpt-5-mini")],
+        min_length=1,
+    )
+    # Runtime evaluation's faithfulness check: a small model is enough.
+    judge: list[ModelTarget] = Field(
         default_factory=lambda: [ModelTarget(provider="openai", model="gpt-5-mini")],
         min_length=1,
     )
@@ -279,6 +309,7 @@ class Settings(BaseSettings):
     retrieval: RetrievalSettings = Field(default_factory=RetrievalSettings)
     answer: AnswerSettings = Field(default_factory=AnswerSettings)
     api: ApiSettings = Field(default_factory=ApiSettings)
+    runtime_eval: RuntimeEvalSettings = Field(default_factory=RuntimeEvalSettings)
     llm: LLMSettings = Field(default_factory=LLMSettings)
 
     anthropic_api_key: SecretStr | None = Field(

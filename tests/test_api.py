@@ -350,3 +350,29 @@ def test_bad_uploads_are_refused(client, env, name, data, status) -> None:
     r = client.post("/ingest", files=[("files", (name, data))], headers=env.headers("admin"))
 
     assert r.status_code == status
+
+
+def test_build_services_wires_every_model_the_routes_need(tmp_path: Path, monkeypatch) -> None:
+    """build_services itself (not the test Env): an agentic request once failed live because
+    the agent LLM wasn't passed in."""
+    from pydantic import SecretStr
+
+    from hybrid_rag.api import services as services_module
+    from hybrid_rag.config import RuntimeEvalSettings
+
+    index = DocumentIndex(
+        QdrantClient(":memory:"), "wiring", build_embeddings(EmbeddingSettings(provider="hashing"))
+    )
+    monkeypatch.setattr(services_module, "build_document_index", lambda settings: index)
+    settings = Settings(
+        api=ApiSettings(keys_file=tmp_path / "keys.yaml", audit_log=tmp_path / "audit.jsonl"),
+        privacy=PrivacySettings(detector="patterns"),
+        runtime_eval=RuntimeEvalSettings(enabled=True),
+        openai_api_key=SecretStr("sk-test-not-used"),
+    )
+
+    svc = services_module.build_services(settings)
+
+    assert svc.answers.rewrite_llm is not None and svc.answers.agent_llm is not None
+    assert svc.runtime_eval is not None and svc.runtime_eval.judge_llm is not None
+    svc.runtime_eval.shutdown()

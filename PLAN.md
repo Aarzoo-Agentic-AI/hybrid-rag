@@ -138,6 +138,27 @@ Each step ends with something working and tested. Features and design decisions 
   - The quick start indexes before starting the API, so only one process holds the models in memory.
   - No license: all rights reserved.
 
+## Step 9: More chunks, runtime evaluation and agentic retrieval ✅
+Added after the plan, from the README's roadmap.
+- **More chunks:** an answer evaluation with 8 chunks (and a 4,000-token budget) against 6. 8 fixed the sabbatical miss and an employee's guessed restricted rule, broke nothing, and cost about 1.5 s per answer, so it's the default now.
+- **Runtime evaluation:**
+  - `POST /feedback`: only the asker, once, within a week. The rating and masked comment are stored; a thumbs-down also keeps the masked question. With tracing on, it's sent to the answer's trace as `user_rating`, with the trace's project ID.
+  - A sampled faithfulness check (`runtime_eval`, off by default): `gpt-5-mini` in a background thread, written to the audit log and sent as `faithfulness` feedback.
+  - `scripts/runtime_report.py`: by day, with thumbs-down questions drafted as golden-set candidates.
+- **Agentic retrieval:** a LangGraph loop (retrieve → grade → search again) as `strategy: agentic`. Generation, gating, citations and permissions are shared with the single pass, and the grader chooses only query text.
+- **Evaluation:** `--strategy` and `--rescore` (re-check saved answers after fixing a fact, without new LLM calls).
+- **Results:**
+  - The single pass with 8 chunks gets 106 of 106 checks right; agentic gets 104 of 106, with twice the searches and 7.7 s against 4.9 s per answer.
+  - Live in Docker: feedback, its link to the trace, the faithfulness check (score 1.0) and an agentic answer all worked.
+- **Decisions:**
+  - 8 chunks by default.
+  - Agentic retrieval opt-in, because it shows no gain on this golden set.
+  - Faithfulness checks in-app rather than as LangSmith online evaluators: they work with tracing off and are tested.
+  - The masked question is kept only with a thumbs-down.
+- **Found by the live check:**
+  - `build_services` didn't pass the agent LLM; a test now builds the real services.
+  - Feedback without the trace's project ID is deprecated in LangSmith, so the project ID is looked up once and sent with every piece of feedback.
+
 ## Proposed structure
 ```
 hybrid-rag/

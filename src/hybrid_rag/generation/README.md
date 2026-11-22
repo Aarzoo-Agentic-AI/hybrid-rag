@@ -49,13 +49,31 @@ question ─► redact ─► rewrite ─► retrieve ─► sources ─► conf
 | **Redact** | The privacy sanitizer masks names, emails, phone numbers and IDs in the question and the chat history (`<EMAIL>`, `<PERSON>`, …), before the LLM, LangSmith or the logs see them. Unlike documents, nothing is refused: an SSN typed into a question is masked too. `Answer.redactions` has the counts, never the values. |
 | **Rewrite** | With chat history, the `query_rewrite` model (`gpt-5-mini`) turns a follow-up ("and interns?") into a standalone question. Without history this step is skipped. |
 | **Retrieve** | `build_retriever` from step 4, with the caller's security filter and the default mode (`hybrid_rerank`). |
-| **Sources** | Duplicates are dropped and the ranking is kept, within `answer.context_max_tokens` (3,000). Each source is numbered and labelled: `[1] Travel Policy §5 Air travel (Travel_Policy.pdf, page 3); effective 2027-01-01`. |
+| **Sources** | Duplicates are dropped and the ranking is kept, within `answer.context_max_tokens` (4,000; the 8 chunks of `retrieval.top_k`). Each source is numbered and labelled: `[1] Travel Policy §5 Air travel (Travel_Policy.pdf, page 3); effective 2027-01-01`. |
 | **Confidence check** | If nothing was found, or the best rerank score is below `answer.min_rerank_score`, the answer is "please contact HR", without calling the LLM. |
 | **Generate** | `ChatPromptTemplate` → `FailoverChatModel` (`gpt-5` with `reasoning_effort: low`, falling back to Anthropic once a key is set). |
 | **Citations** | `[1]` and `[1, 3]` markers are linked to their sources. A marker naming a source that wasn't given is removed. An answer with no valid citation is flagged `grounded: false`, with a note to confirm with HR. |
 | **Output check** | The pattern detector masks any email, phone or ID in the answer that isn't allowlisted. |
 
 The middle steps are one LCEL chain: `RunnablePassthrough.assign(docs=retriever)` → `build_context` → `RunnableBranch` (no LLM call when the confidence check fails) → `generate` (`prompt | llm`) → `parse_citations`.
+
+## Agentic retrieval (`strategy: agentic`)
+
+The default strategy, `single`, searches once. With `agentic` (per request, `"strategy": "agentic"` in `POST /query`, or `answer.strategy` for all), retrieval is a LangGraph loop ([`agent.py`](agent.py)) that searches again when the sources aren't enough:
+
+```
+START → retrieve → grade ──sufficient, or out of rounds──→ END → sources → confident? → generate …
+           ↑          │
+           └── not sufficient: up to agent_max_queries new queries
+```
+
+- **grade:** `gpt-5-mini` (`llm.agent`) sees the question and the sources exactly as the answering LLM would, and replies with JSON: `{"sufficient", "missing", "queries"}`. For "When do I get a sabbatical?" it can ask for "sabbatical years of service"; for a cross-policy question, one query per policy.
+- **retrieve:** runs each new query and appends the chunks it hasn't seen, after the first search's. The first search's ranking stays first, so the confidence check and the best sources are still those of the question itself.
+- **Limits:** `answer.agent_max_rounds` (2) extra searches, `answer.agent_max_queries` (2) queries each. A query already run isn't run again. A grade that can't be read counts as sufficient: the answer step still says "not found" when the sources don't answer it.
+- **Everything after retrieval is shared** with `single`: source selection, the confidence check, the prompt, citations, the output check and streaming.
+- **Security:** the model chooses only query text. Every search goes through the same retriever, built for the caller's principal and filters; the model never sees or sets them. A test has the grader ask for a restricted document's terms on an employee's behalf, and checks that nothing from it comes back.
+- **Recorded:** `Answer.strategy` and `Answer.queries` (every search run, shown in `debug`). The audit log keeps the number of searches, not their text, which is derived from the question.
+- **Cost:** one `gpt-5-mini` grading call per round, so 1–3 per question, plus the extra searches. The [evaluation](../../../eval/README.md) compares the two strategies.
 
 ## The HR rules in the prompt
 
@@ -130,16 +148,25 @@ These are measured on the development laptop, warm, i.e. after the first questio
 
 ```yaml
 answer:
-  context_max_tokens: 3000
+  context_max_tokens: 4000
   min_rerank_score: -12      # a cost floor for the default reranker; null turns it off
   max_history_turns: 6
   contact: the HR Service Center
+  strategy: single           # or agentic
+  agent_max_rounds: 2
+  agent_max_queries: 2
 llm:
   answer:
     - {provider: openai, model: gpt-5, reasoning_effort: low}
     - {provider: anthropic, model: claude-sonnet-5-5}
   query_rewrite:
     - {provider: openai, model: gpt-5-mini, reasoning_effort: minimal}
+    - {provider: anthropic, model: claude-haiku-5-5}
+  agent:                     # agentic retrieval's grader
+    - {provider: openai, model: gpt-5-mini, reasoning_effort: low}
+    - {provider: anthropic, model: claude-haiku-5-5}
+  judge:                     # runtime evaluation's faithfulness check (see the API README)
+    - {provider: openai, model: gpt-5-mini, reasoning_effort: low}
     - {provider: anthropic, model: claude-haiku-5-5}
 ```
 
@@ -152,17 +179,19 @@ llm:
 | [`context.py`](context.py) | `Source`, `select_sources()` (dedupe, order, budget), `format_sources()` |
 | [`citations.py`](citations.py) | `parse_citations()` |
 | [`types.py`](types.py) | `Answer`, `Citation`, `UsedSource`, `AnswerStatus` |
+| [`agent.py`](agent.py) | The LangGraph retrieval loop: `build_agent()`, `run_agent()`, `parse_grade()` |
+| [`judge.py`](judge.py) | The faithfulness judge used by runtime evaluation: `judge_faithfulness()`, `parse_judgement()` |
 
 ## Tests
 
 | File | Covers |
 |---|---|
 | `tests/test_generation.py` | With scripted LLMs, so no API calls: <ul><li>citations, including invalid markers;</li><li>labelled sources with today's date, and policy text never in the system prompt;</li><li>`NOT_FOUND`, ungrounded answers, and the confidence check with no LLM call;</li><li>identical answers for "nothing matched" and "nothing readable";</li><li>failover to the second provider;</li><li>personal data never reaching the LLM, and the output check;</li><li>follow-up rewriting from redacted history;</li><li>streaming, with `NOT_FOUND` never shown;</li><li>context dedupe and budget.</li></ul> |
+| `tests/test_agent.py` | The LangGraph loop with scripted graders: one search when sufficient, new queries merged without duplicates, the round cap, repeated queries skipped, defensive parsing; the agentic strategy in the service and the API; agent queries never widening what the caller may read |
 | `tests/test_tracing.py` | The `answer_question` trace has the redacted question, and the raw email is sent nowhere |
 | `tests/test_generation_live.py` (`-m integration`) | Real `gpt-5` on the real index: <ul><li>a grounded PTO answer citing the Benefits Guide;</li><li>"capital of France" not answered;</li><li>the merit policy never cited for an employee, while a manager gets the right row of the merit matrix.</li></ul> |
 
 ## Not covered yet
 
 - **Forced failover to Anthropic** is tested with fake models only, because `ANTHROPIC_API_KEY` is empty. Once it's set, check it by temporarily putting an invalid OpenAI model first in `llm.answer`.
-- **Multi-query expansion, HyDE and query routing** (FEATURE.md section 5) aren't built. Step 7 shows whether recall needs them.
-- **Answer quality metrics** (faithfulness, relevance) come in step 7.
+- **HyDE and query routing** (FEATURE.md section 5) aren't built. The agentic strategy covers multi-query search when the first search falls short.

@@ -6,9 +6,9 @@ Built with LangChain: Docling parses the PDFs, `bge-m3` produces dense and spars
 
 **On 94 labelled HR questions** ([evaluation](#evaluation-results)):
 - The right section is ranked first for **82.6%** of questions (MRR 0.908).
-- **85 of 86** answerable questions are answered correctly, with citations.
-- **7 of 8** questions the policies don't cover are refused.
-- **No restricted chunk** reached a caller without access.
+- **86 of 86** answerable questions are answered correctly, with citations.
+- **8 of 8** questions the policies don't cover are refused.
+- **No restricted chunk** reached a caller without access, and no restricted fact appeared in their answers.
 
 - [Architecture](#architecture)
 - [Quick start](#quick-start-docker)
@@ -57,7 +57,7 @@ flowchart LR
     Auth --> Redact[Mask personal data<br/>in the question]
     Redact --> Rewrite[Rewrite follow-up<br/><i>gpt-5-mini</i>]
     Rewrite --> Search[Hybrid search in Qdrant<br/>dense + sparse, RRF<br/><b>security filter</b>]
-    Search --> Rerank[Rerank 20 → 6<br/>MiniLM cross-encoder]
+    Search --> Rerank[Rerank 20 → 8<br/>MiniLM cross-encoder]
     Rerank --> Expand[Small-to-big<br/>whole sections]
     Expand --> Gate{Best score<br/>≥ −12?}
     Gate -- no --> NF[Not found<br/>no LLM call]
@@ -154,6 +154,9 @@ curl -sN localhost:8000/query -H "X-API-Key: $KEY" -H "Content-Type: application
 
 # The documents you may read
 curl -s localhost:8000/documents -H "X-API-Key: $KEY"
+
+# Rate an answer (the request_id from its response); a thumbs-down keeps the masked question
+curl -s localhost:8000/feedback -H "X-API-Key: $KEY" -H "Content-Type: application/json"   -d '{"request_id": "2d509d83…", "rating": "down", "comment": "It missed the Tier 2 rate"}'
 ```
 
 A response:
@@ -214,10 +217,10 @@ Each part has its own README with the details.
   - Access is denied by default. A document the caller can't see answers 404, like a missing one.
 - **[Retrieval](src/hybrid_rag/retrieval/README.md):**
   - `bge-m3` dense and sparse vectors are searched together in Qdrant, fused with reciprocal rank fusion (RRF).
-  - The MiniLM cross-encoder reranks the best 20 and keeps 6.
+  - The MiniLM cross-encoder reranks the best 20 and keeps 8.
   - A hit on part of a long section is expanded to the whole section (small-to-big).
 - **[Generation](src/hybrid_rag/generation/README.md):**
-  - A LangChain LCEL chain: mask the question, rewrite a follow-up so it stands alone, retrieve, then pick sources within a 3,000-token budget, labelled with their effective dates.
+  - A LangChain LCEL chain: mask the question, rewrite a follow-up so it stands alone, retrieve, then pick sources within a 4,000-token budget, labelled with their effective dates.
   - A confidence gate skips the LLM when nothing is close.
   - `gpt-5` answers in under 120 words, with `[n]` citations, following the policies' own precedence (the Handbook governs over the Travel and Expense policies). It replies `NOT_FOUND` when the sources don't answer the question.
   - Invalid citations are removed, and the answer gets a privacy check.
@@ -228,6 +231,10 @@ Each part has its own README with the details.
   - An audit log records each question's caller, status, provider and the chunks used, with the permissions version they were read under. It keeps a hash of the question, not its text.
   - JSON logs carry the request ID.
 - **Observability:** each request's `X-Request-ID` appears in the response, the JSON logs, the audit log and the LangSmith trace. [Setting up LangSmith](docs/langsmith.md) is optional.
+- **[Runtime evaluation](src/hybrid_rag/api/README.md#runtime-evaluation):**
+  - Users rate answers with `POST /feedback`, linked to the answer's trace.
+  - When `runtime_eval` is on, a sample of answers gets a background faithfulness check by `gpt-5-mini`.
+  - `scripts/runtime_report.py` summarises both by day and drafts thumbs-down questions as golden-set candidates.
 
 ## Evaluation results
 
@@ -235,21 +242,31 @@ Each part has its own README with the details.
 
 | Mode | Recall@1 | Recall@3 | Recall@5 | Recall@10 | MRR | Median latency |
 |---|---|---|---|---|---|---|
-| `dense` | 77.3% | 94.8% | 98.8% | 98.8% | 0.878 | 0.20 s |
-| `sparse` | 50.6% | 70.3% | 77.9% | 86.0% | 0.634 | 0.21 s |
-| `hybrid` | 62.8% | 90.7% | 95.9% | 100% | 0.787 | 0.21 s |
-| **`hybrid_rerank`** (default) | **82.6%** | **95.3%** | 98.3% | 100% | **0.908** | 0.92 s |
+| `dense` | 77.3% | 94.8% | 98.8% | 98.8% | 0.878 | 0.55 s |
+| `sparse` | 50.6% | 70.3% | 77.9% | 86.0% | 0.634 | 0.45 s |
+| `hybrid` | 64.0% | 90.7% | 95.9% | 100% | 0.793 | 0.45 s |
+| **`hybrid_rerank`** (default) | **82.6%** | **95.3%** | 98.3% | 100% | **0.908** | 2.83 s |
 
-- **The reranker earns its 0.7 s.** It puts the right section first for 82.6% of questions, against 77.3% for dense search alone.
+Latencies are from a laptop CPU under memory pressure during this run; on an idle machine they were about 0.2 s, and 0.9 s with the reranker.
+
+- **The reranker earns its cost.** It puts the right section first for 82.6% of questions, against 77.3% for dense search alone.
 - **Hybrid without reranking is worse than dense.** Sparse search is weak on reworded questions (65.6% Recall@5 on the 45 paraphrased ones, against 91.5% on keyword ones), and fusing it in pulls good dense results down. With the reranker on top, hybrid is the best mode.
 - **No leaks:** the 12 questions about the restricted merit policy were also asked by an employee, in every mode. No chunk from that policy came back.
 
-**End to end** (`--answers`, `gpt-5`, `hybrid_rerank`): 85 of 86 answerable questions were answered, cited an expected section and contained every expected figure, and 7 of 8 unanswerable questions were refused. The failures:
-- **A sabbatical question:** the right section ranked 7th, just outside the 6 chunks sent to the LLM.
-- **"Vacation days in Germany":** the assistant answered with the US PTO table and a caveat, instead of saying the policies are US-only.
-- **An employee asking about a raise at the top of the salary range:** nothing restricted was retrieved, but the answer guessed "paid as a lump sum", which happens to be the restricted rule.
+**End to end** (`--answers`, `gpt-5`, `hybrid_rerank`, 8 chunks): all 86 answerable questions were answered, cited an expected section and contained every expected figure. All 8 unanswerable questions were refused, and the 12 restricted questions asked by an employee revealed nothing. Median answer time: 4.9 s.
 
-**The evaluation changed a setting.** The confidence gate (`answer.min_rerank_score`) was −8.5, calibrated by hand on 23 questions. At that value it refused 9 of the 86 answerable questions, most with the right section ranked first, and stopped no question the LLM wouldn't refuse anyway. It is now −12: a cost floor for questions nothing comes close to, with refusals left to the LLM.
+**The evaluation changed two settings:**
+- **8 chunks instead of 6** (`retrieval.top_k`, with `answer.context_max_tokens` 3,000 → 4,000). With 6, a sabbatical question failed (the right section ranked 7th) and an employee's answer guessed a restricted rule. With 8, both pass, and nothing that passed before fails. The cost is about 1.5 s per answer, for the longer prompt.
+- **The confidence gate** (`answer.min_rerank_score`) was −8.5, calibrated by hand on 23 questions. At that value it refused 9 of the 86 answerable questions, most with the right section ranked first, and stopped no question the LLM wouldn't refuse anyway. It is now −12: a cost floor for questions nothing comes close to, with refusals left to the LLM.
+
+**Agentic retrieval doesn't help on this set.** The same questions with `strategy: agentic` (LangGraph: grade the sources, search again if needed):
+
+| Strategy | Correct | Searches per question | Median answer time |
+|---|---|---|---|
+| `single` (default) | **106 / 106** | 1.0 | **4.9 s** |
+| `agentic` | 104 / 106 | 2.0 | 7.7 s |
+
+It searched again on 29 of the 106 questions, but with 8 chunks the first search already finds what these questions need. Its two misses: a US answer to "vacation days in Germany" (the single-pass run refused it this time, but answered with the US table in earlier runs: the LLM is inconsistent on it), and an employee told the performance year runs "January 1 through December 31", inferred from the Handbook's review calendar. Nothing restricted was retrieved there, but it matches the restricted definition, so the check counts it. The agentic strategy stays available per request, for harder multi-part questions than these.
 
 The full results, with per-category tables and every miss, are in [eval/results/](eval/results/). How to run the evaluation and add questions is in the [evaluation README](eval/README.md).
 
@@ -269,6 +286,8 @@ The full results, with per-category tables and every miss, are in [eval/results/
 | **The confidence gate is a cost floor (−12)** | The evaluation showed a stricter gate refused good questions; `gpt-5` refuses reliably by itself | One LLM call for questions that come close but aren't answered |
 | **API keys mapped to principals, stored as hashes** | Simple, and the principal never comes from request fields; a leaked keys file can't be used | No single sign-on yet; replacing keys with OIDC/JWT changes `auth.py` only |
 | **Uploads indexed by a background job, one at a time** | A PDF takes minutes on a CPU; requests return at once and uploads don't compete for the CPU | Job status is kept in memory and lost on restart (the indexed documents aren't) |
+| **Agentic retrieval is opt-in** (`strategy: agentic`) | The evaluation showed no gain on these questions, for twice the searches and about 3 s more per answer | It may help on harder multi-part questions; the golden set needs some to show it |
+| **Runtime faithfulness checks run in the background, on a sample** | They never delay an answer, and cost one `gpt-5-mini` call per checked answer | Off by default; a burst of traffic skips checks rather than queueing them |
 | **CPU-only Docker image, models in a volume** | 3.9 GB instead of about 7 GB with CUDA; rebuilding the image doesn't download the models again | Slower than a GPU; the first start downloads about 3 GB |
 
 ## Scaling
@@ -347,15 +366,16 @@ The design is in [FEATURE.md](FEATURE.md), and the step-by-step build plan with 
 ## Limitations and roadmap
 
 **Known limitations:**
-- **Three evaluation failures:** a section ranked just outside the context, a US answer to a question about Germany, and one guess beyond the sources (see [Evaluation results](#evaluation-results)).
-- **Answer checks are string matches**, not an LLM judge: strict and repeatable, but they can't judge reasoning or completeness.
-- **No runtime evaluation yet:** signals are recorded (status, `grounded`, scores in the audit log and traces), but there's no user feedback or online evaluator.
+- **The Germany question is unstable:** in some runs the assistant answers with the US PTO table and a caveat instead of saying the policies are US-only.
+- **Answer checks are string matches**, not an LLM judge: strict and repeatable, but they can't judge reasoning or completeness. Three correct answers failed a too-narrow pattern before it was fixed (`--rescore` re-checks saved answers without new LLM calls). The runtime faithfulness check is an LLM judge, but only on live traffic.
+- **The golden set has no headroom left** for retrieval changes (106 of 106): harder questions are needed to tell better strategies apart, which thumbs-down feedback is meant to supply.
+- **Feedback memory:** who asked what is kept in memory for a week, so answers from before a restart can't be rated.
 - **Failover to Anthropic** is tested with fake models only.
 - **The data:** all five policies are current and US-only, so filtering by jurisdiction and version is unit-tested but not evaluated. The policies are illustrative samples.
 - **Job status is kept in memory;** there's one API worker and no rate limiting.
 
 **Next steps:**
-- **Feedback:** a `POST /feedback` route linked to the request ID, sent to LangSmith, with poorly rated questions turned into new golden questions.
-- **An online evaluator** for faithfulness on a sample of live traces.
-- **Better retrieval:** sending 8 chunks instead of 6, or weighting the RRF fusion; the evaluation can measure both.
-- **Agentic retrieval with LangGraph**, letting the model decide whether to search again, and the other later phases in [FEATURE.md §14](FEATURE.md#14-advanced-later-phases).
+- **Harder golden questions:** multi-part and multi-policy questions, and the thumbs-down questions from live use, so the agentic strategy can be measured where it should help.
+- **A stricter rule for out-of-scope countries** in the prompt, then the Germany question run several times to check it holds.
+- **Weighting the RRF fusion,** since sparse search drags hybrid below dense before reranking.
+- **The other later phases** in [FEATURE.md §14](FEATURE.md#14-advanced-later-phases): Graph RAG, GPU models, a third LLM provider, OIDC.

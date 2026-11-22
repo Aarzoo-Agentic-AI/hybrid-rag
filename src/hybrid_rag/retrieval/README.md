@@ -34,7 +34,7 @@ question ─► PolicyRetriever ────────────────
             dense (50) ┐                         cross-encoder          a hit on part of a split
                        ├─ RRF in Qdrant ─► 20    reads question and     section becomes the whole
             sparse (50)┘   (security filter      chunk together,        section (security filter)
-                            on each prefetch)    keeps the best 6
+                            on each prefetch)    keeps the best 8
 ```
 
 | `retrieval.mode` | What runs | Use |
@@ -125,7 +125,7 @@ retrieval:
   dense_limit: 50
   sparse_limit: 50
   fused_limit: 20        # candidates for the reranker
-  top_k: 6
+  top_k: 8              # 8 beat 6 in the answer evaluation
   expand_sections: true
   max_section_tokens: 1500
 ```

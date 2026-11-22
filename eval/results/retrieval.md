@@ -1,8 +1,8 @@
 # Retrieval evaluation
 
-- **date:** 2026-11-22 07:06 UTC
-- **commit:** 6f2f011 (uncommitted changes)
-- **golden set:** v1, 94 questions, sha256 3fae8871f553 (fact 37, table_lookup 12, exception 10, cross_policy 7, definition 7, follow_up 5, access 8, unanswerable 8)
+- **date:** 2026-11-22 08:43 UTC
+- **commit:** e82c9a5 (uncommitted changes)
+- **golden set:** v1, 94 questions, sha256 d5371c35cc86 (fact 37, table_lookup 12, exception 10, cross_policy 7, definition 7, follow_up 5, access 8, unanswerable 8)
 - **index:** tenant `dummymocktest`, 106 distinct sections
 - **embeddings:** `BAAI/bge-m3` (dense + sparse)
 - **reranker:** `cross-encoder/ms-marco-MiniLM-L-6-v2`
@@ -15,10 +15,10 @@
 
 | Mode | Recall@1 | Recall@3 | Recall@5 | Recall@10 | MRR | Median latency |
 |---|---|---|---|---|---|---|
-| `dense` | 77.3% | 94.8% | 98.8% | 98.8% | 0.878 | 0.20 s |
-| `sparse` | 50.6% | 70.3% | 77.9% | 86.0% | 0.634 | 0.21 s |
-| `hybrid` | 62.8% | 90.7% | 95.9% | 100% | 0.787 | 0.21 s |
-| `hybrid_rerank` | 82.6% | 95.3% | 98.3% | 100% | 0.908 | 0.92 s |
+| `dense` | 77.3% | 94.8% | 98.8% | 98.8% | 0.878 | 0.55 s |
+| `sparse` | 50.6% | 70.3% | 77.9% | 86.0% | 0.634 | 0.45 s |
+| `hybrid` | 64.0% | 90.7% | 95.9% | 100% | 0.793 | 0.45 s |
+| `hybrid_rerank` | 82.6% | 95.3% | 98.3% | 100% | 0.908 | 2.83 s |
 
 ## Recall@5 by category
 

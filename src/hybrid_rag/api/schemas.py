@@ -6,7 +6,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from hybrid_rag.config import RetrievalMode
+from hybrid_rag.config import AnswerStrategy, RetrievalMode
 from hybrid_rag.generation import Answer, AnswerStatus
 
 
@@ -38,6 +38,8 @@ class QueryRequest(BaseModel):
     question: str = Field(min_length=1, max_length=2000)
     history: list[Turn] = Field(default_factory=list, max_length=20)
     mode: RetrievalMode | None = None  # default: retrieval.mode
+    # single: one search. agentic: search again if the sources aren't enough (slower).
+    strategy: AnswerStrategy | None = None  # default: answer.strategy
     filters: Filters | None = None
     debug: bool = False  # include the sources, scores, provider and rewritten question
     stream: bool = False  # server-sent events: token events, then one answer event
@@ -72,6 +74,8 @@ class DebugOut(BaseModel):
     redactions: dict[str, int]
     output_redactions: dict[str, int]
     provider: dict[str, Any] | None
+    strategy: str
+    queries: list[str]  # every search run (the agentic strategy can add some)
     sources: list[SourceOut]
 
 
@@ -100,11 +104,29 @@ class QueryResponse(BaseModel):
                 redactions=answer.redactions,
                 output_redactions=answer.output_redactions,
                 provider=answer.provider,
+                strategy=answer.strategy,
+                queries=answer.queries,
                 sources=[SourceOut(**vars(s)) for s in answer.sources],
             )
             if debug
             else None,
         )
+
+
+class FeedbackRequest(BaseModel):
+    """A rating of one answer, by the caller who asked it."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    request_id: str = Field(min_length=1, max_length=128, description="From the /query response")
+    rating: Literal["up", "down"]
+    comment: str | None = Field(default=None, max_length=1000)
+
+
+class FeedbackResponse(BaseModel):
+    request_id: str
+    rating: Literal["up", "down"]
+    recorded: bool = True
 
 
 class DocumentOut(BaseModel):

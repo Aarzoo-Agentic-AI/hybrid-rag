@@ -11,7 +11,9 @@ from typing import Any
 from hybrid_rag.access import AccessOverrides
 from hybrid_rag.api.audit import AuditLog
 from hybrid_rag.api.auth import KeyStore
+from hybrid_rag.api.feedback import FeedbackLog, LangSmithFeedback, RecentRequests
 from hybrid_rag.api.jobs import IngestJobs
+from hybrid_rag.api.runtime_eval import RuntimeEvaluator
 from hybrid_rag.config import Settings
 from hybrid_rag.generation import AnswerService
 from hybrid_rag.ingestion import IngestionPipeline, PolicyRegistry
@@ -39,6 +41,10 @@ class Services:
     parser: Parser
     llm_factory: LLMFactory | None = None
     trace_client: Any = None  # a LangSmith Client with the anonymizer, when tracing is on
+    recent: RecentRequests = field(default_factory=RecentRequests)  # who asked what, for feedback
+    feedback: FeedbackLog = field(default_factory=lambda: FeedbackLog(None))
+    runtime_eval: RuntimeEvaluator | None = None  # None: runtime_eval.enabled is off
+    langsmith: LangSmithFeedback | None = None  # sends feedback to traces, when tracing is on
     _pipelines: dict[str, IngestionPipeline] = field(default_factory=dict)
     _lock: threading.Lock = field(default_factory=threading.Lock)
 
@@ -84,6 +90,7 @@ def build_services(settings: Settings) -> Services:
         index,
         factory.for_task("answer"),
         rewrite_llm=factory.for_task("query_rewrite"),
+        agent_llm=factory.for_task("agent"),  # for "strategy": "agentic"
         sanitizer=sanitizer,
     )
     keys = KeyStore.load(settings.api.keys_file)
@@ -96,16 +103,38 @@ def build_services(settings: Settings) -> Services:
     trace_client = None
     if tracing_is_enabled():
         trace_client = anonymizing_client(lambda text: sanitizer.check_output(text)[0])
+    audit = AuditLog(settings.api.audit_log, include_questions=settings.api.audit_questions)
+    langsmith = LangSmithFeedback(trace_client) if trace_client is not None else None
+    runtime_eval = None
+    if settings.runtime_eval.enabled:
+        runtime_eval = RuntimeEvaluator(
+            factory.for_task("judge"),
+            audit,
+            sample_rate=settings.runtime_eval.sample_rate,
+            max_pending=settings.runtime_eval.max_pending,
+            trace_client=trace_client,
+            langsmith=langsmith,
+            mask=lambda text: sanitizer.check_output(text)[0],
+        )
+        logger.info(
+            "Runtime evaluation on: %.0f%% of answers", 100 * settings.runtime_eval.sample_rate
+        )
     return Services(
         settings=settings,
         index=index,
         answers=answers,
         keys=keys,
-        audit=AuditLog(settings.api.audit_log, include_questions=settings.api.audit_questions),
+        audit=audit,
         jobs=IngestJobs(UPLOAD_DIR),
         overrides=AccessOverrides(settings.documents.access_overrides),
         sanitizer=sanitizer,
         parser=DoclingParser() if settings.documents.parser == "docling" else PypdfParser(),
         llm_factory=factory,
         trace_client=trace_client,
+        recent=RecentRequests(
+            settings.api.recent_requests, window_s=settings.api.feedback_window_hours * 3600
+        ),
+        feedback=FeedbackLog(settings.api.feedback_log),
+        runtime_eval=runtime_eval,
+        langsmith=langsmith,
     )

@@ -30,6 +30,7 @@ _CODES = {
     401: "unauthorized",
     403: "forbidden",
     404: "not_found",
+    409: "conflict",
     413: "too_large",
     422: "invalid_request",
     503: "unavailable",
@@ -78,6 +79,8 @@ def create_app(
         logger.info("API ready")
         yield
         app.state.services.jobs.shutdown()
+        if app.state.services.runtime_eval is not None:
+            app.state.services.runtime_eval.shutdown()
         flush_traces()
 
     app = FastAPI(

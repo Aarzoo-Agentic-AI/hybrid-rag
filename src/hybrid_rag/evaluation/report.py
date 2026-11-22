@@ -6,7 +6,7 @@ from collections.abc import Sequence
 from typing import Any
 
 from hybrid_rag.evaluation.golden import CATEGORIES, STYLES, GoldenSet
-from hybrid_rag.evaluation.metrics import best_threshold, gate_rows, mean
+from hybrid_rag.evaluation.metrics import best_threshold, gate_rows, mean, median
 from hybrid_rag.evaluation.runner import KS, AnswerRun, LeakRun, RetrievalRun, group, summarize
 
 
@@ -197,6 +197,11 @@ def render_answers(golden: GoldenSet, runs: Sequence[AnswerRun], meta: dict[str,
                     f"{sum(r.correct for r in hidden)}/{len(hidden)}",
                 ],
                 ["Failed over to another provider", str(sum(r.failed_over for r in runs))],
+                ["Searches per question (mean)", _num(mean(r.searches for r in runs), 2)],
+                [
+                    "Latency per question (median)",
+                    f"{median(r.latency_s for r in runs) or 0:.1f} s",
+                ],
             ],
         ),
         "",

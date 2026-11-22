@@ -152,6 +152,7 @@ class AnswerRun:
     provider: str | None
     model: str | None
     failed_over: bool
+    searches: int = 1  # retrieval queries run (the agentic strategy can add some)
     correct: bool = field(default=False)
 
     def to_dict(self) -> dict[str, Any]:
@@ -179,14 +180,7 @@ def _score(q: GoldenQuestion, caller: str, hidden: bool, a: Answer, latency: flo
     found = facts_found(a.text, q.facts) if a.status == "answered" else [False] * len(q.facts)
     leaked = [lab for lab in cited if lab[0] in q.expected_sources] if hidden else []
     provider = a.provider or {}
-    if hidden:
-        # The caller may not read the sources: any refusal is right, and so is an answer that
-        # neither cites them nor contains their facts.
-        correct = not leaked and not any(found)
-    elif not q.answerable:
-        correct = a.status in REFUSALS
-    else:
-        correct = a.status == "answered" and hit and all(found)
+    correct = _correct(q, hidden, a.status, hit, found, leaked)
     return AnswerRun(
         id=q.id,
         category=q.category,
@@ -204,5 +198,50 @@ def _score(q: GoldenQuestion, caller: str, hidden: bool, a: Answer, latency: flo
         provider=provider.get("provider"),
         model=provider.get("model"),
         failed_over=bool(provider.get("failed_over")),
+        searches=max(1, len(a.queries)),
         correct=correct,
     )
+
+
+def _correct(
+    q: GoldenQuestion, hidden: bool, status: str, hit: bool, found: list[bool], leaked: list[Label]
+) -> bool:
+    if hidden:
+        # The caller may not read the sources: any refusal is right, and so is an answer that
+        # neither cites them nor contains their facts.
+        return not leaked and not any(found)
+    if not q.answerable:
+        return status in REFUSALS
+    return status == "answered" and hit and all(found)
+
+
+def rescore(golden: GoldenSet, runs: Iterable[AnswerRun]) -> list[AnswerRun]:
+    """Check saved answers again against ``golden`` (after correcting a fact or an expected
+    section), without asking the LLM again. Answers to questions no longer in the set are
+    dropped."""
+    by_id = {q.id: q for q in golden.questions}
+    out = []
+    for r in runs:
+        q = by_id.get(r.id)
+        if q is None:
+            continue
+        found = facts_found(r.text, q.facts) if r.status == "answered" else [False] * len(q.facts)
+        hit = any(req.met_by(lab) for req in q.expected for lab in r.cited)
+        leaked = [lab for lab in r.cited if lab[0] in q.expected_sources] if r.hidden else []
+        r.facts, r.citation_hit, r.leaked = found, hit, leaked
+        r.correct = _correct(q, r.hidden, r.status, hit, found, leaked)
+        out.append(r)
+    return out
+
+
+def load_answer_runs(data: dict[str, Any]) -> list[AnswerRun]:
+    """``answers.json`` back into runs (labels are stored as lists)."""
+    runs = []
+    for item in data["runs"]:
+        item = {
+            **item,
+            "cited": [tuple(x) for x in item["cited"]],
+            "leaked": [tuple(x) for x in item["leaked"]],
+        }
+        runs.append(AnswerRun(**item))
+    return runs

@@ -62,12 +62,12 @@ retrieval:
   dense_limit: 50        # candidates from dense search
   sparse_limit: 50       # candidates from sparse search
   fused_limit: 20        # candidates kept after RRF, passed to the reranker
-  top_k: 6               # chunks sent to the LLM
+  top_k: 8               # chunks sent to the LLM (8 beat 6 in the evaluation: eval/README.md)
   expand_sections: true  # small-to-big: return the whole section for a hit on part of it
   max_section_tokens: 1500
 
 answer:
-  context_max_tokens: 3000   # sources in the prompt, in tokens
+  context_max_tokens: 4000   # sources in the prompt, in tokens (room for 8 chunks)
   # Below this top rerank score: "not found", without calling the LLM. A cost floor for
   # questions nothing comes close to, not a quality filter (the LLM refuses the rest). The
   # scale depends on reranker.model; -12 is for ms-marco-MiniLM-L-6-v2 (eval/results/).
@@ -75,6 +75,11 @@ answer:
   min_rerank_score: -12
   max_history_turns: 6       # chat history used to rewrite follow-up questions
   contact: the HR Service Center
+  # single: one retrieval pass. agentic: LangGraph judges whether the sources are enough
+  # (llm.agent) and searches again if not. Per request: "strategy" in POST /query.
+  strategy: single
+  agent_max_rounds: 2          # extra searches after the first
+  agent_max_queries: 2         # new queries per extra search
 
 api:
   keys_file: secrets/api_keys.yaml   # created by scripts/make_api_key.py; git-ignored
@@ -84,6 +89,17 @@ api:
   max_files_per_upload: 10
   warmup: true                   # load the models at startup
   json_logs: true
+  feedback_log: logs/feedback.jsonl  # POST /feedback ratings
+  feedback_window_hours: 168     # feedback accepted for a week, from the caller who asked
+  recent_requests: 10000         # requests remembered (in memory) for feedback
+
+runtime_eval:
+  # A faithfulness check (llm.judge) on a sample of answered questions, in a background
+  # thread: never delays the answer. Results go to the audit log and, with tracing on, to
+  # LangSmith as `faithfulness` feedback. scripts/runtime_report.py summarises them.
+  enabled: false
+  sample_rate: 0.1
+  max_pending: 50
 
 llm:
   # Ordered lists: the first entry is the primary, the rest are fallbacks.
@@ -94,6 +110,12 @@ llm:
     - {provider: anthropic, model: claude-sonnet-5-5}
   query_rewrite:
     - {provider: openai, model: gpt-5-mini, reasoning_effort: minimal}
+    - {provider: anthropic, model: claude-haiku-5-5}
+  agent:                         # agentic retrieval (answer.strategy: agentic)
+    - {provider: openai, model: gpt-5-mini, reasoning_effort: low}
+    - {provider: anthropic, model: claude-haiku-5-5}
+  judge:                         # runtime evaluation (runtime_eval)
+    - {provider: openai, model: gpt-5-mini, reasoning_effort: low}
     - {provider: anthropic, model: claude-haiku-5-5}
   request_timeout_s: 60
   overall_deadline_s: 120

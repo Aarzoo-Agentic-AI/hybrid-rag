@@ -449,7 +449,7 @@ questions:
     hidden_from: [employee]
     expected: [["merit::4 Performance Rating Scale > Special cases",
                 "merit::7 Annual Performance Bonus Plan > 7.6 Proration and special situations"]]
-    facts: ["never lowers|does not lower|cannot lower|can't lower|won't lower"]
+    facts: ["not lower|never lower|never allowed to lower|cannot reduce|can't reduce|not reduce"]
 
   - id: merit-promoted-in-august
     question: "Someone on my team was promoted in August. Do they also get a merit increase this cycle?"

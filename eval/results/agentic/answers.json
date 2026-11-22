@@ -1,0 +1,3142 @@
+{
+  "meta": {
+    "date": "2026-11-22 09:00 UTC",
+    "commit": "e82c9a5 (uncommitted changes)",
+    "golden set": "v1, sha256 7ce3a1d7985a",
+    "index": "tenant `dummymocktest`, 106 distinct sections",
+    "embeddings": "`BAAI/bge-m3` (dense + sparse)",
+    "reranker": "`cross-encoder/ms-marco-MiniLM-L-6-v2`",
+    "machine": "Intel64 Family 6 Model 154 Stepping 4, GenuineIntel, Python 3.12.3",
+    "answer mode": "`hybrid_rerank`",
+    "strategy": "`agentic`",
+    "sources sent": "top 8 chunks, at most 4000 tokens",
+    "llm": "`openai/gpt-5`, then `anthropic/claude-sonnet-5-5`",
+    "confidence gate": "min_rerank_score -12.0",
+    "rescored": "2026-11-22 09:17 UTC (same answers)"
+  },
+  "runs": [
+    {
+      "id": "hb-hybrid-days",
+      "category": "fact",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "At least 3 days per week (“anchor days”) in the office. [1]\n\nThis rule is effective starting 2027-01-01. [1]",
+      "rewritten_question": "How many days a week do hybrid employees have to be in the office?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "8 Remote and Hybrid Work"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 27.968638999998802,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "hb-work-abroad",
+      "category": "fact",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "Only with prior approvals: working from another country, even temporarily, requires advance HR approval, and a remote work arrangement must be approved by your VP and HR. Without these approvals, you may not work from Spain. [9, 3]\n\nKey conditions and notes:\n- Remote work requires VP and HR approval; country-to-country work needs advance HR approval for tax/legal reasons. [9, 3]\n- You must work from a safe, private space with secure internet; use the company VPN on public Wi‑Fi. [9]\n- These rules apply starting 2027-01-01. [9, 3]\nFor your specific situation and timing, contact the HR Service Center. [9, 3]",
+      "rewritten_question": "Can I work from Spain for a month while I visit family?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "8 Remote and Hybrid Work"
+        ],
+        [
+          "Travel_Policy.pdf",
+          "4 Approval and booking"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 16.828708600020036,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 5,
+      "correct": true
+    },
+    {
+      "id": "hb-i9",
+      "category": "fact",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "Within 3 business days of starting work; this applies to hires on or after January 1, 2027 [1].",
+      "rewritten_question": "When must new hires complete Form I-9?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "6 Recruitment, Hiring and Onboarding"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 6.010316200001398,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "hb-internal-posting",
+      "category": "fact",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "At least 5 business days [1]. \n\nNote: This rule applies starting 2027-01-01 [1].",
+      "rewritten_question": "How long are open roles posted internally?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "6 Recruitment, Hiring and Onboarding"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 5.230037000001175,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "hb-internal-apply",
+      "category": "fact",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "Employees may apply for internal roles after 12 months in their current job, if they are in good standing; this policy applies starting January 1, 2027 [1]. \n\n- Open roles are posted internally for at least 5 business days [1]. \n- For questions about your specific situation, contact the HR Service Center [1].",
+      "rewritten_question": "How long do I need to be in my current job before I can go for another role inside the company?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "6 Recruitment, Hiring and Onboarding"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 6.141278099996271,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "hb-phishing-report",
+      "category": "fact",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "Within 1 hour—report suspected phishing to the Security team. [2, 3]\n\nNotes:\n- The 1-hour requirement also applies to lost devices and other security incidents. [2, 3]\n- This rule is effective from 2027-01-01. [2, 3]",
+      "rewritten_question": "I clicked a suspicious link in an email. How quickly do I have to tell someone?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "16 Information Security and Acceptable Use"
+        ],
+        [
+          "Travel_Policy.pdf",
+          "12 Health, safety and security"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 7.308547499997076,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "hb-harassment-escalate",
+      "category": "fact",
+      "caller": "manager",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "If you’re a manager, you must escalate the report to HR within one business day (effective 2027-01-01) [1]. \n\nIf you’re not a manager, you can report directly to HR, any manager, or the 24/7 anonymous ethics hotline; the policy doesn’t set a specific deadline for non-managers [1, 12].",
+      "rewritten_question": "A colleague told me they're being harassed. How fast do I have to pass it on to HR?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "3 Anti-Harassment and Anti-Discrimination > Reporting and investigation"
+        ],
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "21 Speaking Up: Complaints and Whistleblowing"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 13.295626200007973,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 3,
+      "correct": true
+    },
+    {
+      "id": "hb-pto-request",
+      "category": "fact",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "At least 2 weeks in advance, and submit the request through the HR system [1].\n\nNotes:\n- This rule applies starting 2027-01-01 [1].\n- The sources provided don’t state the advance-notice requirement before that date; contact the HR Service Center for current guidance.",
+      "rewritten_question": "How far ahead should I ask for planned vacation?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "13 Leave and Time Off"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 6.2043168999953195,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "hb-fmla",
+      "category": "fact",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "Up to 12 weeks of job-protected FMLA leave per year, or up to 26 weeks if the leave is for military caregiver purposes. Effective for leaves starting 2027-01-01. [1]\n\n- Leave is job-protected, with reinstatement as required by law. [1]\n- State paid family and medical leave programs are coordinated with company paid leave. [1]\n- The Benefits Guide also notes FMLA/state leave is job-protected and coordinated with paid leave. [2]",
+      "rewritten_question": "How many weeks of FMLA leave can I take?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "13 Leave and Time Off"
+        ],
+        [
+          "Employee_Benefits_Guide_2027.pdf",
+          "7 Time Off and Leave"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 6.480878500005929,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "hb-injury-report",
+      "category": "fact",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "Report work-related injuries within 24 hours, effective from 2027-01-01 [2, 1].\n\n- Workers’ compensation covers work-related injuries and illnesses; report them within 24 hours [2].\n- Near misses and hazards should be reported right away [2].",
+      "rewritten_question": "How soon must a work injury be reported?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "14 Health, Safety and Security"
+        ],
+        [
+          "Travel_Policy.pdf",
+          "12 Health, safety and security"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 6.468117899989011,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "hb-ai-customer-data",
+      "category": "fact",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "Only if the chatbot is an approved AI tool; never paste customer data into any unapproved chatbot. Use only approved software/storage and protect confidential and personal data at all times [1, 4, 7]. These rules apply from 2027-01-01 [1, 4, 7].\n\n- Use only AI tools on the approved-tools register [1].\n- Never enter confidential, customer, personal or regulated data into unapproved AI tools [1].\n- Store company data only in approved storage and use only approved software [7]; protect confidential and personal data [4].\n- You are accountable for AI-assisted content; review for accuracy, bias, security, and IP [1].\n- Disclose AI assistance where it matters (e.g., customer-facing emails) [1].\n- Report any AI-related data exposure or harmful output via the security incident process [1].",
+      "rewritten_question": "Can I paste customer data into a chatbot to help me draft an email?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "17 Responsible Use of AI Tools"
+        ],
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "18 Data Privacy and Confidentiality"
+        ],
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "16 Information Security and Acceptable Use"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 9.353496700001415,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "hb-no-call-no-show",
+      "category": "fact",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "Starting 2027-01-01, three consecutive days of absence without notice may be treated as a voluntary resignation [1].\n\n- You’re expected to notify your manager before your start time for any absence or lateness [1].\n- Absences protected by law (e.g., sick leave, FMLA or similar) are never counted against attendance [1].",
+      "rewritten_question": "What happens if I'm absent for three days without notifying anyone?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "7 Working Hours, Attendance and Timekeeping"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 5.803654499992263,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "hb-pay-frequency",
+      "category": "fact",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "From 2027-01-01, pay is biweekly (26 pay periods) via direct deposit [1].",
+      "rewritten_question": "How often do we get paid?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "9 Compensation and Payroll"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 5.722443800012115,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "hb-pay-discuss",
+      "category": "fact",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "Yes. You may discuss your own wages and working conditions with coworkers, and retaliation for doing so is prohibited [2]. This policy applies starting 2027-01-01 [2].",
+      "rewritten_question": "Am I allowed to talk about my salary with coworkers?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "9 Compensation and Payroll"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 7.600038999982644,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "ben-401k-match",
+      "category": "fact",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "The company matches 100% of the first 4% you contribute, plus 50% of the next 2% (maximum 5% of pay), effective 2027-01-01 [1].\n\nKey conditions:\n- Company match vests 100% after 2 years of service [1].\n- You’re eligible immediately from your first paycheck; auto-enrolled at 6% pre-tax unless you opt out, which can affect receiving the match [1].",
+      "rewritten_question": "What is the company 401(k) match?",
+      "facts": [
+        true,
+        true
+      ],
+      "cited": [
+        [
+          "Employee_Benefits_Guide_2027.pdf",
+          "6 Retirement Savings: 401(k)"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 7.680162000004202,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "ben-401k-vesting",
+      "category": "fact",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "From 2027-01-01, the company match in your 401(k) becomes fully yours after 2 years of service; your own contributions are always 100% vested [3]. “Vesting” means when company contributions become fully yours [1].",
+      "rewritten_question": "When does the money the company adds to my retirement account become mine?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Employee_Benefits_Guide_2027.pdf",
+          "6 Retirement Savings: 401(k)"
+        ],
+        [
+          "Employee_Benefits_Guide_2027.pdf",
+          "12 Required Notices and Glossary > Glossary"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 5.631086799985496,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "ben-parental-leave",
+      "category": "fact",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "New parents receive 16 weeks of parental leave at 100% pay for birth, adoption, or foster placement (all parents), effective for leaves starting on or after 2027-01-01 [1]. \n\nConditions and related provisions:\n- Birthing parents get an additional 6–8 weeks of recovery time through Short-Term Disability, which pays 60% of base pay (up to $2,500/week) for up to 26 weeks after a 7‑day waiting period [1, 3].\n- FMLA/state leave is job‑protected and is coordinated with company paid leave; specific entitlements depend on applicable law [1].",
+      "rewritten_question": "How much paid leave do new parents get?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Employee_Benefits_Guide_2027.pdf",
+          "7 Time Off and Leave"
+        ],
+        [
+          "Employee_Benefits_Guide_2027.pdf",
+          "5 Life and Disability Insurance"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 8.642200899979798,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "ben-dependent-age",
+      "category": "fact",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "Your children can stay on your health insurance until age 26, regardless of student or marital status; disabled children who meet the plan’s criteria can remain covered at any age [1]. \n\n- When a child loses eligibility (e.g., turns 26), they may elect COBRA to continue medical, dental, vision and Health Care FSA coverage for up to 18 months (36 months in some cases); they must pay the full premium plus a 2% administrative fee, and a COBRA notice is mailed to your home [2]. \n- These rules apply starting 2027-01-01 [1].",
+      "rewritten_question": "Until what age can my kids stay on my health insurance?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Employee_Benefits_Guide_2027.pdf",
+          "1 Eligibility and Enrollment > Who is eligible"
+        ],
+        [
+          "Employee_Benefits_Guide_2027.pdf",
+          "10 Life Events, COBRA and Changes > COBRA continuation"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 7.357441900006961,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "ben-new-hire-enroll",
+      "category": "fact",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "You have 31 days from your start date to enroll in benefits as a new hire [1]. Coverage begins the first day of the month after your hire date (or on your hire date if you start on the 1st) [2].\n\nIf you miss the 31-day window:\n- You must wait for annual open enrollment in November for coverage effective January 1, unless you experience a qualifying life event (QLE) [1].\n- Outside open enrollment, changes are allowed only after a QLE, must be consistent with the event, and must be reported within 31 days (60 days for birth/adoption or gaining/losing Medicaid/CHIP) [4, 1].",
+      "rewritten_question": "I just started. How long do I have to sign up for benefits?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Employee_Benefits_Guide_2027.pdf",
+          "1 Eligibility and Enrollment > When you can enroll"
+        ],
+        [
+          "Employee_Benefits_Guide_2027.pdf",
+          "1 Eligibility and Enrollment > Who is eligible"
+        ],
+        [
+          "Employee_Benefits_Guide_2027.pdf",
+          "10 Life Events, COBRA and Changes"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 7.753406100004213,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "ben-cobra",
+      "category": "fact",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "Up to 18 months, or 36 months in some cases, if your coverage ends due to termination, reduced hours, or a dependent losing eligibility (effective Jan 1, 2027) [1]. \n\n- You pay the full premium plus a 2% administrative fee [1].  \n- Coverage usually ends on the last day of the month of separation; a COBRA notice is mailed to your home [2].  \n- For help, contact the HR Benefits Service Center or the COBRA Administrator [5].",
+      "rewritten_question": "How long can I keep COBRA coverage?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Employee_Benefits_Guide_2027.pdf",
+          "10 Life Events, COBRA and Changes > COBRA continuation"
+        ],
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "23 Separation from Employment"
+        ],
+        [
+          "Employee_Benefits_Guide_2027.pdf",
+          "11 Contacts and Resources"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 8.810970399994403,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "ben-eap-sessions",
+      "category": "fact",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "Eight free counseling sessions per issue. [1]\n\nConditions:\n- Available to you and your household through the EAP; services are free and confidential, 24/7. [1]\n- Applies starting 2027-01-01. [1]",
+      "rewritten_question": "How many free counseling sessions does the EAP offer?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Employee_Benefits_Guide_2027.pdf",
+          "8 Wellbeing and Support Programs"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 5.716688700020313,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "ben-tuition",
+      "category": "fact",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "Yes. Beginning 2027-01-01, the company provides tuition assistance up to $5,250 per year, tax-free, for approved degree (including master’s) and certification programs [1].\n\nKey conditions and notes:\n- The program must be approved to qualify for assistance [1].\n- Handled through the Benefits program, not via expense reports or the Expense Policy [8].\n- This benefit applies from 2027-01-01; policies don’t describe the application/approval process—contact the HR Service Center for steps [1].",
+      "rewritten_question": "Will the company help pay for my master's degree?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Employee_Benefits_Guide_2027.pdf",
+          "9 Additional and Voluntary Benefits > Company-paid"
+        ],
+        [
+          "Expense_Policy.pdf",
+          "4 Eligible expense categories"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 15.592096299980767,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 5,
+      "correct": true
+    },
+    {
+      "id": "ben-ivf",
+      "category": "fact",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "Yes. Beginning January 1, 2027, the fertility and family‑building benefit includes up to a $20,000 lifetime benefit that can be used for IVF (as well as egg freezing, adoption, and surrogacy) [1]. \n\n- Effective date: applies starting 2027-01-01 [1]. \n- Limit: lifetime maximum of $20,000 for these services [1]. \n\nFor questions about how this applies to your situation or timing, please contact the HR Service Center.",
+      "rewritten_question": "Is IVF covered?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Employee_Benefits_Guide_2027.pdf",
+          "2 Medical Plans > Medical plan features"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 6.195304499997292,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "ben-hsa-family",
+      "category": "fact",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "$1,500, if you’re enrolled in the HDHP with HSA and have family coverage [1, 5].\n\nKey conditions:\n- Only HDHP enrollees are eligible for the HSA and company contribution [5].\n- Subject to IRS HSA rules and annual IRS contribution limits (company funds count toward the limit) [1, 5].\n- Effective for plan year starting 2027-01-01 [1, 5].\n- HSA funds carry over 100% and are yours to keep if you leave [5].",
+      "rewritten_question": "How much does the company put into my HSA if I have family coverage?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Employee_Benefits_Guide_2027.pdf",
+          "2 Medical Plans"
+        ],
+        [
+          "Employee_Benefits_Guide_2027.pdf",
+          "4 Health Savings and Flexible Spending Accounts"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 8.116884099988965,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "ben-short-term-disability",
+      "category": "fact",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "Starting 2027-01-01: You have up to 10 sick days per year; for longer illnesses, Short‑Term Disability (STD) pays 60% of base pay (70% if you purchased the buy‑up), up to $2,500/week, for up to 26 weeks after a 7‑day waiting period. If disability continues past 180 days, Long‑Term Disability (LTD) pays 60% of monthly earnings (70% if you purchased the buy‑up), up to $15,000/month. [1, 4]\n\nKey conditions and limits:\n- Sick time may be higher where state/local law requires. [1]\n- STD: 7‑day waiting period; max $2,500/week; up to 26 weeks. [4]\n- LTD: begins after 180 days; max $15,000/month. [4]\n- FMLA provides job protection but not pay. [5]",
+      "rewritten_question": "If I'm off sick for several weeks, how much of my pay is covered?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Employee_Benefits_Guide_2027.pdf",
+          "7 Time Off and Leave"
+        ],
+        [
+          "Employee_Benefits_Guide_2027.pdf",
+          "5 Life and Disability Insurance"
+        ],
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "13 Leave and Time Off"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 19.55283729999792,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 3,
+      "correct": true
+    },
+    {
+      "id": "ben-internet-stipend",
+      "category": "fact",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "Yes—approved remote and hybrid roles receive a $50 per month stipend for home internet/phone. This applies starting 2027-01-01. [1, 4]\n\nKey details:\n- Eligibility: for approved remote and hybrid roles (per Benefits Guide Section 9 referenced in the Expense Policy). [4]\n- How it’s paid: handled as a benefit stipend, not through expense reports. [4]\n- Related benefit: a separate one-time $500 home-office setup allowance with receipts. [1]\nIf you’re unsure about your role’s status, contact the HR Service Center. [4]",
+      "rewritten_question": "Do I get money for my home internet?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Employee_Benefits_Guide_2027.pdf",
+          "9 Additional and Voluntary Benefits > Company-paid"
+        ],
+        [
+          "Expense_Policy.pdf",
+          "4 Eligible expense categories"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 8.816333700000541,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "ben-sabbatical",
+      "category": "fact",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "You’re eligible for a paid sabbatical of 4 weeks after every 7 years of service. This policy applies starting January 1, 2027. [7]\n\nThe policy does not detail scheduling, approvals, or other conditions. For your specific situation, contact the HR Service Center. [7]",
+      "rewritten_question": "When do I get a sabbatical?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Employee_Benefits_Guide_2027.pdf",
+          "7 Time Off and Leave"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 7.087169900012668,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "trv-book-ahead",
+      "category": "fact",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "At least 14 days in advance, where possible; if booked later, a reason must be stated (applies from 2027-01-01) [1].",
+      "rewritten_question": "How far in advance should business travel be booked?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Travel_Policy.pdf",
+          "4 Approval and booking"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 4.768816999974661,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "trv-rental-car",
+      "category": "fact",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "Compact or mid-size only. [1]\n\nConditions:\n- Use a rental car only when it’s cheaper or more practical than taxi or rideshare. [1]\n- This policy applies starting 2027-01-01. [1]",
+      "rewritten_question": "What size rental car can I get?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Travel_Policy.pdf",
+          "7 Ground transportation"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 4.4708876000077,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "trv-loyalty-points",
+      "category": "fact",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "You keep them—the loyalty points earned on business travel belong to the traveller [1]. Effective from 2027-01-01 [1].\n\nNotes:\n- You may use personal loyalty points to upgrade; paid upgrades are not reimbursed [1].",
+      "rewritten_question": "Who keeps the airline miles I earn on business trips?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Travel_Policy.pdf",
+          "5 Air travel"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 4.858639399986714,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "trv-unsafe-destination",
+      "category": "fact",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "Yes. You may decline travel you reasonably believe is unsafe without penalty; check government travel advisories before international trips. Employee safety takes priority over cost. [1, 2]\n\nEffective date: These rules apply starting 2027-01-01. [1, 2]\nNotes:\n- Check government advisories before international trips. [1]\n- Safety takes precedence over cost decisions. [2]\n- For any current situation before 2027, the sources don’t state the rule; contact the HR Service Center for guidance on your case. [1, 2]",
+      "rewritten_question": "Can I refuse a trip to a country I think is dangerous?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Travel_Policy.pdf",
+          "12 Health, safety and security"
+        ],
+        [
+          "Travel_Policy.pdf",
+          "2 Principles"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 8.876616800000193,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "exp-submit-deadline",
+      "category": "fact",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "Submit expense claims within 30 days of the expense; later claims may be declined. [1, 3]\nThis requirement takes effect on 2027-01-01. [1, 3]",
+      "rewritten_question": "What's the deadline for submitting expense claims?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Expense_Policy.pdf",
+          "7 Submission, corporate card and reimbursement"
+        ],
+        [
+          "Travel_Policy.pdf",
+          "9 Corporate card and expense submission"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 5.40789100000984,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "exp-receipt-threshold",
+      "category": "fact",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "No. From 2027-01-01, receipts are required only for expenses over $25, so a $15 taxi ride does not need a receipt to be reimbursed [2, 6].\n\nConditions and notes:\n- You must still record the business purpose in your expense entry and submit within 30 days [2, 6].\n- Keep expense records for at least 7 years; the policy does not require a receipt for items of $25 or less [2].",
+      "rewritten_question": "Do I need to keep the receipt for a $15 taxi ride?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Expense_Policy.pdf",
+          "6 Documentation"
+        ],
+        [
+          "Travel_Policy.pdf",
+          "9 Corporate card and expense submission"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 10.514071899990086,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "exp-office-supplies",
+      "category": "fact",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "$100 per item, for low-cost items needed for immediate work use [1].\n\nConditions and exceptions:\n- Applies starting 2027-01-01 [1].\n- Large purchases or recurring vendor services must go through Procurement, not expense claims [2].",
+      "rewritten_question": "What's the limit for office supplies on expenses?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Expense_Policy.pdf",
+          "4 Eligible expense categories"
+        ],
+        [
+          "Expense_Policy.pdf",
+          "5 Approval limits"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 4.994092000008095,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "exp-vendor-tickets",
+      "category": "fact",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "You may accept the tickets only if the total value of all gifts/entertainment from that supplier this year is $100 or less; otherwise, you must decline. These rules apply starting 2027-01-01. [1, 2]\n\n- Cash or cash equivalents are never allowed. [1, 2]\n- Disclose the gift in the compliance portal annually and when circumstances change. [1, 2]\n- Never accept anything that could be a bribe or improper payment. [2]\n- If any government officials are involved, no gifts/hospitality without prior Legal approval. [1, 2]",
+      "rewritten_question": "A supplier wants to give me concert tickets. Can I accept them?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "12 Conflicts of Interest and Gifts"
+        ],
+        [
+          "Expense_Policy.pdf",
+          "9 Gifts and entertainment"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 8.611684900010005,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "exp-wine-dinner",
+      "category": "fact",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "No. Alcohol is not reimbursable on work trips, so a glass of wine with dinner cannot be expensed [4, 2, 3].\n\nException: Alcohol may be served only at approved company events; outside of those events it remains non-reimbursable [4, 7, 3].  \nEffective date: These rules apply from 2027-01-01 [4, 2, 3, 7].",
+      "rewritten_question": "Can I expense a glass of wine with dinner on a work trip?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Travel_Policy.pdf",
+          "8 Meals"
+        ],
+        [
+          "Travel_Policy.pdf",
+          "11 Non-reimbursable expenses"
+        ],
+        [
+          "Expense_Policy.pdf",
+          "8 Non-reimbursable expenses"
+        ],
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "15 Drug- and Alcohol-Free Workplace"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 7.194073299993761,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "exp-partner-travel",
+      "category": "fact",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "No. Spouse, partner or family travel costs are non‑reimbursable and cannot be charged to the company, effective 2027-01-01 [1].\n\n- Personal trip extension costs are also not reimbursable [1].\n- Any expense without required receipts won’t be reimbursed [1].\nIf you have a unique situation, contact the HR Service Center for guidance on your case.",
+      "rewritten_question": "Can my partner come along on a work trip at company cost?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Travel_Policy.pdf",
+          "11 Non-reimbursable expenses"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 6.032884799991734,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "ben-pto-4-years",
+      "category": "table_lookup",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "20 PTO days per year (the 3–5 years of service tier). This schedule applies starting January 1, 2027. [1]\n\nNotes:\n- Up to 5 unused PTO days may roll over to the next year. [1]\n- Planned PTO should be requested at least 2 weeks in advance through the HR system. [2]",
+      "rewritten_question": "How many PTO days do I get after 4 years?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Employee_Benefits_Guide_2027.pdf",
+          "7 Time Off and Leave"
+        ],
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "13 Leave and Time Off"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 5.960511400015093,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "trv-hotel-boston",
+      "category": "table_lookup",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "$300 per night including taxes, using preferred hotels in the travel tool (Boston is Tier 1). This applies from 2027-01-01. [1]\n\nConditions and notes:\n- Stay within city rate caps and book preferred hotels via the travel tool. [1]\n- Stays over 5 nights should be reviewed for serviced apartments. [1]\n- Minibar, entertainment, spa, and personal laundry are not reimbursable. [1]",
+      "rewritten_question": "What's the hotel limit for a trip to Boston?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Travel_Policy.pdf",
+          "6 Lodging"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 4.907565000001341,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "trv-hotel-denver",
+      "category": "table_lookup",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "$220 per night (including taxes) for Denver (Tier 2). This applies starting 2027-01-01. [1]\n\n- Use preferred hotels in the travel tool and stay within the city rate caps. [2]\n- Caps in the table are illustrative; Finance publishes final caps each year. [1]\n- Stays over 5 nights should be reviewed for serviced apartments. [1]",
+      "rewritten_question": "What's the nightly lodging cap in Denver?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Travel_Policy.pdf",
+          "6 Lodging"
+        ],
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "20 Travel and Expenses"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 4.977682600001572,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "trv-long-flight-cabin",
+      "category": "table_lookup",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "No. From 2027-01-01, flights over 6 hours should be booked in premium economy; business class is not permitted unless you have written approval under section 14 [1]. \n\n- Manager pre-approval is required for all travel, and VP approval is required for international travel [3].  \n- You may use personal loyalty points to upgrade; paid upgrades aren’t reimbursed, and loyalty points earned are yours [1].",
+      "rewritten_question": "I'm flying 8 hours to London for a client meeting. Can I book business class?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Travel_Policy.pdf",
+          "5 Air travel"
+        ],
+        [
+          "Travel_Policy.pdf",
+          "4 Approval and booking"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 9.729311900009634,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "exp-approve-3000",
+      "category": "table_lookup",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "A $3,000 expense must be approved by a Finance director (amounts $2,500.01–$10,000). This rule applies from 2027-01-01. [2]\n\n- Large purchases or recurring vendor services must go through Procurement instead of expense claims. [2]",
+      "rewritten_question": "Who has to approve a $3,000 expense?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Expense_Policy.pdf",
+          "5 Approval limits"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 8.917683200008469,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "exp-approve-200",
+      "category": "table_lookup",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "Your direct manager approves a $200 expense claim [2]. This approval rule applies from 2027-01-01 [2].\n\nConditions and exceptions:\n- The approving manager cannot approve their own claim [8].\n- Large purchases and recurring vendor services must go through Procurement, not expense claims, regardless of amount [2].",
+      "rewritten_question": "Who signs off on a $200 expense claim?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Expense_Policy.pdf",
+          "5 Approval limits"
+        ],
+        [
+          "Expense_Policy.pdf",
+          "3 Roles and responsibilities"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 5.32094770000549,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "ben-ppo-family-cost",
+      "category": "table_lookup",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "$205 per paycheck for family coverage under the PPO Plus plan (26 pay periods) [1].\n\nNotes and adjustments:\n- +$50 spousal surcharge per paycheck if your spouse has access to their own employer’s medical coverage [2].\n- −$25 per paycheck with the tobacco-free attestation or cessation program [2].\n- Rates shown are illustrative; the company pays about 80% of premiums on average [1].",
+      "rewritten_question": "What does family coverage on the PPO cost per paycheck?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Employee_Benefits_Guide_2027.pdf",
+          "2 Medical Plans > Your cost per paycheck (26 pay periods)"
+        ],
+        [
+          "Employee_Benefits_Guide_2027.pdf",
+          "2 Medical Plans > Medical plan features"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 5.868628399999579,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "ben-hdhp-deductible",
+      "category": "table_lookup",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "$1,700 individual in-network annual deductible for the HDHP with HSA, effective 2027-01-01 [2].",
+      "rewritten_question": "What's the individual deductible on the HDHP?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Employee_Benefits_Guide_2027.pdf",
+          "2 Medical Plans"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 5.044996300013736,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "ben-adult-braces",
+      "category": "table_lookup",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "Yes—but only under Dental Premier: orthodontia for children and adults is covered at 50% up to a $2,500 lifetime maximum; the Dental Base plan does not cover orthodontia. [1]\n\nKey details:\n- Coverage level: 50% up to a $2,500 lifetime maximum (Dental Premier) [1]\n- Not covered under Dental Base [1]\n- Effective starting 2027-01-01 [1]",
+      "rewritten_question": "Does the dental plan pay for braces for adults?",
+      "facts": [
+        true,
+        true
+      ],
+      "cited": [
+        [
+          "Employee_Benefits_Guide_2027.pdf",
+          "3 Dental and Vision > Dental"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 6.653770600009011,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "ben-glasses-frames",
+      "category": "table_lookup",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "Every 24 months you can get new frames with a $200 allowance; any cost above that gets a 20% discount under the Vision Plan [1].\n\nNotes and limits:\n- Applies starting January 1, 2027 [1].\n- If you choose contact lenses instead of glasses, the allowance is $200 for contacts (no frames that period) [1].",
+      "rewritten_question": "How often can I get new glasses frames, and how much is covered?",
+      "facts": [
+        true,
+        true
+      ],
+      "cited": [
+        [
+          "Employee_Benefits_Guide_2027.pdf",
+          "3 Dental and Vision > Vision"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 6.371474499988835,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "ben-bereavement-grandparent",
+      "category": "table_lookup",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "Under the Employee Benefits Guide (effective January 1, 2027), bereavement leave is up to 10 days for immediate family and 3 days for extended family [1]. The policy does not define whether a grandmother is “immediate” or “extended,” so it doesn’t state how many days apply for a grandparent—please contact the HR Service Center for clarification [1].",
+      "rewritten_question": "How many days off do I get if my grandmother dies?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Employee_Benefits_Guide_2027.pdf",
+          "7 Time Off and Leave"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 16.680873200006317,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 5,
+      "correct": true
+    },
+    {
+      "id": "hb-exempt-overtime",
+      "category": "table_lookup",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "No. Employees classified as exempt are not eligible for overtime pay [3]. \n\nNotes:\n- Non-exempt employees are paid overtime as required by law; overtime should be approved in advance, but all hours actually worked are paid [1]. \n- These rules apply starting 2027-01-01 [1, 3]. \n- For questions about your classification, contact the HR Service Center.",
+      "rewritten_question": "Do exempt employees get paid overtime?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "5 Employment Classifications"
+        ],
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "7 Working Hours, Attendance and Timekeeping"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 6.534852800017688,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "hb-manager-resignation-notice",
+      "category": "exception",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "At least 4 weeks’ written notice (people managers and above). This requirement applies starting 2027-01-01. [1]\n\n- Standard expectation for others is at least 2 weeks’ written notice. [1]\n- The sources provided don’t state the notice expectation before 2027-01-01; contact the HR Service Center for guidance for resignations before that date. [1]",
+      "rewritten_question": "I manage a team. How much notice should I give if I quit?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "23 Separation from Employment"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 8.04664899999625,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "exp-exception-approver",
+      "category": "exception",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "The Chief People Officer, with Finance concurrence, must give written approval for any exception to the expense policy. This rule applies from January 1, 2027. [1]",
+      "rewritten_question": "Who can approve an exception to the expense policy?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Expense_Policy.pdf",
+          "11 Exceptions"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 4.889755200012587,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "trv-international-meals",
+      "category": "exception",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "International trip meals are reimbursed at Finance’s published per‑diem rates (not a flat $75). This applies from 2027-01-01. [1]\n\nKey conditions:\n- Itemized receipts are required. [1]\n- Alcohol is not reimbursable. [1]\n- Submit expenses within 30 days, with receipts for any item over $25. [16]",
+      "rewritten_question": "What's the meal allowance for international trips?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Travel_Policy.pdf",
+          "8 Meals"
+        ],
+        [
+          "Travel_Policy.pdf",
+          "9 Corporate card and expense submission"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 12.296970299998065,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 5,
+      "correct": true
+    },
+    {
+      "id": "ben-part-time-medical",
+      "category": "exception",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "No. Starting 2027-01-01, only regular full-time employees scheduled 30+ hours/week are eligible for full benefits (including medical). Part-time employees scheduled 20–29 hours/week are eligible only for 401(k), EAP and selected voluntary benefits, not the medical plan [1, 2].\n\n- If you later become full-time, coverage begins the first day of the month after your hire date (or on your hire date if hired on the 1st) [1].\n- These rules take effect 2027-01-01; for your current situation, please contact the HR Service Center. [1, 2]",
+      "rewritten_question": "I work 25 hours a week. Can I join the medical plan?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Employee_Benefits_Guide_2027.pdf",
+          "1 Eligibility and Enrollment > Who is eligible"
+        ],
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "5 Employment Classifications"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 9.463374400016619,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "hb-weapons-in-car",
+      "category": "exception",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "Generally no. If your car is on company property, weapons are not allowed, unless state law requires otherwise [1].\n\n- Effective date: applies from 2027-01-01 [1].\n- For how your state’s law applies to your situation, please contact the HR Service Center.",
+      "rewritten_question": "Am I allowed to keep a gun in my car at work?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "14 Health, Safety and Security"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 16.10546799999429,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 5,
+      "correct": true
+    },
+    {
+      "id": "trv-long-stay",
+      "category": "exception",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "No. For trips longer than 5 nights, stays should be reviewed for serviced apartments; otherwise use preferred hotels within the travel tool and within the city rate caps [1, 3].\n\nKey conditions:\n- Use preferred hotels in the travel tool and stay within published city rate caps; minibar, entertainment, spa, and personal laundry aren’t reimbursable [1, 3].\n- Manager pre-approval is required for all travel; VP approval if international; book through the travel tool (aim 14+ days ahead) [7, 3].\n- Working from another state or country, even temporarily, needs HR approval in advance [7, 8].\n\nNote: These rules apply from 2027-01-01 [1, 3, 7, 8].",
+      "rewritten_question": "I'm going on a 3-week project trip. Do I have to stay in a hotel the whole time?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Travel_Policy.pdf",
+          "6 Lodging"
+        ],
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "20 Travel and Expenses"
+        ],
+        [
+          "Travel_Policy.pdf",
+          "4 Approval and booking"
+        ],
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "8 Remote and Hybrid Work"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 18.205280299996957,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 5,
+      "correct": true
+    },
+    {
+      "id": "ben-add-newborn",
+      "category": "exception",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "From January 1, 2027, you have 60 days from your child’s birth to report the event and add them to your coverage; after that window, you generally must wait until annual open enrollment in November for coverage effective January 1 [1, 2].\n\nNotes:\n- Changes must be consistent with the life event (e.g., add the child, adjust plan tier) [1].\n- Enroll through the benefits portal and upload required verification documents; be sure to submit and save your confirmation [8].",
+      "rewritten_question": "I just had a baby. How long do I have to add them to my insurance?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Employee_Benefits_Guide_2027.pdf",
+          "10 Life Events, COBRA and Changes"
+        ],
+        [
+          "Employee_Benefits_Guide_2027.pdf",
+          "1 Eligibility and Enrollment > When you can enroll"
+        ],
+        [
+          "Employee_Benefits_Guide_2027.pdf",
+          "1 Eligibility and Enrollment > How to enroll"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 7.2625904000015,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "hb-asking-for-help-drinking",
+      "category": "exception",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "If you proactively ask for help before any violation, that alone is not grounds for discipline (effective 2027-01-01) [1]. You’re encouraged to contact the free, confidential 24/7 EAP for support (8 counseling sessions per issue, plus legal/financial consults; effective 2027-01-01) [6].\n\nConditions and limits:\n- Being impaired by alcohol or cannabis during work time or on company property is prohibited; violations may lead to corrective action under the standard process [1, 3].\n- This policy language takes effect 2027-01-01 [1, 6].\n\nFor questions about your situation, contact the HR Service Center.",
+      "rewritten_question": "If I ask for help with a drinking problem, will I get disciplined?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "15 Drug- and Alcohol-Free Workplace"
+        ],
+        [
+          "Employee_Benefits_Guide_2027.pdf",
+          "8 Wellbeing and Support Programs"
+        ],
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "22 Corrective Action"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 7.203331299999263,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "merit-protected-leave-rating",
+      "category": "exception",
+      "caller": "manager",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "No. Protected leave is never allowed to lower someone’s performance rating [1]. This policy applies from 2027-01-01 [1].\n\nKey details:\n- If an employee is on leave for more than 6 months of the year, they may be rated Meets by default, or assessed based on the time worked; protected leave itself cannot reduce the rating [1].\n- HR runs bias checks—including by leave status—before ratings are finalized, and ratings can’t be communicated until calibration is complete [4].\n- For bonuses, protected leave is never treated as a negative factor (separate from ratings) [2].\n\nFor questions about an individual situation, contact the HR Service Center.",
+      "rewritten_question": "Can being on protected leave lower someone's performance rating?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Annual_Review_Merit_Bonus_Policy_2027.pdf",
+          "4 Performance Rating Scale > Special cases"
+        ],
+        [
+          "Annual_Review_Merit_Bonus_Policy_2027.pdf",
+          "5 Calibration and Fairness Controls"
+        ],
+        [
+          "Annual_Review_Merit_Bonus_Policy_2027.pdf",
+          "7 Annual Performance Bonus Plan > 7.6 Proration and special situations"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 7.634747200005222,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "merit-promoted-in-august",
+      "category": "exception",
+      "caller": "manager",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "Typically no. From 2027-01-01 onward, employees promoted on or after July 1 are usually not eligible for an additional merit increase in the same cycle, because the promotion increase replaces it [1].\n\nNotes:\n- This policy is effective for cycles starting 2027-01-01 [1].\n- If you believe an exception may apply, please contact the HR Service Center for guidance.",
+      "rewritten_question": "Someone on my team was promoted in August. Do they also get a merit increase this cycle?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Annual_Review_Merit_Bonus_Policy_2027.pdf",
+          "6 Merit Increase Guidelines > 6.3 Proration"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 9.990814399992814,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "xp-domestic-meals",
+      "category": "cross_policy",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "Yes. Both the Handbook and the Travel Policy set the domestic daily meal limit at $75 per day, with itemized receipts required [1, 2].\n\nNotes:\n- Alcohol is not reimbursable; alcohol is only served at approved company events [1, 3].\n- These provisions take effect starting 2027-01-01 [1, 2].\n- If a difference ever arises, the Handbook governs, but here they match [4].",
+      "rewritten_question": "Is the daily meal limit for domestic trips the same in the Handbook and the Travel Policy?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Travel_Policy.pdf",
+          "8 Meals"
+        ],
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "20 Travel and Expenses"
+        ],
+        [
+          "Expense_Policy.pdf",
+          "4 Eligible expense categories"
+        ],
+        [
+          "Travel_Policy.pdf",
+          "1 Purpose"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 8.046537200018065,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "xp-precedence",
+      "category": "cross_policy",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "The HR Policy Handbook governs if it differs from the Travel or Expense Policies. This applies from 2027-01-01. [1, 3]",
+      "rewritten_question": "If the Travel Policy and the HR Handbook disagree, which one wins?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Travel_Policy.pdf",
+          "1 Purpose"
+        ],
+        [
+          "Expense_Policy.pdf",
+          "1 Purpose"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 5.112000599998282,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "xp-long-flight-sources",
+      "category": "cross_policy",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "The cabin class for long flights is set by HR Policy Handbook §20 and Travel Policy §5: both allow premium economy for flights over 6 hours. If they ever differ, the Handbook governs. These rules apply from 2027-01-01. [3, 1, 4]\n\n- Business class is not permitted on any flight; exceptions need written approval under section 14. [1]\n- Upgrades with personal loyalty points are allowed; paid upgrades are not reimbursed. [1]\n- The Travel Policy’s premium economy rule for over-6-hour flights is “per Handbook Section 20,” confirming alignment. [1, 3]\n- Policies are effective 2027-01-01. [1, 3]",
+      "rewritten_question": "Which policies set the cabin class for long flights, and what do they allow?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "20 Travel and Expenses"
+        ],
+        [
+          "Travel_Policy.pdf",
+          "5 Air travel"
+        ],
+        [
+          "Travel_Policy.pdf",
+          "1 Purpose"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 8.740158800006611,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "xp-gift-limit",
+      "category": "cross_policy",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "The gift and entertainment limit is $100 per source per year, set by Expense Policy §9 and the HR Policy Handbook §12; this rule applies starting 2027-01-01 [1, 2].\n\nKey conditions:\n- Cash or cash equivalents are never allowed [1, 2].\n- No gifts or hospitality for government officials without prior Legal approval [1, 2].\n- Disclose gifts and potential conflicts annually in the compliance portal and whenever circumstances change [1, 2].",
+      "rewritten_question": "What's the gift limit, and which policies set it?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Expense_Policy.pdf",
+          "9 Gifts and entertainment"
+        ],
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "12 Conflicts of Interest and Gifts"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 6.479800100001739,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "xp-home-office",
+      "category": "cross_policy",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "You can be reimbursed up to a one-time $500 home‑office setup with receipts, and you can claim a $50/month internet/phone stipend if you’re in an approved remote or hybrid role; both are handled as expense claims within these limits. [7, 4]\n\nKey conditions:\n- Effective for expenses on/after 2027-01-01. [7, 4]\n- Submit each claim within 30 days and include receipts for the setup. [5, 7]\n- $500 setup is one-time only; stipend is capped at $50 per month. [7, 4]\n- Must be necessary for business; keep accurate documentation. [1]\n- Approvals follow expense-amount thresholds (a $500 setup requires VP approval). [6]\nIf you need help with your specific situation, contact the HR Service Center. [2]",
+      "rewritten_question": "What can I get for setting up a home office, and do I claim it as an expense?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Expense_Policy.pdf",
+          "4 Eligible expense categories"
+        ],
+        [
+          "Employee_Benefits_Guide_2027.pdf",
+          "9 Additional and Voluntary Benefits > Company-paid"
+        ],
+        [
+          "Expense_Policy.pdf",
+          "7 Submission, corporate card and reimbursement"
+        ],
+        [
+          "Expense_Policy.pdf",
+          "2 Principles"
+        ],
+        [
+          "Expense_Policy.pdf",
+          "5 Approval limits"
+        ],
+        [
+          "Expense_Policy.pdf",
+          "3 Roles and responsibilities"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 13.454138700006297,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "xp-hurt-on-trip",
+      "category": "cross_policy",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "From 2027-01-01: Report the injury right away and within 24 hours, and tell your manager at once. Work-related injuries and illnesses are covered by workers’ compensation; they must be reported within 24 hours. [1, 3]\n\n- Report injuries, near misses and hazards promptly; workers’ comp applies to work-related injuries/illnesses. [3]\n- During travel, life insurance includes travel assistance at no cost; keep the carrier’s emergency number with you. [1, 17]\n- For help with your specific case, contact the HR Benefits Service Center (see Contacts and Resources). [21]",
+      "rewritten_question": "I got hurt during a business trip. What do I need to do?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Travel_Policy.pdf",
+          "12 Health, safety and security"
+        ],
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "14 Health, Safety and Security"
+        ],
+        [
+          "Employee_Benefits_Guide_2027.pdf",
+          "5 Life and Disability Insurance"
+        ],
+        [
+          "Employee_Benefits_Guide_2027.pdf",
+          "11 Contacts and Resources"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 17.224198200012324,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 5,
+      "correct": true
+    },
+    {
+      "id": "xp-fake-receipt",
+      "category": "cross_policy",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "Submitting a fake (falsified) receipt is serious misconduct: the employee must repay the amount and faces corrective action under Handbook Section 22, up to termination [2]. This applies from 2027-01-01 [2].\n\n- Finance may audit any claim [2].\n- Suspected misuse should be reported to your manager, HR, or the 24/7 ethics hotline; retaliation for good-faith reports is prohibited (Handbook Section 21) [2].",
+      "rewritten_question": "What happens to someone who submits a fake receipt?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Expense_Policy.pdf",
+          "10 Fraud, audit and consequences"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 7.527350000018487,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "ben-def-coinsurance",
+      "category": "definition",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "Coinsurance is your share of costs after the deductible, expressed as a percentage. [1]",
+      "rewritten_question": "What does coinsurance mean?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Employee_Benefits_Guide_2027.pdf",
+          "12 Required Notices and Glossary > Glossary"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 3.55976340000052,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "ben-def-out-of-pocket",
+      "category": "definition",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "An out-of-pocket maximum is the most you pay in a plan year; after you reach it, the plan pays 100% of covered in-network costs [1].",
+      "rewritten_question": "What is an out-of-pocket maximum?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Employee_Benefits_Guide_2027.pdf",
+          "12 Required Notices and Glossary > Glossary"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 4.207605900010094,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "ben-def-eoi",
+      "category": "definition",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "Evidence of Insurability (EOI) is a health questionnaire required for some optional life or disability coverage [1].\n\nWhen it’s required:\n- If you elect optional life coverage above the guaranteed-issue amounts: over $500,000 for employee supplemental life or over $50,000 for spouse life, an EOI form is required [3].",
+      "rewritten_question": "What is Evidence of Insurability?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Employee_Benefits_Guide_2027.pdf",
+          "12 Required Notices and Glossary > Glossary"
+        ],
+        [
+          "Employee_Benefits_Guide_2027.pdf",
+          "5 Life and Disability Insurance"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 5.80022750000353,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "ben-def-hdhp",
+      "category": "definition",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "An HDHP is a high-deductible health plan with lower premiums and a higher deductible; enrolling in one makes you eligible for a Health Savings Account (HSA) [1].",
+      "rewritten_question": "What's an HDHP?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Employee_Benefits_Guide_2027.pdf",
+          "12 Required Notices and Glossary > Glossary"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 4.727092099987203,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "hb-def-non-exempt",
+      "category": "definition",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "Non-exempt employees are eligible for overtime under the FLSA and state law and must record all hours worked [4]. This definition applies starting 2027-01-01 [4].\n\nKey implications (effective 2027-01-01):\n- Overtime is paid as required by law; advance manager approval is needed, but all hours actually worked are paid [1].  \n- All time worked must be accurately recorded; off‑the‑clock work and editing another person’s time are prohibited [1].  \n- Record travel time that the law treats as work time; it is paid, with the same overtime rules [2].",
+      "rewritten_question": "What does non-exempt mean?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "5 Employment Classifications"
+        ],
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "7 Working Hours, Attendance and Timekeeping"
+        ],
+        [
+          "Travel_Policy.pdf",
+          "10 Travel time and working hours"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 5.848344799975166,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "merit-def-compa-ratio",
+      "category": "definition",
+      "caller": "manager",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "A compa-ratio is your base salary divided by the midpoint of your job’s salary range [1]. It indicates your position in the range and is used to guide merit increase recommendations alongside performance rating [2].",
+      "rewritten_question": "What is a compa-ratio?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Annual_Review_Merit_Bonus_Policy_2027.pdf",
+          "12 Definitions"
+        ],
+        [
+          "Annual_Review_Merit_Bonus_Policy_2027.pdf",
+          "6 Merit Increase Guidelines > 6.2 Merit matrix"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 4.377455599984387,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "merit-def-performance-year",
+      "category": "definition",
+      "caller": "manager",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "January 1 to December 31 [1, 2].  \nNote: This applies starting with the 2027 performance year per the policy’s effective date of January 1, 2027 [5].",
+      "rewritten_question": "What dates does the performance year cover?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Annual_Review_Merit_Bonus_Policy_2027.pdf",
+          "12 Definitions"
+        ],
+        [
+          "Annual_Review_Merit_Bonus_Policy_2027.pdf",
+          "7 Annual Performance Bonus Plan"
+        ],
+        [
+          "Annual_Review_Merit_Bonus_Policy_2027.pdf",
+          "Document Control"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 4.873283500026446,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "fu-hotel-chicago",
+      "category": "follow_up",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "From Jan 1, 2027, Chicago is Tier 2 with a nightly hotel cap of $220 including taxes [1]. \n\nNotes:\n- The listed caps are illustrative; Finance will publish the actual caps each year [1].\n- Lodging must be booked in preferred hotels within the travel tool and within the city rate caps [1, 2].",
+      "rewritten_question": "What's the hotel cap in Chicago?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Travel_Policy.pdf",
+          "6 Lodging"
+        ],
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "20 Travel and Expenses"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 9.278432600025553,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "fu-pto-rollover",
+      "category": "follow_up",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "Up to 5 days of unused PTO can be carried over to the next year. [1]\n\nNote: This rule applies starting January 1, 2027. [1]",
+      "rewritten_question": "How many PTO days new employees can carry over to the next year?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Employee_Benefits_Guide_2027.pdf",
+          "7 Time Off and Leave"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 8.17926490001264,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "fu-401k-vesting",
+      "category": "follow_up",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "The company’s 401(k) match is fully vested after 2 years of service (effective 2027-01-01) [1].\n\nNotes:\n- Your own contributions are always 100% vested immediately [1].\n- “Vesting” means when company contributions become fully yours [2].",
+      "rewritten_question": "When is the company's 401(k) match fully vested?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Employee_Benefits_Guide_2027.pdf",
+          "6 Retirement Savings: 401(k)"
+        ],
+        [
+          "Employee_Benefits_Guide_2027.pdf",
+          "12 Required Notices and Glossary > Glossary"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 6.07612149999477,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "fu-approve-12000",
+      "category": "follow_up",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "From 2027-01-01, expenses over $10,000 require CFO approval and must follow Procurement rules. Large purchases, recurring vendor services, and contractor engagements go through Procurement rather than expense claims. [1]",
+      "rewritten_question": "Who approves a $12,000 expense?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Expense_Policy.pdf",
+          "5 Approval limits"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 5.918193500023335,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "fu-bonus-senior-director",
+      "category": "follow_up",
+      "caller": "manager",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "25% of base salary for L7 (Senior Director), effective from 2027-01-01 [1].",
+      "rewritten_question": "What's the target bonus percentage for a Senior Director?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Annual_Review_Merit_Bonus_Policy_2027.pdf",
+          "7 Annual Performance Bonus Plan > 7.1 Target bonus by level"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 5.866599700006191,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "merit-matrix-meets",
+      "category": "access",
+      "caller": "manager",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "From 2027-01-01, a Meets rating at a 0.95 compa-ratio has a merit increase range of 2.5%–3.5% [1].\n\n- Ranges are guidelines; managers may go ±1 percentage point with a written reason and VP approval, and only if the department stays within budget [1].",
+      "rewritten_question": "What merit increase does a Meets rating get at a 0.95 compa-ratio?",
+      "facts": [
+        true,
+        true
+      ],
+      "cited": [
+        [
+          "Annual_Review_Merit_Bonus_Policy_2027.pdf",
+          "6 Merit Increase Guidelines > 6.2 Merit matrix"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 5.8834851999999955,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "merit-target-bonus-l5",
+      "category": "access",
+      "caller": "manager",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "From 2027-01-01, the target bonus for an L5 (e.g., Manager) is 12%–15% of eligible base salary [1].\n\n- Effective date: applies starting 2027-01-01 [1].",
+      "rewritten_question": "What's the target bonus for an L5 manager?",
+      "facts": [
+        true,
+        true
+      ],
+      "cited": [
+        [
+          "Annual_Review_Merit_Bonus_Policy_2027.pdf",
+          "7 Annual Performance Bonus Plan > 7.1 Target bonus by level"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 4.173302700015483,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "merit-pip-multiplier",
+      "category": "access",
+      "caller": "manager",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "If an employee is on a PIP at year end, their annual bonus’s individual multiplier is capped at 50% (effective for bonuses under the policy starting 2027-01-01) [1].\n\nKey conditions and exceptions:\n- Must be in a bonus-eligible role, hired by Oct 31 of the performance year, and employed on the payout date; sales-incentive participants are excluded [4].\n- Bonus is variable and not guaranteed [2].\n- If the employee resigns or is terminated for cause before payout, no bonus is earned, unless state law requires otherwise [1, 4].\n- Paid separately by March 15 after the performance year, subject to tax withholding; 401(k) deferral per plan rules [6].",
+      "rewritten_question": "If someone is on a PIP at year end, what happens to their bonus?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Annual_Review_Merit_Bonus_Policy_2027.pdf",
+          "7 Annual Performance Bonus Plan > 7.6 Proration and special situations"
+        ],
+        [
+          "Annual_Review_Merit_Bonus_Policy_2027.pdf",
+          "2 Scope and Eligibility"
+        ],
+        [
+          "Annual_Review_Merit_Bonus_Policy_2027.pdf",
+          "7 Annual Performance Bonus Plan"
+        ],
+        [
+          "Annual_Review_Merit_Bonus_Policy_2027.pdf",
+          "7 Annual Performance Bonus Plan > 7.7 Payment"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 6.915500200004317,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "merit-budget",
+      "category": "access",
+      "caller": "hr-comp",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "For the illustrative 2027 cycle, the merit budget is 3.5% of eligible base payroll, plus a separate 0.5% pool for promotions and market/equity adjustments [1].\n\nNotes and conditions:\n- Finance and Total Rewards set the budget each year; the figures shown are examples in this template and must be replaced with values approved by Finance and the Compensation Committee [1, 4, 3].\n- The policy is effective January 1, 2027 and applies from the 2027 performance year [8].",
+      "rewritten_question": "What's the merit budget for 2027?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Annual_Review_Merit_Bonus_Policy_2027.pdf",
+          "6 Merit Increase Guidelines > 6.1 Merit budget"
+        ],
+        [
+          "Annual_Review_Merit_Bonus_Policy_2027.pdf",
+          "12 Definitions"
+        ],
+        [
+          "Annual_Review_Merit_Bonus_Policy_2027.pdf",
+          "Overview"
+        ],
+        [
+          "Annual_Review_Merit_Bonus_Policy_2027.pdf",
+          "Document Control"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 7.464618600002723,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "merit-appeal-window",
+      "category": "access",
+      "caller": "manager",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "15 business days from your review conversation to submit a written appeal to your HR Business Partner [1].\n\nAlso note:\n- Effective for reviews on or after 2027-01-01 [1].\n- A skip-level leader and HR review the evidence and respond in writing within 20 business days; their decision is final [1].\n- Appeals are protected activity and must not result in retaliation [1].",
+      "rewritten_question": "How long does an employee have to appeal a performance rating?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Annual_Review_Merit_Bonus_Policy_2027.pdf",
+          "9 Review and Appeal Process"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 5.02381690000766,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "merit-top-of-range",
+      "category": "access",
+      "caller": "manager",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "They do not get a base salary increase; the approved merit amount is paid as a one-time lump sum. If a merit increase would push pay above the range maximum, only the portion above the maximum is paid as a lump sum. [1]\n\nNotes and conditions:\n- The eligibility table flags employees at/above the range maximum as not eligible for a base merit increase and directs to §6.4 for lump-sum treatment. [3, 1]\n- This policy applies starting 2027-01-01. [1, 3]",
+      "rewritten_question": "What happens to the raise of someone already at the top of their salary range?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Annual_Review_Merit_Bonus_Policy_2027.pdf",
+          "6 Merit Increase Guidelines > 6.4 Employees at or above range maximum"
+        ],
+        [
+          "Annual_Review_Merit_Bonus_Policy_2027.pdf",
+          "2 Scope and Eligibility"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 9.181557400006568,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "merit-late-hire",
+      "category": "access",
+      "caller": "manager",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "No. Under the 2027 policy, merit increases are only for employees hired on or before September 30 of the performance year; hires after September 30 (e.g., November) are not eligible [2]. \n\n- If hired by September 30, the merit increase is prorated by full months worked in the year [1]. \n- Employees under a collective bargaining agreement or sales commission plan follow those documents where they differ [2]. \n- These rules apply starting 2027-01-01 [2].",
+      "rewritten_question": "Does someone who joined in November get a merit increase?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Annual_Review_Merit_Bonus_Policy_2027.pdf",
+          "2 Scope and Eligibility"
+        ],
+        [
+          "Annual_Review_Merit_Bonus_Policy_2027.pdf",
+          "6 Merit Increase Guidelines > 6.3 Proration"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 8.533077600004617,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "merit-bonus-worked-example",
+      "category": "access",
+      "caller": "hr-comp",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "$22,680, using the policy formula: $120,000 × 15% × 105% × 120% [7, 1].\n\nNotes:\n- This assumes an L5 target bonus of 15% (L5 range is 12%–15%) [6].\n- “Exceeds Expectations” uses an individual multiplier within 110%–130% (120% typical); payout varies if a different multiplier is used [3].\n- Departments must keep total payouts within their CPF-funded pool [3, 2].\n- These rules apply from 2027-01-01 [1, 2, 3, 6, 7].",
+      "rewritten_question": "What bonus would an L5 on $120,000 rated Exceeds get if the company factor is 105%?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "Annual_Review_Merit_Bonus_Policy_2027.pdf",
+          "7 Annual Performance Bonus Plan > 7.2 Bonus formula"
+        ],
+        [
+          "Annual_Review_Merit_Bonus_Policy_2027.pdf",
+          "7 Annual Performance Bonus Plan > 7.5 Worked example"
+        ],
+        [
+          "Annual_Review_Merit_Bonus_Policy_2027.pdf",
+          "7 Annual Performance Bonus Plan > 7.1 Target bonus by level"
+        ],
+        [
+          "Annual_Review_Merit_Bonus_Policy_2027.pdf",
+          "7 Annual Performance Bonus Plan > 7.4 Individual Performance Multiplier"
+        ],
+        [
+          "Annual_Review_Merit_Bonus_Policy_2027.pdf",
+          "7 Annual Performance Bonus Plan > 7.3 Company Performance Factor (bonus pool funding)"
+        ]
+      ],
+      "citation_hit": true,
+      "leaked": [],
+      "latency_s": 8.057230399979744,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 1,
+      "correct": true
+    },
+    {
+      "id": "na-relocation",
+      "category": "unanswerable",
+      "caller": "employee",
+      "hidden": false,
+      "status": "not_found",
+      "grounded": false,
+      "text": "The HR policies I found don't answer this question. Please contact the HR Service Center.",
+      "rewritten_question": "How much relocation allowance do new hires get?",
+      "facts": [],
+      "cited": [],
+      "citation_hit": false,
+      "leaked": [],
+      "latency_s": 9.120937800005777,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 5,
+      "correct": true
+    },
+    {
+      "id": "na-dogs-in-office",
+      "category": "unanswerable",
+      "caller": "employee",
+      "hidden": false,
+      "status": "not_found",
+      "grounded": false,
+      "text": "The HR policies I found don't answer this question. Please contact the HR Service Center.",
+      "rewritten_question": "Can I bring my dog to the office?",
+      "facts": [],
+      "cited": [],
+      "citation_hit": false,
+      "leaked": [],
+      "latency_s": 12.535007600003155,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 5,
+      "correct": true
+    },
+    {
+      "id": "na-germany-vacation",
+      "category": "unanswerable",
+      "caller": "employee",
+      "hidden": false,
+      "status": "answered",
+      "grounded": true,
+      "text": "The provided policies don’t state a Germany-specific vacation allotment. Company PTO is 15 days (0–2 years), 20 days (3–5 years), and 25 days (6+ years), with up to 5 days allowed to roll over; this applies from 2027-01-01 [1].\n\nWhat the policies don’t cover: Any Germany-specific statutory or country-adjusted vacation rules beyond the company PTO tiers. For country-specific details, please contact the HR Service Center.",
+      "rewritten_question": "How many vacation days do employees in Germany get?",
+      "facts": [],
+      "cited": [
+        [
+          "Employee_Benefits_Guide_2027.pdf",
+          "7 Time Off and Leave"
+        ]
+      ],
+      "citation_hit": false,
+      "leaked": [],
+      "latency_s": 18.36704969999846,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 5,
+      "correct": false
+    },
+    {
+      "id": "na-stock-option-vesting",
+      "category": "unanswerable",
+      "caller": "employee",
+      "hidden": false,
+      "status": "not_found",
+      "grounded": false,
+      "text": "The HR policies I found don't answer this question. Please contact the HR Service Center.",
+      "rewritten_question": "What's the vesting schedule for stock options?",
+      "facts": [],
+      "cited": [],
+      "citation_hit": false,
+      "leaked": [],
+      "latency_s": 9.896437800023705,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 5,
+      "correct": true
+    },
+    {
+      "id": "na-free-lunch",
+      "category": "unanswerable",
+      "caller": "employee",
+      "hidden": false,
+      "status": "not_found",
+      "grounded": false,
+      "text": "The HR policies I found don't answer this question. Please contact the HR Service Center.",
+      "rewritten_question": "Does the office provide free lunch?",
+      "facts": [],
+      "cited": [],
+      "citation_hit": false,
+      "leaked": [],
+      "latency_s": 13.400520700000925,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 5,
+      "correct": true
+    },
+    {
+      "id": "na-ceo",
+      "category": "unanswerable",
+      "caller": "employee",
+      "hidden": false,
+      "status": "not_found",
+      "grounded": false,
+      "text": "The HR policies I found don't answer this question. Please contact the HR Service Center.",
+      "rewritten_question": "Who is the CEO of the company?",
+      "facts": [],
+      "cited": [],
+      "citation_hit": false,
+      "leaked": [],
+      "latency_s": 10.205559100024402,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 5,
+      "correct": true
+    },
+    {
+      "id": "na-vpn-reset",
+      "category": "unanswerable",
+      "caller": "employee",
+      "hidden": false,
+      "status": "not_found",
+      "grounded": false,
+      "text": "The HR policies I found don't answer this question. Please contact the HR Service Center.",
+      "rewritten_question": "How do I reset my VPN password?",
+      "facts": [],
+      "cited": [],
+      "citation_hit": false,
+      "leaked": [],
+      "latency_s": 10.214197599998442,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 4,
+      "correct": true
+    },
+    {
+      "id": "na-tuition-payback",
+      "category": "unanswerable",
+      "caller": "employee",
+      "hidden": false,
+      "status": "not_found",
+      "grounded": false,
+      "text": "The HR policies I found don't answer this question. Please contact the HR Service Center.",
+      "rewritten_question": "Do I have to pay back tuition assistance if I leave within a year?",
+      "facts": [],
+      "cited": [],
+      "citation_hit": false,
+      "leaked": [],
+      "latency_s": 11.047359999996843,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 5,
+      "correct": true
+    },
+    {
+      "id": "merit-protected-leave-rating",
+      "category": "exception",
+      "caller": "employee",
+      "hidden": true,
+      "status": "answered",
+      "grounded": true,
+      "text": "The policies don’t say whether protected leave can lower a performance rating. They do state that absences protected by law (e.g., sick leave, FMLA) are never counted against attendance, so attendance-related issues shouldn’t be based on protected leave [2]. The performance policy describes reviews and PIPs but doesn’t address how ratings should account for time away on protected leave [3]. \n\nFor guidance on a specific situation, please contact the HR Service Center.",
+      "rewritten_question": "Can being on protected leave lower someone's performance rating?",
+      "facts": [
+        false
+      ],
+      "cited": [
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "7 Working Hours, Attendance and Timekeeping"
+        ],
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "10 Performance Management and Development"
+        ]
+      ],
+      "citation_hit": false,
+      "leaked": [],
+      "latency_s": 19.07746409997344,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 5,
+      "correct": true
+    },
+    {
+      "id": "merit-promoted-in-august",
+      "category": "exception",
+      "caller": "employee",
+      "hidden": true,
+      "status": "answered",
+      "grounded": true,
+      "text": "The Handbook says annual merit increases are based on performance and position in range, and promotions are reviewed quarterly; it does not state whether a recent promotion affects eligibility for the same merit cycle [1]. Annual reviews inform merit and promotion decisions [2]. These provisions apply starting January 1, 2027 [4].\n\nFor how this applies to your team member’s specific case, contact the HR Service Center (hr@dummymocktest.example | 1-800-XXX-XXXX) [4].",
+      "rewritten_question": "Someone on my team was promoted in August. Do they also get a merit increase this cycle?",
+      "facts": [
+        false
+      ],
+      "cited": [
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "9 Compensation and Payroll"
+        ],
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "10 Performance Management and Development"
+        ],
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "Document Control"
+        ]
+      ],
+      "citation_hit": false,
+      "leaked": [],
+      "latency_s": 13.774846299987985,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 5,
+      "correct": true
+    },
+    {
+      "id": "merit-def-compa-ratio",
+      "category": "definition",
+      "caller": "employee",
+      "hidden": true,
+      "status": "not_found",
+      "grounded": false,
+      "text": "The HR policies I found don't answer this question. Please contact the HR Service Center.",
+      "rewritten_question": "What is a compa-ratio?",
+      "facts": [
+        false
+      ],
+      "cited": [],
+      "citation_hit": false,
+      "leaked": [],
+      "latency_s": 9.817694199999096,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 5,
+      "correct": true
+    },
+    {
+      "id": "merit-def-performance-year",
+      "category": "definition",
+      "caller": "employee",
+      "hidden": true,
+      "status": "answered",
+      "grounded": true,
+      "text": "January 1 through December 31 (calendar year), with goals set in January and the annual review in December; calibration occurs after reviews [1]. This framework applies starting January 1, 2027 [5].",
+      "rewritten_question": "What dates does the performance year cover?",
+      "facts": [
+        true
+      ],
+      "cited": [
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "10 Performance Management and Development"
+        ],
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "Document Control"
+        ]
+      ],
+      "citation_hit": false,
+      "leaked": [],
+      "latency_s": 16.163404099992476,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 5,
+      "correct": false
+    },
+    {
+      "id": "merit-matrix-meets",
+      "category": "access",
+      "caller": "employee",
+      "hidden": true,
+      "status": "answered",
+      "grounded": true,
+      "text": "The policies do not specify a set merit increase percentage for a Meets rating at a 0.95 compa-ratio. They only state that annual merit increases are based on performance and position in range, effective 2027-01-01 [1].\n\nNot covered: any merit matrix or specific percentages for ratings/compa-ratios. For your case, contact the HR Service Center [1].",
+      "rewritten_question": "What merit increase does a Meets rating get at a 0.95 compa-ratio?",
+      "facts": [
+        false,
+        false
+      ],
+      "cited": [
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "9 Compensation and Payroll"
+        ]
+      ],
+      "citation_hit": false,
+      "leaked": [],
+      "latency_s": 13.876304600009462,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 4,
+      "correct": true
+    },
+    {
+      "id": "merit-target-bonus-l5",
+      "category": "access",
+      "caller": "employee",
+      "hidden": true,
+      "status": "not_found",
+      "grounded": false,
+      "text": "The HR policies I found don't answer this question. Please contact the HR Service Center.",
+      "rewritten_question": "What's the target bonus for an L5 manager?",
+      "facts": [
+        false,
+        false
+      ],
+      "cited": [],
+      "citation_hit": false,
+      "leaked": [],
+      "latency_s": 9.668201399996178,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 5,
+      "correct": true
+    },
+    {
+      "id": "merit-pip-multiplier",
+      "category": "access",
+      "caller": "employee",
+      "hidden": true,
+      "status": "not_found",
+      "grounded": false,
+      "text": "The HR policies I found don't answer this question. Please contact the HR Service Center.",
+      "rewritten_question": "If someone is on a PIP at year end, what happens to their bonus?",
+      "facts": [
+        false
+      ],
+      "cited": [],
+      "citation_hit": false,
+      "leaked": [],
+      "latency_s": 10.743211099994369,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 5,
+      "correct": true
+    },
+    {
+      "id": "merit-budget",
+      "category": "access",
+      "caller": "employee",
+      "hidden": true,
+      "status": "not_found",
+      "grounded": false,
+      "text": "The HR policies I found don't answer this question. Please contact the HR Service Center.",
+      "rewritten_question": "What's the merit budget for 2027?",
+      "facts": [
+        false
+      ],
+      "cited": [],
+      "citation_hit": false,
+      "leaked": [],
+      "latency_s": 11.030942500015954,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 5,
+      "correct": true
+    },
+    {
+      "id": "merit-appeal-window",
+      "category": "access",
+      "caller": "employee",
+      "hidden": true,
+      "status": "not_found",
+      "grounded": false,
+      "text": "The HR policies I found don't answer this question. Please contact the HR Service Center.",
+      "rewritten_question": "How long does an employee have to appeal a performance rating?",
+      "facts": [
+        false
+      ],
+      "cited": [],
+      "citation_hit": false,
+      "leaked": [],
+      "latency_s": 9.061719399993308,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 5,
+      "correct": true
+    },
+    {
+      "id": "merit-top-of-range",
+      "category": "access",
+      "caller": "employee",
+      "hidden": true,
+      "status": "not_found",
+      "grounded": false,
+      "text": "The HR policies I found don't answer this question. Please contact the HR Service Center.",
+      "rewritten_question": "What happens to the raise of someone already at the top of their salary range?",
+      "facts": [
+        false
+      ],
+      "cited": [],
+      "citation_hit": false,
+      "leaked": [],
+      "latency_s": 21.091533900005743,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 5,
+      "correct": true
+    },
+    {
+      "id": "merit-late-hire",
+      "category": "access",
+      "caller": "employee",
+      "hidden": true,
+      "status": "answered",
+      "grounded": true,
+      "text": "The policies only state that merit increases are annual and based on performance and position in range, with the December annual review informing merit; they do not specify eligibility or proration for employees who joined late in the year (e.g., November). [1, 4]\n\nImportant notes:\n- These provisions take effect January 1, 2027. [13]\n- For your specific situation or current-year practice, contact the HR Service Center (hr@dummymocktest.example | 1-800-XXX-XXXX). [13]",
+      "rewritten_question": "Does someone who joined in November get a merit increase?",
+      "facts": [
+        false
+      ],
+      "cited": [
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "9 Compensation and Payroll"
+        ],
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "10 Performance Management and Development"
+        ],
+        [
+          "HR_Policy_Handbook_2027.pdf",
+          "Document Control"
+        ]
+      ],
+      "citation_hit": false,
+      "leaked": [],
+      "latency_s": 14.71907259998261,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 4,
+      "correct": true
+    },
+    {
+      "id": "merit-bonus-worked-example",
+      "category": "access",
+      "caller": "employee",
+      "hidden": true,
+      "status": "not_found",
+      "grounded": false,
+      "text": "The HR policies I found don't answer this question. Please contact the HR Service Center.",
+      "rewritten_question": "What bonus would an L5 on $120,000 rated Exceeds get if the company factor is 105%?",
+      "facts": [
+        false
+      ],
+      "cited": [],
+      "citation_hit": false,
+      "leaked": [],
+      "latency_s": 9.297984899982112,
+      "provider": "openai",
+      "model": "gpt-5",
+      "failed_over": false,
+      "searches": 5,
+      "correct": true
+    }
+  ]
+}

@@ -16,7 +16,7 @@ from hybrid_rag.llm.failover import FailoverChatModel, ProviderSlot
 
 logger = logging.getLogger(__name__)
 
-Task = Literal["answer", "query_rewrite"]
+Task = Literal["answer", "query_rewrite", "agent", "judge"]
 
 
 def build_provider_model(target: ModelTarget, settings: Settings) -> BaseChatModel | None:

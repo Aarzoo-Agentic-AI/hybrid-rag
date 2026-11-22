@@ -1,8 +1,8 @@
 {
   "meta": {
-    "date": "2026-11-22 07:06 UTC",
-    "commit": "6f2f011 (uncommitted changes)",
-    "golden set": "v1, 94 questions, sha256 3fae8871f553 (fact 37, table_lookup 12, exception 10, cross_policy 7, definition 7, follow_up 5, access 8, unanswerable 8)",
+    "date": "2026-11-22 08:43 UTC",
+    "commit": "e82c9a5 (uncommitted changes)",
+    "golden set": "v1, 94 questions, sha256 d5371c35cc86 (fact 37, table_lookup 12, exception 10, cross_policy 7, definition 7, follow_up 5, access 8, unanswerable 8)",
     "index": "tenant `dummymocktest`, 106 distinct sections",
     "embeddings": "`BAAI/bge-m3` (dense + sparse)",
     "reranker": "`cross-encoder/ms-marco-MiniLM-L-6-v2`",
@@ -62,7 +62,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 13.732092199992621,
+      "latency_s": 21.032838000013726,
       "top_rerank_score": null
     },
     {
@@ -117,7 +117,7 @@
       "ranks": [
         3
       ],
-      "latency_s": 0.22948489998816513,
+      "latency_s": 0.29220389999682084,
       "top_rerank_score": null
     },
     {
@@ -172,7 +172,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.2234615000197664,
+      "latency_s": 0.6048034999985248,
       "top_rerank_score": null
     },
     {
@@ -227,7 +227,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.19570019998354837,
+      "latency_s": 0.4820091000001412,
       "top_rerank_score": null
     },
     {
@@ -282,7 +282,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.2555065999913495,
+      "latency_s": 0.6348776000086218,
       "top_rerank_score": null
     },
     {
@@ -337,7 +337,7 @@
       "ranks": [
         2
       ],
-      "latency_s": 0.26177079998888075,
+      "latency_s": 0.8648098999983631,
       "top_rerank_score": null
     },
     {
@@ -392,7 +392,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.2747012000181712,
+      "latency_s": 0.6711295999994036,
       "top_rerank_score": null
     },
     {
@@ -447,7 +447,7 @@
       "ranks": [
         2
       ],
-      "latency_s": 0.18990880000637844,
+      "latency_s": 0.4594366999808699,
       "top_rerank_score": null
     },
     {
@@ -502,7 +502,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.23233530001016334,
+      "latency_s": 0.49182170000858605,
       "top_rerank_score": null
     },
     {
@@ -557,7 +557,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.2222366000059992,
+      "latency_s": 0.4905201999936253,
       "top_rerank_score": null
     },
     {
@@ -612,7 +612,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.22311079999781214,
+      "latency_s": 0.5650076000019908,
       "top_rerank_score": null
     },
     {
@@ -667,7 +667,7 @@
       "ranks": [
         3
       ],
-      "latency_s": 0.21405330000561662,
+      "latency_s": 0.5677606000099331,
       "top_rerank_score": null
     },
     {
@@ -722,7 +722,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.1932407999993302,
+      "latency_s": 0.39324190001934767,
       "top_rerank_score": null
     },
     {
@@ -777,7 +777,7 @@
       "ranks": [
         2
       ],
-      "latency_s": 0.20528609998291358,
+      "latency_s": 0.49144220000016503,
       "top_rerank_score": null
     },
     {
@@ -832,7 +832,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.20129820000147447,
+      "latency_s": 0.5129022999899462,
       "top_rerank_score": null
     },
     {
@@ -887,7 +887,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.20869120000861585,
+      "latency_s": 1.0551813000056427,
       "top_rerank_score": null
     },
     {
@@ -942,7 +942,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.19246939997537993,
+      "latency_s": 0.5476520999800414,
       "top_rerank_score": null
     },
     {
@@ -997,7 +997,7 @@
       "ranks": [
         4
       ],
-      "latency_s": 0.20489100000122562,
+      "latency_s": 0.7234467999951448,
       "top_rerank_score": null
     },
     {
@@ -1052,7 +1052,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.22691709999344312,
+      "latency_s": 0.5890727000078186,
       "top_rerank_score": null
     },
     {
@@ -1107,7 +1107,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.19635369998286478,
+      "latency_s": 0.49544670002069324,
       "top_rerank_score": null
     },
     {
@@ -1162,7 +1162,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.20430430001579225,
+      "latency_s": 0.4567226000071969,
       "top_rerank_score": null
     },
     {
@@ -1217,7 +1217,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.20361249998677522,
+      "latency_s": 0.45044540002709255,
       "top_rerank_score": null
     },
     {
@@ -1272,7 +1272,7 @@
       "ranks": [
         2
       ],
-      "latency_s": 0.19265280000399798,
+      "latency_s": 0.5660167000023648,
       "top_rerank_score": null
     },
     {
@@ -1327,7 +1327,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.20691789998090826,
+      "latency_s": 0.6915381999860983,
       "top_rerank_score": null
     },
     {
@@ -1382,7 +1382,7 @@
       "ranks": [
         5
       ],
-      "latency_s": 0.21616670000366867,
+      "latency_s": 0.6200504000007641,
       "top_rerank_score": null
     },
     {
@@ -1437,7 +1437,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.17699490001541562,
+      "latency_s": 0.5547540000115987,
       "top_rerank_score": null
     },
     {
@@ -1492,7 +1492,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.18708689999766648,
+      "latency_s": 0.8866508000064641,
       "top_rerank_score": null
     },
     {
@@ -1547,7 +1547,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.18002470000647008,
+      "latency_s": 0.7826983999984805,
       "top_rerank_score": null
     },
     {
@@ -1602,7 +1602,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.18298260000301525,
+      "latency_s": 0.5117142999952193,
       "top_rerank_score": null
     },
     {
@@ -1657,7 +1657,7 @@
       "ranks": [
         3
       ],
-      "latency_s": 0.19529569998849183,
+      "latency_s": 1.0390453999862075,
       "top_rerank_score": null
     },
     {
@@ -1712,7 +1712,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.19446099997730926,
+      "latency_s": 1.4211707999929786,
       "top_rerank_score": null
     },
     {
@@ -1767,7 +1767,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.1935673000116367,
+      "latency_s": 0.740238500002306,
       "top_rerank_score": null
     },
     {
@@ -1822,7 +1822,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.20528210001066327,
+      "latency_s": 1.016233700007433,
       "top_rerank_score": null
     },
     {
@@ -1877,7 +1877,7 @@
       "ranks": [
         2
       ],
-      "latency_s": 0.1920127999910619,
+      "latency_s": 0.738721000001533,
       "top_rerank_score": null
     },
     {
@@ -1932,7 +1932,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.19984829999157228,
+      "latency_s": 0.8385593999992125,
       "top_rerank_score": null
     },
     {
@@ -1987,7 +1987,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.2027822000090964,
+      "latency_s": 1.198593000008259,
       "top_rerank_score": null
     },
     {
@@ -2042,7 +2042,7 @@
       "ranks": [
         null
       ],
-      "latency_s": 0.1982074000115972,
+      "latency_s": 0.7494949999963865,
       "top_rerank_score": null
     },
     {
@@ -2097,7 +2097,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.20093720001750626,
+      "latency_s": 0.6072869999916293,
       "top_rerank_score": null
     },
     {
@@ -2152,7 +2152,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.20238239999162033,
+      "latency_s": 0.6961372999940068,
       "top_rerank_score": null
     },
     {
@@ -2207,7 +2207,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.2046322000096552,
+      "latency_s": 0.6644241999892984,
       "top_rerank_score": null
     },
     {
@@ -2262,7 +2262,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.21976330000325106,
+      "latency_s": 0.7593042000080459,
       "top_rerank_score": null
     },
     {
@@ -2317,7 +2317,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.20041580000543036,
+      "latency_s": 0.5013710999919567,
       "top_rerank_score": null
     },
     {
@@ -2372,7 +2372,7 @@
       "ranks": [
         2
       ],
-      "latency_s": 0.20256450001033954,
+      "latency_s": 0.5543681000126526,
       "top_rerank_score": null
     },
     {
@@ -2427,7 +2427,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.19401919998927042,
+      "latency_s": 0.5820157999987714,
       "top_rerank_score": null
     },
     {
@@ -2482,7 +2482,7 @@
       "ranks": [
         3
       ],
-      "latency_s": 0.2127444999932777,
+      "latency_s": 0.7526665000186767,
       "top_rerank_score": null
     },
     {
@@ -2537,7 +2537,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.19885000001522712,
+      "latency_s": 0.5348338999901898,
       "top_rerank_score": null
     },
     {
@@ -2592,7 +2592,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.21373059999314137,
+      "latency_s": 0.91707480000332,
       "top_rerank_score": null
     },
     {
@@ -2647,7 +2647,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.20283380002365448,
+      "latency_s": 0.4850198999920394,
       "top_rerank_score": null
     },
     {
@@ -2702,7 +2702,7 @@
       "ranks": [
         2
       ],
-      "latency_s": 0.18916609999723732,
+      "latency_s": 0.3923116000078153,
       "top_rerank_score": null
     },
     {
@@ -2757,7 +2757,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.21403049997752532,
+      "latency_s": 0.6220977999910247,
       "top_rerank_score": null
     },
     {
@@ -2812,7 +2812,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.2004517000168562,
+      "latency_s": 1.0422745000105351,
       "top_rerank_score": null
     },
     {
@@ -2867,7 +2867,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.20023050002055243,
+      "latency_s": 1.1681038000097033,
       "top_rerank_score": null
     },
     {
@@ -2922,7 +2922,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.20148909999988973,
+      "latency_s": 0.8981054999749176,
       "top_rerank_score": null
     },
     {
@@ -2977,7 +2977,7 @@
       "ranks": [
         2
       ],
-      "latency_s": 0.20079580001765862,
+      "latency_s": 0.8049089999985881,
       "top_rerank_score": null
     },
     {
@@ -3032,7 +3032,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.2347973000141792,
+      "latency_s": 1.3189310999878217,
       "top_rerank_score": null
     },
     {
@@ -3087,7 +3087,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.226035999978194,
+      "latency_s": 0.6207832999934908,
       "top_rerank_score": null
     },
     {
@@ -3142,7 +3142,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.21419900000910275,
+      "latency_s": 0.4853174999880139,
       "top_rerank_score": null
     },
     {
@@ -3197,7 +3197,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.20609110000077635,
+      "latency_s": 0.4907825000118464,
       "top_rerank_score": null
     },
     {
@@ -3252,7 +3252,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.22800059997825883,
+      "latency_s": 0.5862785000063013,
       "top_rerank_score": null
     },
     {
@@ -3308,7 +3308,7 @@
         2,
         1
       ],
-      "latency_s": 0.21974410000257194,
+      "latency_s": 0.6080276999855414,
       "top_rerank_score": null
     },
     {
@@ -3363,7 +3363,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.20597949999500997,
+      "latency_s": 0.683854800008703,
       "top_rerank_score": null
     },
     {
@@ -3419,7 +3419,7 @@
         2,
         1
       ],
-      "latency_s": 0.2275847000128124,
+      "latency_s": 1.2784230000106618,
       "top_rerank_score": null
     },
     {
@@ -3475,7 +3475,7 @@
         2,
         1
       ],
-      "latency_s": 0.19490189998759888,
+      "latency_s": 0.4603709999937564,
       "top_rerank_score": null
     },
     {
@@ -3531,7 +3531,7 @@
         4,
         1
       ],
-      "latency_s": 0.2243978999904357,
+      "latency_s": 0.6011770000040997,
       "top_rerank_score": null
     },
     {
@@ -3587,7 +3587,7 @@
         1,
         2
       ],
-      "latency_s": 0.19861040002433583,
+      "latency_s": 0.49115009998786263,
       "top_rerank_score": null
     },
     {
@@ -3642,7 +3642,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.19110679998993874,
+      "latency_s": 0.4582069999887608,
       "top_rerank_score": null
     },
     {
@@ -3697,7 +3697,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.20392359999823384,
+      "latency_s": 0.37587550000171177,
       "top_rerank_score": null
     },
     {
@@ -3752,7 +3752,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.20037070001126267,
+      "latency_s": 0.441951999993762,
       "top_rerank_score": null
     },
     {
@@ -3807,7 +3807,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.21702140002162196,
+      "latency_s": 0.4402429000183474,
       "top_rerank_score": null
     },
     {
@@ -3862,7 +3862,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.19982889998937026,
+      "latency_s": 0.37977550001232885,
       "top_rerank_score": null
     },
     {
@@ -3917,7 +3917,7 @@
       "ranks": [
         4
       ],
-      "latency_s": 0.20385379999061115,
+      "latency_s": 0.8369329000124708,
       "top_rerank_score": null
     },
     {
@@ -3972,7 +3972,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.2022112999984529,
+      "latency_s": 0.3668150000157766,
       "top_rerank_score": null
     },
     {
@@ -4027,7 +4027,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.19223300000885502,
+      "latency_s": 0.4038270999735687,
       "top_rerank_score": null
     },
     {
@@ -4082,7 +4082,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.21977959998184815,
+      "latency_s": 0.38960639998549595,
       "top_rerank_score": null
     },
     {
@@ -4137,7 +4137,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.21890669999993406,
+      "latency_s": 0.5338896999892313,
       "top_rerank_score": null
     },
     {
@@ -4192,7 +4192,7 @@
       "ranks": [
         2
       ],
-      "latency_s": 0.19888780001201667,
+      "latency_s": 0.42305189999751747,
       "top_rerank_score": null
     },
     {
@@ -4247,7 +4247,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.1987805999815464,
+      "latency_s": 0.3603929000091739,
       "top_rerank_score": null
     },
     {
@@ -4302,7 +4302,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.20547469999291934,
+      "latency_s": 0.393381900008535,
       "top_rerank_score": null
     },
     {
@@ -4357,7 +4357,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.23034070001449436,
+      "latency_s": 0.4748746999830473,
       "top_rerank_score": null
     },
     {
@@ -4412,7 +4412,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.20980250000138767,
+      "latency_s": 0.43316659997799434,
       "top_rerank_score": null
     },
     {
@@ -4467,7 +4467,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.24455350000062026,
+      "latency_s": 0.48197199997957796,
       "top_rerank_score": null
     },
     {
@@ -4522,7 +4522,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.23528379999333993,
+      "latency_s": 0.41685679997317493,
       "top_rerank_score": null
     },
     {
@@ -4577,7 +4577,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.2044766999897547,
+      "latency_s": 0.4333766000054311,
       "top_rerank_score": null
     },
     {
@@ -4632,7 +4632,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.2202292000001762,
+      "latency_s": 0.47364379998180084,
       "top_rerank_score": null
     },
     {
@@ -4687,7 +4687,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.22074610000709072,
+      "latency_s": 0.42614930000854656,
       "top_rerank_score": null
     },
     {
@@ -4742,7 +4742,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.28725979998125695,
+      "latency_s": 0.5435377999965567,
       "top_rerank_score": null
     },
     {
@@ -4795,7 +4795,7 @@
         ]
       ],
       "ranks": [],
-      "latency_s": 0.20309729999280535,
+      "latency_s": 0.43213219998870045,
       "top_rerank_score": null
     },
     {
@@ -4848,7 +4848,7 @@
         ]
       ],
       "ranks": [],
-      "latency_s": 0.1947222999879159,
+      "latency_s": 0.3992578999896068,
       "top_rerank_score": null
     },
     {
@@ -4901,7 +4901,7 @@
         ]
       ],
       "ranks": [],
-      "latency_s": 0.20268630000646226,
+      "latency_s": 0.41555040000821464,
       "top_rerank_score": null
     },
     {
@@ -4954,7 +4954,7 @@
         ]
       ],
       "ranks": [],
-      "latency_s": 0.20191260002320632,
+      "latency_s": 0.42725659999996424,
       "top_rerank_score": null
     },
     {
@@ -5007,7 +5007,7 @@
         ]
       ],
       "ranks": [],
-      "latency_s": 0.19159540001419373,
+      "latency_s": 0.38467929998296313,
       "top_rerank_score": null
     },
     {
@@ -5060,7 +5060,7 @@
         ]
       ],
       "ranks": [],
-      "latency_s": 0.20097419997910038,
+      "latency_s": 0.3782199999841396,
       "top_rerank_score": null
     },
     {
@@ -5113,7 +5113,7 @@
         ]
       ],
       "ranks": [],
-      "latency_s": 0.19486849999520928,
+      "latency_s": 0.3826610000105575,
       "top_rerank_score": null
     },
     {
@@ -5166,7 +5166,7 @@
         ]
       ],
       "ranks": [],
-      "latency_s": 0.22077479999279603,
+      "latency_s": 0.6470125999767333,
       "top_rerank_score": null
     },
     {
@@ -5221,7 +5221,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.21118720000959001,
+      "latency_s": 0.6584436999983154,
       "top_rerank_score": null
     },
     {
@@ -5276,7 +5276,7 @@
       "ranks": [
         null
       ],
-      "latency_s": 0.21407250000629574,
+      "latency_s": 0.6661115000024438,
       "top_rerank_score": null
     },
     {
@@ -5331,7 +5331,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.19867860001977533,
+      "latency_s": 0.6210192999860737,
       "top_rerank_score": null
     },
     {
@@ -5386,7 +5386,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.19622749998234212,
+      "latency_s": 0.672274299984565,
       "top_rerank_score": null
     },
     {
@@ -5441,7 +5441,7 @@
       "ranks": [
         3
       ],
-      "latency_s": 0.24447000000509433,
+      "latency_s": 1.4509059000120033,
       "top_rerank_score": null
     },
     {
@@ -5496,7 +5496,7 @@
       "ranks": [
         null
       ],
-      "latency_s": 0.23017399999662302,
+      "latency_s": 1.7148589999997057,
       "top_rerank_score": null
     },
     {
@@ -5551,7 +5551,7 @@
       "ranks": [
         3
       ],
-      "latency_s": 0.24070860000210814,
+      "latency_s": 1.3740449999750126,
       "top_rerank_score": null
     },
     {
@@ -5606,7 +5606,7 @@
       "ranks": [
         2
       ],
-      "latency_s": 0.18641259998548776,
+      "latency_s": 1.7429740999941714,
       "top_rerank_score": null
     },
     {
@@ -5661,7 +5661,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.18700870001339354,
+      "latency_s": 3.0199577000166755,
       "top_rerank_score": null
     },
     {
@@ -5716,7 +5716,7 @@
       "ranks": [
         5
       ],
-      "latency_s": 0.19208169999183156,
+      "latency_s": 1.3764708999951836,
       "top_rerank_score": null
     },
     {
@@ -5771,7 +5771,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.22792590002063662,
+      "latency_s": 2.0015789000026416,
       "top_rerank_score": null
     },
     {
@@ -5826,7 +5826,7 @@
       "ranks": [
         9
       ],
-      "latency_s": 0.211705499998061,
+      "latency_s": 2.157081900018966,
       "top_rerank_score": null
     },
     {
@@ -5881,7 +5881,7 @@
       "ranks": [
         null
       ],
-      "latency_s": 0.20471580000594258,
+      "latency_s": 0.5340589999977965,
       "top_rerank_score": null
     },
     {
@@ -5936,7 +5936,7 @@
       "ranks": [
         6
       ],
-      "latency_s": 0.21009110001614317,
+      "latency_s": 0.558508999994956,
       "top_rerank_score": null
     },
     {
@@ -5991,7 +5991,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.2045810999989044,
+      "latency_s": 0.4503913999942597,
       "top_rerank_score": null
     },
     {
@@ -6046,7 +6046,7 @@
       "ranks": [
         6
       ],
-      "latency_s": 0.2279819000104908,
+      "latency_s": 0.5858920000027865,
       "top_rerank_score": null
     },
     {
@@ -6101,7 +6101,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.19415309999021702,
+      "latency_s": 0.7114998000033665,
       "top_rerank_score": null
     },
     {
@@ -6156,7 +6156,7 @@
       "ranks": [
         null
       ],
-      "latency_s": 0.20495630000368692,
+      "latency_s": 0.525219199975254,
       "top_rerank_score": null
     },
     {
@@ -6211,7 +6211,7 @@
       "ranks": [
         null
       ],
-      "latency_s": 0.21342759998515248,
+      "latency_s": 1.3476097999955527,
       "top_rerank_score": null
     },
     {
@@ -6266,7 +6266,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.20320160000119358,
+      "latency_s": 0.8507696000160649,
       "top_rerank_score": null
     },
     {
@@ -6321,7 +6321,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.21920580000733025,
+      "latency_s": 0.558050199993886,
       "top_rerank_score": null
     },
     {
@@ -6376,7 +6376,7 @@
       "ranks": [
         null
       ],
-      "latency_s": 0.21299570001428947,
+      "latency_s": 0.6504964999912772,
       "top_rerank_score": null
     },
     {
@@ -6419,7 +6419,7 @@
       "ranks": [
         4
       ],
-      "latency_s": 0.20056969998404384,
+      "latency_s": 0.39878620000672527,
       "top_rerank_score": null
     },
     {
@@ -6474,7 +6474,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.23028369998792186,
+      "latency_s": 0.4672378999821376,
       "top_rerank_score": null
     },
     {
@@ -6529,7 +6529,7 @@
       "ranks": [
         10
       ],
-      "latency_s": 0.2631798000074923,
+      "latency_s": 0.48624389999895357,
       "top_rerank_score": null
     },
     {
@@ -6584,7 +6584,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.2193443999858573,
+      "latency_s": 0.39161729998886585,
       "top_rerank_score": null
     },
     {
@@ -6639,7 +6639,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.2270383999857586,
+      "latency_s": 0.38232049997895956,
       "top_rerank_score": null
     },
     {
@@ -6694,7 +6694,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.20299779999186285,
+      "latency_s": 0.38966509999590926,
       "top_rerank_score": null
     },
     {
@@ -6749,7 +6749,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.18319800001336262,
+      "latency_s": 0.3313266999903135,
       "top_rerank_score": null
     },
     {
@@ -6804,7 +6804,7 @@
       "ranks": [
         null
       ],
-      "latency_s": 0.20335480000358075,
+      "latency_s": 0.40866169999935664,
       "top_rerank_score": null
     },
     {
@@ -6859,7 +6859,7 @@
       "ranks": [
         3
       ],
-      "latency_s": 0.20097199999145232,
+      "latency_s": 0.40353050001431257,
       "top_rerank_score": null
     },
     {
@@ -6914,7 +6914,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.36230449998402037,
+      "latency_s": 0.4142079000012018,
       "top_rerank_score": null
     },
     {
@@ -6969,7 +6969,7 @@
       "ranks": [
         2
       ],
-      "latency_s": 0.2806137999868952,
+      "latency_s": 0.4402676000026986,
       "top_rerank_score": null
     },
     {
@@ -7024,7 +7024,7 @@
       "ranks": [
         4
       ],
-      "latency_s": 0.20990789998904802,
+      "latency_s": 0.3834218999836594,
       "top_rerank_score": null
     },
     {
@@ -7079,7 +7079,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.21186799998395145,
+      "latency_s": 0.4207894999999553,
       "top_rerank_score": null
     },
     {
@@ -7134,7 +7134,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.21461660001659766,
+      "latency_s": 0.6382869999797549,
       "top_rerank_score": null
     },
     {
@@ -7189,7 +7189,7 @@
       "ranks": [
         2
       ],
-      "latency_s": 0.20666230001370423,
+      "latency_s": 0.4159312999981921,
       "top_rerank_score": null
     },
     {
@@ -7244,7 +7244,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.19950009998865426,
+      "latency_s": 0.4311652000178583,
       "top_rerank_score": null
     },
     {
@@ -7299,7 +7299,7 @@
       "ranks": [
         2
       ],
-      "latency_s": 0.20689669999410398,
+      "latency_s": 0.41669890002231114,
       "top_rerank_score": null
     },
     {
@@ -7354,7 +7354,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.2055681999772787,
+      "latency_s": 0.40818069997476414,
       "top_rerank_score": null
     },
     {
@@ -7409,7 +7409,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.2370879999944009,
+      "latency_s": 0.48487509999540634,
       "top_rerank_score": null
     },
     {
@@ -7464,7 +7464,7 @@
       "ranks": [
         5
       ],
-      "latency_s": 0.19947520000278018,
+      "latency_s": 0.3827138000051491,
       "top_rerank_score": null
     },
     {
@@ -7519,7 +7519,7 @@
       "ranks": [
         4
       ],
-      "latency_s": 0.20546549998107366,
+      "latency_s": 0.38620119998813607,
       "top_rerank_score": null
     },
     {
@@ -7574,7 +7574,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.2066542000102345,
+      "latency_s": 0.41283809999004006,
       "top_rerank_score": null
     },
     {
@@ -7629,7 +7629,7 @@
       "ranks": [
         2
       ],
-      "latency_s": 0.20665350000490434,
+      "latency_s": 0.4017232999904081,
       "top_rerank_score": null
     },
     {
@@ -7684,7 +7684,7 @@
       "ranks": [
         null
       ],
-      "latency_s": 0.19201419997261837,
+      "latency_s": 0.4030149999889545,
       "top_rerank_score": null
     },
     {
@@ -7739,7 +7739,7 @@
       "ranks": [
         4
       ],
-      "latency_s": 0.20919429999776185,
+      "latency_s": 0.4566917000047397,
       "top_rerank_score": null
     },
     {
@@ -7794,7 +7794,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.2073445999994874,
+      "latency_s": 0.4130507000081707,
       "top_rerank_score": null
     },
     {
@@ -7849,7 +7849,7 @@
       "ranks": [
         2
       ],
-      "latency_s": 0.21153749999939464,
+      "latency_s": 0.42957840001326986,
       "top_rerank_score": null
     },
     {
@@ -7904,7 +7904,7 @@
       "ranks": [
         2
       ],
-      "latency_s": 0.2225375999987591,
+      "latency_s": 0.504110900015803,
       "top_rerank_score": null
     },
     {
@@ -7959,7 +7959,7 @@
       "ranks": [
         8
       ],
-      "latency_s": 0.19925589999184012,
+      "latency_s": 0.5280565999855753,
       "top_rerank_score": null
     },
     {
@@ -8014,7 +8014,7 @@
       "ranks": [
         null
       ],
-      "latency_s": 0.6271490000071935,
+      "latency_s": 0.4473001000005752,
       "top_rerank_score": null
     },
     {
@@ -8069,7 +8069,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.39801219999208115,
+      "latency_s": 0.42895589998806827,
       "top_rerank_score": null
     },
     {
@@ -8124,7 +8124,7 @@
       "ranks": [
         3
       ],
-      "latency_s": 0.21092199999839067,
+      "latency_s": 0.4272511999879498,
       "top_rerank_score": null
     },
     {
@@ -8179,7 +8179,7 @@
       "ranks": [
         null
       ],
-      "latency_s": 0.2543028999934904,
+      "latency_s": 0.5233933000126854,
       "top_rerank_score": null
     },
     {
@@ -8234,7 +8234,7 @@
       "ranks": [
         6
       ],
-      "latency_s": 0.24003489999449812,
+      "latency_s": 0.45700749999377877,
       "top_rerank_score": null
     },
     {
@@ -8289,7 +8289,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.26627120000193827,
+      "latency_s": 0.5330265999946278,
       "top_rerank_score": null
     },
     {
@@ -8344,7 +8344,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.21741199999814853,
+      "latency_s": 0.7506735000060871,
       "top_rerank_score": null
     },
     {
@@ -8399,7 +8399,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.24415149999549612,
+      "latency_s": 0.5240058999916073,
       "top_rerank_score": null
     },
     {
@@ -8455,7 +8455,7 @@
         1,
         null
       ],
-      "latency_s": 0.22632159999920987,
+      "latency_s": 0.4658814999856986,
       "top_rerank_score": null
     },
     {
@@ -8510,7 +8510,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.2250447999977041,
+      "latency_s": 0.4420308999833651,
       "top_rerank_score": null
     },
     {
@@ -8566,7 +8566,7 @@
         1,
         4
       ],
-      "latency_s": 0.2394448000122793,
+      "latency_s": 0.4546777000068687,
       "top_rerank_score": null
     },
     {
@@ -8622,7 +8622,7 @@
         3,
         1
       ],
-      "latency_s": 0.21095340000465512,
+      "latency_s": 0.38858849997632205,
       "top_rerank_score": null
     },
     {
@@ -8678,7 +8678,7 @@
         null,
         3
       ],
-      "latency_s": 0.2441367999999784,
+      "latency_s": 0.46591289999196306,
       "top_rerank_score": null
     },
     {
@@ -8734,7 +8734,7 @@
         null,
         null
       ],
-      "latency_s": 0.2096583999809809,
+      "latency_s": 0.41486029999214225,
       "top_rerank_score": null
     },
     {
@@ -8789,7 +8789,7 @@
       "ranks": [
         3
       ],
-      "latency_s": 0.2087662999983877,
+      "latency_s": 0.39379380000173114,
       "top_rerank_score": null
     },
     {
@@ -8844,7 +8844,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.19145550002576783,
+      "latency_s": 0.35138769997865893,
       "top_rerank_score": null
     },
     {
@@ -8899,7 +8899,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.20108660002006218,
+      "latency_s": 0.6500016000063624,
       "top_rerank_score": null
     },
     {
@@ -8954,7 +8954,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.19776899999123998,
+      "latency_s": 0.37890140002127737,
       "top_rerank_score": null
     },
     {
@@ -9009,7 +9009,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.1868157999997493,
+      "latency_s": 0.33705669999471866,
       "top_rerank_score": null
     },
     {
@@ -9064,7 +9064,7 @@
       "ranks": [
         3
       ],
-      "latency_s": 0.1849383999942802,
+      "latency_s": 0.4140106000122614,
       "top_rerank_score": null
     },
     {
@@ -9119,7 +9119,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.18127329999697395,
+      "latency_s": 0.4082701999868732,
       "top_rerank_score": null
     },
     {
@@ -9174,7 +9174,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.18543959999806248,
+      "latency_s": 0.3826868000032846,
       "top_rerank_score": null
     },
     {
@@ -9229,7 +9229,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.1924062000180129,
+      "latency_s": 0.3860722000245005,
       "top_rerank_score": null
     },
     {
@@ -9284,7 +9284,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.2007066000078339,
+      "latency_s": 0.4087240999797359,
       "top_rerank_score": null
     },
     {
@@ -9339,7 +9339,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.19681719999061897,
+      "latency_s": 0.5676150000072084,
       "top_rerank_score": null
     },
     {
@@ -9394,7 +9394,7 @@
       "ranks": [
         7
       ],
-      "latency_s": 0.19049969999468885,
+      "latency_s": 0.4317853999964427,
       "top_rerank_score": null
     },
     {
@@ -9449,7 +9449,7 @@
       "ranks": [
         3
       ],
-      "latency_s": 0.1931617000082042,
+      "latency_s": 0.37139590000151657,
       "top_rerank_score": null
     },
     {
@@ -9504,7 +9504,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.21229820000007749,
+      "latency_s": 0.47318500000983477,
       "top_rerank_score": null
     },
     {
@@ -9559,7 +9559,7 @@
       "ranks": [
         2
       ],
-      "latency_s": 0.20947649999288842,
+      "latency_s": 0.4247281000134535,
       "top_rerank_score": null
     },
     {
@@ -9614,7 +9614,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.21207839998533018,
+      "latency_s": 0.6280099999858066,
       "top_rerank_score": null
     },
     {
@@ -9669,7 +9669,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.1905006000015419,
+      "latency_s": 0.4785161999752745,
       "top_rerank_score": null
     },
     {
@@ -9724,7 +9724,7 @@
       "ranks": [
         2
       ],
-      "latency_s": 0.19101469998713583,
+      "latency_s": 0.4805371000256855,
       "top_rerank_score": null
     },
     {
@@ -9779,7 +9779,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.21153239998966455,
+      "latency_s": 0.5157298000121955,
       "top_rerank_score": null
     },
     {
@@ -9834,7 +9834,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.19061520000104792,
+      "latency_s": 0.4286251000012271,
       "top_rerank_score": null
     },
     {
@@ -9889,7 +9889,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.23140949997468852,
+      "latency_s": 0.5199411000066902,
       "top_rerank_score": null
     },
     {
@@ -9942,7 +9942,7 @@
         ]
       ],
       "ranks": [],
-      "latency_s": 0.189015499985544,
+      "latency_s": 0.4376312000094913,
       "top_rerank_score": null
     },
     {
@@ -9995,7 +9995,7 @@
         ]
       ],
       "ranks": [],
-      "latency_s": 0.18475409998791292,
+      "latency_s": 0.44182359997648746,
       "top_rerank_score": null
     },
     {
@@ -10048,7 +10048,7 @@
         ]
       ],
       "ranks": [],
-      "latency_s": 0.29050679999636486,
+      "latency_s": 0.6158285000128672,
       "top_rerank_score": null
     },
     {
@@ -10101,7 +10101,7 @@
         ]
       ],
       "ranks": [],
-      "latency_s": 0.5111143999965861,
+      "latency_s": 0.462047499982873,
       "top_rerank_score": null
     },
     {
@@ -10154,7 +10154,7 @@
         ]
       ],
       "ranks": [],
-      "latency_s": 0.32132040002034046,
+      "latency_s": 0.3744615000032354,
       "top_rerank_score": null
     },
     {
@@ -10207,7 +10207,7 @@
         ]
       ],
       "ranks": [],
-      "latency_s": 0.19240039997384883,
+      "latency_s": 0.38026279999758117,
       "top_rerank_score": null
     },
     {
@@ -10260,7 +10260,7 @@
         ]
       ],
       "ranks": [],
-      "latency_s": 0.19366960000479594,
+      "latency_s": 0.3604848000104539,
       "top_rerank_score": null
     },
     {
@@ -10313,7 +10313,7 @@
         ]
       ],
       "ranks": [],
-      "latency_s": 0.20880540000507608,
+      "latency_s": 0.4786567999981344,
       "top_rerank_score": null
     },
     {
@@ -10368,7 +10368,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.20927670001401566,
+      "latency_s": 0.4572583000117447,
       "top_rerank_score": null
     },
     {
@@ -10423,7 +10423,7 @@
       "ranks": [
         8
       ],
-      "latency_s": 0.2139759999990929,
+      "latency_s": 0.4108196999877691,
       "top_rerank_score": null
     },
     {
@@ -10478,7 +10478,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.19385529999271967,
+      "latency_s": 0.38551280001411214,
       "top_rerank_score": null
     },
     {
@@ -10533,7 +10533,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.1923722000210546,
+      "latency_s": 0.39039129999582656,
       "top_rerank_score": null
     },
     {
@@ -10588,7 +10588,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.23419950000243261,
+      "latency_s": 0.49986740000895225,
       "top_rerank_score": null
     },
     {
@@ -10624,12 +10624,12 @@
           "21 Speaking Up: Complaints and Whistleblowing"
         ],
         [
-          "Travel_Policy.pdf",
-          "12 Health, safety and security"
-        ],
-        [
           "Employee_Benefits_Guide_2027.pdf",
           "1 Eligibility and Enrollment > How to enroll"
+        ],
+        [
+          "Travel_Policy.pdf",
+          "12 Health, safety and security"
         ],
         [
           "HR_Policy_Handbook_2027.pdf",
@@ -10643,7 +10643,7 @@
       "ranks": [
         4
       ],
-      "latency_s": 0.3562341000069864,
+      "latency_s": 0.4988874999980908,
       "top_rerank_score": null
     },
     {
@@ -10698,7 +10698,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.5359328999766149,
+      "latency_s": 0.5380251999886241,
       "top_rerank_score": null
     },
     {
@@ -10753,7 +10753,7 @@
       "ranks": [
         2
       ],
-      "latency_s": 0.2763610999973025,
+      "latency_s": 0.3795658999879379,
       "top_rerank_score": null
     },
     {
@@ -10808,7 +10808,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.211072600010084,
+      "latency_s": 0.39733790000900626,
       "top_rerank_score": null
     },
     {
@@ -10863,7 +10863,7 @@
       "ranks": [
         2
       ],
-      "latency_s": 0.1844381999981124,
+      "latency_s": 0.367532799980836,
       "top_rerank_score": null
     },
     {
@@ -10912,13 +10912,13 @@
         ],
         [
           "HR_Policy_Handbook_2027.pdf",
-          "6 Recruitment, Hiring and Onboarding"
+          "15 Drug- and Alcohol-Free Workplace"
         ]
       ],
       "ranks": [
         1
       ],
-      "latency_s": 0.23183639999479055,
+      "latency_s": 0.4455479999887757,
       "top_rerank_score": null
     },
     {
@@ -10973,7 +10973,7 @@
       "ranks": [
         5
       ],
-      "latency_s": 0.23792490002233535,
+      "latency_s": 0.45705540000926703,
       "top_rerank_score": null
     },
     {
@@ -11028,7 +11028,7 @@
       "ranks": [
         3
       ],
-      "latency_s": 0.2047092000138946,
+      "latency_s": 0.39544419999583624,
       "top_rerank_score": null
     },
     {
@@ -11083,7 +11083,7 @@
       "ranks": [
         3
       ],
-      "latency_s": 0.22480759999598376,
+      "latency_s": 0.4444562999997288,
       "top_rerank_score": null
     },
     {
@@ -11100,11 +11100,11 @@
         ],
         [
           "Employee_Benefits_Guide_2027.pdf",
-          "12 Required Notices and Glossary > Glossary"
+          "6 Retirement Savings: 401(k) > Employee Stock Purchase Plan (ESPP)"
         ],
         [
           "Employee_Benefits_Guide_2027.pdf",
-          "6 Retirement Savings: 401(k) > Employee Stock Purchase Plan (ESPP)"
+          "12 Required Notices and Glossary > Glossary"
         ],
         [
           "Employee_Benefits_Guide_2027.pdf",
@@ -11138,7 +11138,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.20005400001537055,
+      "latency_s": 0.40918829999282025,
       "top_rerank_score": null
     },
     {
@@ -11193,7 +11193,7 @@
       "ranks": [
         2
       ],
-      "latency_s": 0.2160747000016272,
+      "latency_s": 0.47509930000524037,
       "top_rerank_score": null
     },
     {
@@ -11248,7 +11248,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.1918094000138808,
+      "latency_s": 0.4107781999919098,
       "top_rerank_score": null
     },
     {
@@ -11303,7 +11303,7 @@
       "ranks": [
         7
       ],
-      "latency_s": 0.2022589000116568,
+      "latency_s": 0.6143313999928068,
       "top_rerank_score": null
     },
     {
@@ -11358,7 +11358,7 @@
       "ranks": [
         3
       ],
-      "latency_s": 0.21419329999480397,
+      "latency_s": 1.0722546999750193,
       "top_rerank_score": null
     },
     {
@@ -11413,7 +11413,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.18662650001351722,
+      "latency_s": 0.5676423999830149,
       "top_rerank_score": null
     },
     {
@@ -11468,7 +11468,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.1924721000250429,
+      "latency_s": 0.47827419999521226,
       "top_rerank_score": null
     },
     {
@@ -11523,7 +11523,7 @@
       "ranks": [
         2
       ],
-      "latency_s": 0.19543609998072498,
+      "latency_s": 0.48897810000926256,
       "top_rerank_score": null
     },
     {
@@ -11578,7 +11578,7 @@
       "ranks": [
         3
       ],
-      "latency_s": 0.17982649998157285,
+      "latency_s": 0.3777325999981258,
       "top_rerank_score": null
     },
     {
@@ -11633,7 +11633,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.20863680000184104,
+      "latency_s": 0.527435099997092,
       "top_rerank_score": null
     },
     {
@@ -11688,7 +11688,7 @@
       "ranks": [
         6
       ],
-      "latency_s": 0.216208199999528,
+      "latency_s": 0.5327142000023741,
       "top_rerank_score": null
     },
     {
@@ -11732,18 +11732,18 @@
           "20 Travel and Expenses"
         ],
         [
-          "Travel_Policy.pdf",
-          "8 Meals"
-        ],
-        [
           "HR_Policy_Handbook_2027.pdf",
           "6 Recruitment, Hiring and Onboarding"
+        ],
+        [
+          "Travel_Policy.pdf",
+          "8 Meals"
         ]
       ],
       "ranks": [
         1
       ],
-      "latency_s": 0.18895370000973344,
+      "latency_s": 0.36797769999247976,
       "top_rerank_score": null
     },
     {
@@ -11798,7 +11798,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.17790390001027845,
+      "latency_s": 0.3709351999859791,
       "top_rerank_score": null
     },
     {
@@ -11853,7 +11853,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.1907896000193432,
+      "latency_s": 0.3914703000045847,
       "top_rerank_score": null
     },
     {
@@ -11908,7 +11908,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.18721890001324937,
+      "latency_s": 0.3853508000029251,
       "top_rerank_score": null
     },
     {
@@ -11963,7 +11963,7 @@
       "ranks": [
         4
       ],
-      "latency_s": 0.4303524999995716,
+      "latency_s": 0.48473899997770786,
       "top_rerank_score": null
     },
     {
@@ -12018,7 +12018,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.47476199999800883,
+      "latency_s": 0.56585390001419,
       "top_rerank_score": null
     },
     {
@@ -12073,7 +12073,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.22217719999025576,
+      "latency_s": 0.5637109999952372,
       "top_rerank_score": null
     },
     {
@@ -12128,7 +12128,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.20437450002646074,
+      "latency_s": 0.8329250999959186,
       "top_rerank_score": null
     },
     {
@@ -12183,7 +12183,7 @@
       "ranks": [
         2
       ],
-      "latency_s": 0.19417780000367202,
+      "latency_s": 0.49482230001012795,
       "top_rerank_score": null
     },
     {
@@ -12215,12 +12215,12 @@
           "6 Documentation"
         ],
         [
-          "Travel_Policy.pdf",
-          "4 Approval and booking"
-        ],
-        [
           "HR_Policy_Handbook_2027.pdf",
           "23 Separation from Employment"
+        ],
+        [
+          "Travel_Policy.pdf",
+          "4 Approval and booking"
         ],
         [
           "Travel_Policy.pdf",
@@ -12238,7 +12238,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.20211089999065734,
+      "latency_s": 0.5036619000020437,
       "top_rerank_score": null
     },
     {
@@ -12286,14 +12286,14 @@
           "1 Purpose"
         ],
         [
-          "Expense_Policy.pdf",
-          "3 Roles and responsibilities"
+          "Travel_Policy.pdf",
+          "9 Corporate card and expense submission"
         ]
       ],
       "ranks": [
         1
       ],
-      "latency_s": 0.20893610001076013,
+      "latency_s": 0.4830969000176992,
       "top_rerank_score": null
     },
     {
@@ -12348,7 +12348,7 @@
       "ranks": [
         3
       ],
-      "latency_s": 0.20635049999691546,
+      "latency_s": 0.6543893000052776,
       "top_rerank_score": null
     },
     {
@@ -12403,7 +12403,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.19381399999838322,
+      "latency_s": 0.46772330001113005,
       "top_rerank_score": null
     },
     {
@@ -12432,11 +12432,11 @@
         ],
         [
           "Travel_Policy.pdf",
-          "9 Corporate card and expense submission"
+          "8 Meals"
         ],
         [
           "Travel_Policy.pdf",
-          "8 Meals"
+          "9 Corporate card and expense submission"
         ],
         [
           "Travel_Policy.pdf",
@@ -12458,7 +12458,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.20152790000429377,
+      "latency_s": 0.4605032000108622,
       "top_rerank_score": null
     },
     {
@@ -12513,7 +12513,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.20063040000968613,
+      "latency_s": 0.4261432000203058,
       "top_rerank_score": null
     },
     {
@@ -12568,7 +12568,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.22787029997562058,
+      "latency_s": 0.543825900007505,
       "top_rerank_score": null
     },
     {
@@ -12589,11 +12589,11 @@
         ],
         [
           "Expense_Policy.pdf",
-          "4 Eligible expense categories"
+          "3 Roles and responsibilities"
         ],
         [
           "Expense_Policy.pdf",
-          "3 Roles and responsibilities"
+          "4 Eligible expense categories"
         ],
         [
           "Expense_Policy.pdf",
@@ -12623,7 +12623,7 @@
       "ranks": [
         2
       ],
-      "latency_s": 0.19273720000637695,
+      "latency_s": 0.44100250001065433,
       "top_rerank_score": null
     },
     {
@@ -12678,7 +12678,7 @@
       "ranks": [
         3
       ],
-      "latency_s": 0.19101629999931902,
+      "latency_s": 0.42694000000483356,
       "top_rerank_score": null
     },
     {
@@ -12733,7 +12733,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.19735910001327284,
+      "latency_s": 0.5026536000077613,
       "top_rerank_score": null
     },
     {
@@ -12788,7 +12788,7 @@
       "ranks": [
         2
       ],
-      "latency_s": 0.193699800001923,
+      "latency_s": 0.43279369999072514,
       "top_rerank_score": null
     },
     {
@@ -12843,7 +12843,7 @@
       "ranks": [
         2
       ],
-      "latency_s": 0.20751030000974424,
+      "latency_s": 0.4273828000004869,
       "top_rerank_score": null
     },
     {
@@ -12898,7 +12898,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.22649520001141354,
+      "latency_s": 0.4741175000090152,
       "top_rerank_score": null
     },
     {
@@ -12953,7 +12953,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.21726910001598299,
+      "latency_s": 0.4183667999750469,
       "top_rerank_score": null
     },
     {
@@ -12970,11 +12970,11 @@
         ],
         [
           "HR_Policy_Handbook_2027.pdf",
-          "7 Working Hours, Attendance and Timekeeping"
+          "5 Employment Classifications"
         ],
         [
           "HR_Policy_Handbook_2027.pdf",
-          "5 Employment Classifications"
+          "7 Working Hours, Attendance and Timekeeping"
         ],
         [
           "Employee_Benefits_Guide_2027.pdf",
@@ -13008,7 +13008,7 @@
       "ranks": [
         2
       ],
-      "latency_s": 0.19632160000037402,
+      "latency_s": 0.3669790999847464,
       "top_rerank_score": null
     },
     {
@@ -13063,7 +13063,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.2173289000056684,
+      "latency_s": 0.4990599000011571,
       "top_rerank_score": null
     },
     {
@@ -13118,7 +13118,7 @@
       "ranks": [
         2
       ],
-      "latency_s": 0.2044173000031151,
+      "latency_s": 0.4310834999778308,
       "top_rerank_score": null
     },
     {
@@ -13173,7 +13173,7 @@
       "ranks": [
         2
       ],
-      "latency_s": 0.2047152000013739,
+      "latency_s": 0.4300206000043545,
       "top_rerank_score": null
     },
     {
@@ -13210,11 +13210,11 @@
         ],
         [
           "Employee_Benefits_Guide_2027.pdf",
-          "7 Time Off and Leave"
+          "5 Life and Disability Insurance"
         ],
         [
           "Employee_Benefits_Guide_2027.pdf",
-          "5 Life and Disability Insurance"
+          "7 Time Off and Leave"
         ],
         [
           "Employee_Benefits_Guide_2027.pdf",
@@ -13228,7 +13228,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.20232640000176616,
+      "latency_s": 0.4340331999992486,
       "top_rerank_score": null
     },
     {
@@ -13283,7 +13283,7 @@
       "ranks": [
         3
       ],
-      "latency_s": 0.19245669999509118,
+      "latency_s": 0.41250490001402795,
       "top_rerank_score": null
     },
     {
@@ -13338,7 +13338,7 @@
       "ranks": [
         2
       ],
-      "latency_s": 0.2352705999801401,
+      "latency_s": 0.5256589000055101,
       "top_rerank_score": null
     },
     {
@@ -13393,7 +13393,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.2303613999974914,
+      "latency_s": 0.49627350000082515,
       "top_rerank_score": null
     },
     {
@@ -13448,7 +13448,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.22341829998185858,
+      "latency_s": 0.4459255999827292,
       "top_rerank_score": null
     },
     {
@@ -13503,7 +13503,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.23069870000472292,
+      "latency_s": 0.47917690000031143,
       "top_rerank_score": null
     },
     {
@@ -13558,7 +13558,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.26480040000751615,
+      "latency_s": 0.5243851999985054,
       "top_rerank_score": null
     },
     {
@@ -13614,7 +13614,7 @@
         1,
         2
       ],
-      "latency_s": 0.24396570000681095,
+      "latency_s": 0.5104797999956645,
       "top_rerank_score": null
     },
     {
@@ -13669,7 +13669,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.2203305000148248,
+      "latency_s": 0.47956999999587424,
       "top_rerank_score": null
     },
     {
@@ -13725,7 +13725,7 @@
         1,
         2
       ],
-      "latency_s": 0.2445276000071317,
+      "latency_s": 0.5199310000170954,
       "top_rerank_score": null
     },
     {
@@ -13781,7 +13781,7 @@
         2,
         1
       ],
-      "latency_s": 0.23559940000995994,
+      "latency_s": 0.4019599000166636,
       "top_rerank_score": null
     },
     {
@@ -13837,7 +13837,7 @@
         8,
         1
       ],
-      "latency_s": 0.2683065000164788,
+      "latency_s": 0.5260925000184216,
       "top_rerank_score": null
     },
     {
@@ -13893,7 +13893,7 @@
         2,
         4
       ],
-      "latency_s": 0.2457533999986481,
+      "latency_s": 0.4479680999938864,
       "top_rerank_score": null
     },
     {
@@ -13906,11 +13906,11 @@
       "labels": [
         [
           "Expense_Policy.pdf",
-          "6 Documentation"
+          "10 Fraud, audit and consequences"
         ],
         [
           "Expense_Policy.pdf",
-          "10 Fraud, audit and consequences"
+          "6 Documentation"
         ],
         [
           "Expense_Policy.pdf",
@@ -13946,9 +13946,9 @@
         ]
       ],
       "ranks": [
-        2
+        1
       ],
-      "latency_s": 0.23247750001610257,
+      "latency_s": 0.42358609999064356,
       "top_rerank_score": null
     },
     {
@@ -14003,7 +14003,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.1993967999878805,
+      "latency_s": 0.39403920000768267,
       "top_rerank_score": null
     },
     {
@@ -14058,7 +14058,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.20914260001154616,
+      "latency_s": 0.4128052999731153,
       "top_rerank_score": null
     },
     {
@@ -14113,7 +14113,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.23386569999274798,
+      "latency_s": 0.8041386999830138,
       "top_rerank_score": null
     },
     {
@@ -14168,7 +14168,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.19768170002498664,
+      "latency_s": 0.4507949000108056,
       "top_rerank_score": null
     },
     {
@@ -14223,7 +14223,7 @@
       "ranks": [
         4
       ],
-      "latency_s": 0.20743199999560602,
+      "latency_s": 0.48895540001103655,
       "top_rerank_score": null
     },
     {
@@ -14251,14 +14251,6 @@
           "1 Eligibility and Enrollment > Who is eligible"
         ],
         [
-          "Annual_Review_Merit_Bonus_Policy_2027.pdf",
-          "12 Definitions"
-        ],
-        [
-          "HR_Policy_Handbook_2027.pdf",
-          "15 Drug- and Alcohol-Free Workplace"
-        ],
-        [
           "HR_Policy_Handbook_2027.pdf",
           "9 Compensation and Payroll"
         ],
@@ -14267,18 +14259,26 @@
           "12 Definitions"
         ],
         [
+          "HR_Policy_Handbook_2027.pdf",
+          "15 Drug- and Alcohol-Free Workplace"
+        ],
+        [
           "Annual_Review_Merit_Bonus_Policy_2027.pdf",
-          "7 Annual Performance Bonus Plan > 7.3 Company Performance Factor (bonus pool funding)"
+          "12 Definitions"
         ],
         [
           "HR_Policy_Handbook_2027.pdf",
           "3 Anti-Harassment and Anti-Discrimination"
+        ],
+        [
+          "Annual_Review_Merit_Bonus_Policy_2027.pdf",
+          "7 Annual Performance Bonus Plan > 7.3 Company Performance Factor (bonus pool funding)"
         ]
       ],
       "ranks": [
         1
       ],
-      "latency_s": 0.20251740000094287,
+      "latency_s": 0.4783651999896392,
       "top_rerank_score": null
     },
     {
@@ -14333,7 +14333,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.2004587999836076,
+      "latency_s": 0.3826520000002347,
       "top_rerank_score": null
     },
     {
@@ -14377,18 +14377,18 @@
           "5 Air travel"
         ],
         [
-          "Expense_Policy.pdf",
-          "5 Approval limits"
-        ],
-        [
           "Employee_Benefits_Guide_2027.pdf",
           "1 Eligibility and Enrollment > How to enroll"
+        ],
+        [
+          "Expense_Policy.pdf",
+          "5 Approval limits"
         ]
       ],
       "ranks": [
         1
       ],
-      "latency_s": 0.21673839999129996,
+      "latency_s": 0.443604600004619,
       "top_rerank_score": null
     },
     {
@@ -14443,7 +14443,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.24319189999368973,
+      "latency_s": 0.5821278000075836,
       "top_rerank_score": null
     },
     {
@@ -14498,7 +14498,7 @@
       "ranks": [
         2
       ],
-      "latency_s": 0.22508899998501875,
+      "latency_s": 0.5523830000020098,
       "top_rerank_score": null
     },
     {
@@ -14553,7 +14553,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.24447999999392778,
+      "latency_s": 0.37809980000020005,
       "top_rerank_score": null
     },
     {
@@ -14566,11 +14566,11 @@
       "labels": [
         [
           "Annual_Review_Merit_Bonus_Policy_2027.pdf",
-          "7 Annual Performance Bonus Plan > 7.5 Worked example"
+          "7 Annual Performance Bonus Plan > 7.1 Target bonus by level"
         ],
         [
           "Annual_Review_Merit_Bonus_Policy_2027.pdf",
-          "7 Annual Performance Bonus Plan > 7.1 Target bonus by level"
+          "7 Annual Performance Bonus Plan > 7.5 Worked example"
         ],
         [
           "Annual_Review_Merit_Bonus_Policy_2027.pdf",
@@ -14606,9 +14606,9 @@
         ]
       ],
       "ranks": [
-        2
+        1
       ],
-      "latency_s": 0.2431874999892898,
+      "latency_s": 0.38786570000229403,
       "top_rerank_score": null
     },
     {
@@ -14663,7 +14663,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.2748790000041481,
+      "latency_s": 0.49789500000770204,
       "top_rerank_score": null
     },
     {
@@ -14676,11 +14676,11 @@
       "labels": [
         [
           "Annual_Review_Merit_Bonus_Policy_2027.pdf",
-          "7 Annual Performance Bonus Plan > 7.1 Target bonus by level"
+          "7 Annual Performance Bonus Plan > 7.5 Worked example"
         ],
         [
           "Annual_Review_Merit_Bonus_Policy_2027.pdf",
-          "7 Annual Performance Bonus Plan > 7.5 Worked example"
+          "7 Annual Performance Bonus Plan > 7.1 Target bonus by level"
         ],
         [
           "Annual_Review_Merit_Bonus_Policy_2027.pdf",
@@ -14716,9 +14716,9 @@
         ]
       ],
       "ranks": [
-        1
+        2
       ],
-      "latency_s": 0.25358170000254177,
+      "latency_s": 0.4047102000040468,
       "top_rerank_score": null
     },
     {
@@ -14773,7 +14773,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.26386139998794533,
+      "latency_s": 0.45177389998571016,
       "top_rerank_score": null
     },
     {
@@ -14828,7 +14828,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.2709558999922592,
+      "latency_s": 0.38464720000047237,
       "top_rerank_score": null
     },
     {
@@ -14877,13 +14877,13 @@
         ],
         [
           "Annual_Review_Merit_Bonus_Policy_2027.pdf",
-          "3 Annual Review Cycle and Timeline"
+          "7 Annual Performance Bonus Plan > 7.4 Individual Performance Multiplier"
         ]
       ],
       "ranks": [
         1
       ],
-      "latency_s": 0.21263379999436438,
+      "latency_s": 0.4086282000062056,
       "top_rerank_score": null
     },
     {
@@ -14938,7 +14938,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.22443929998553358,
+      "latency_s": 0.5493676999758463,
       "top_rerank_score": null
     },
     {
@@ -14993,7 +14993,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.21220750000793487,
+      "latency_s": 0.42764740000711754,
       "top_rerank_score": null
     },
     {
@@ -15048,7 +15048,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.25093789998209104,
+      "latency_s": 0.5136611000052653,
       "top_rerank_score": null
     },
     {
@@ -15101,7 +15101,7 @@
         ]
       ],
       "ranks": [],
-      "latency_s": 0.238578900025459,
+      "latency_s": 0.402915499988012,
       "top_rerank_score": null
     },
     {
@@ -15154,7 +15154,7 @@
         ]
       ],
       "ranks": [],
-      "latency_s": 0.22046869999030605,
+      "latency_s": 0.3697952999791596,
       "top_rerank_score": null
     },
     {
@@ -15207,7 +15207,7 @@
         ]
       ],
       "ranks": [],
-      "latency_s": 0.21195820000139065,
+      "latency_s": 0.4366398999991361,
       "top_rerank_score": null
     },
     {
@@ -15260,7 +15260,7 @@
         ]
       ],
       "ranks": [],
-      "latency_s": 0.2149288000073284,
+      "latency_s": 0.8118452000198886,
       "top_rerank_score": null
     },
     {
@@ -15272,12 +15272,12 @@
       "query": "Does the office provide free lunch?",
       "labels": [
         [
-          "Travel_Policy.pdf",
-          "8 Meals"
-        ],
-        [
           "HR_Policy_Handbook_2027.pdf",
           "8 Remote and Hybrid Work"
+        ],
+        [
+          "Travel_Policy.pdf",
+          "8 Meals"
         ],
         [
           "HR_Policy_Handbook_2027.pdf",
@@ -15313,7 +15313,7 @@
         ]
       ],
       "ranks": [],
-      "latency_s": 0.22257020001416095,
+      "latency_s": 0.5853848999831825,
       "top_rerank_score": null
     },
     {
@@ -15366,7 +15366,7 @@
         ]
       ],
       "ranks": [],
-      "latency_s": 0.21470000001136214,
+      "latency_s": 0.3801365999970585,
       "top_rerank_score": null
     },
     {
@@ -15414,12 +15414,12 @@
           "2 Medical Plans"
         ],
         [
-          "Travel_Policy.pdf",
-          "7 Ground transportation"
+          "Employee_Benefits_Guide_2027.pdf",
+          "8 Wellbeing and Support Programs"
         ]
       ],
       "ranks": [],
-      "latency_s": 0.2327616999973543,
+      "latency_s": 0.3834130000032019,
       "top_rerank_score": null
     },
     {
@@ -15459,12 +15459,12 @@
           "10 Life Events, COBRA and Changes > COBRA continuation"
         ],
         [
-          "Expense_Policy.pdf",
-          "7 Submission, corporate card and reimbursement"
-        ],
-        [
           "Employee_Benefits_Guide_2027.pdf",
           "5 Life and Disability Insurance"
+        ],
+        [
+          "Expense_Policy.pdf",
+          "7 Submission, corporate card and reimbursement"
         ],
         [
           "Employee_Benefits_Guide_2027.pdf",
@@ -15472,7 +15472,7 @@
         ]
       ],
       "ranks": [],
-      "latency_s": 0.23294399998849258,
+      "latency_s": 0.47224860001006164,
       "top_rerank_score": null
     },
     {
@@ -15527,7 +15527,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 3.19677270000102,
+      "latency_s": 5.831529099988984,
       "top_rerank_score": 4.955976486206055
     },
     {
@@ -15582,7 +15582,7 @@
       "ranks": [
         3
       ],
-      "latency_s": 0.9197023000160698,
+      "latency_s": 2.2787583000026643,
       "top_rerank_score": -11.047935485839844
     },
     {
@@ -15630,14 +15630,14 @@
           "24 Policy Administration"
         ],
         [
-          "HR_Policy_Handbook_2027.pdf",
-          "17 Responsible Use of AI Tools"
+          "Expense_Policy.pdf",
+          "Document Control"
         ]
       ],
       "ranks": [
         1
       ],
-      "latency_s": 0.755509799986612,
+      "latency_s": 1.6382238999940455,
       "top_rerank_score": 6.058199882507324
     },
     {
@@ -15692,7 +15692,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.7588633999985177,
+      "latency_s": 1.5620290999941062,
       "top_rerank_score": 7.760753154754639
     },
     {
@@ -15747,7 +15747,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.7352359000069555,
+      "latency_s": 1.7039171000069473,
       "top_rerank_score": -2.113227367401123
     },
     {
@@ -15802,7 +15802,7 @@
       "ranks": [
         2
       ],
-      "latency_s": 0.6782633000111673,
+      "latency_s": 1.5975471000128891,
       "top_rerank_score": -11.059581756591797
     },
     {
@@ -15857,7 +15857,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.718737700022757,
+      "latency_s": 1.634225999994669,
       "top_rerank_score": 0.7360581159591675
     },
     {
@@ -15912,7 +15912,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.6691930000088178,
+      "latency_s": 1.6002461000171024,
       "top_rerank_score": -4.11811637878418
     },
     {
@@ -15967,7 +15967,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.7161170000035781,
+      "latency_s": 1.686877000000095,
       "top_rerank_score": 4.15213680267334
     },
     {
@@ -16022,7 +16022,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.7918862999940757,
+      "latency_s": 1.6151729999983218,
       "top_rerank_score": 1.4721646308898926
     },
     {
@@ -16077,7 +16077,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.7779032000107691,
+      "latency_s": 2.5306966999778524,
       "top_rerank_score": -10.439510345458984
     },
     {
@@ -16132,7 +16132,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.9721903000026941,
+      "latency_s": 2.1908825999998953,
       "top_rerank_score": -2.7531838417053223
     },
     {
@@ -16187,7 +16187,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.6747546000115108,
+      "latency_s": 1.5306599999894388,
       "top_rerank_score": -0.4363555908203125
     },
     {
@@ -16242,7 +16242,7 @@
       "ranks": [
         2
       ],
-      "latency_s": 0.908747300010873,
+      "latency_s": 2.290558599983342,
       "top_rerank_score": -6.157405853271484
     },
     {
@@ -16297,7 +16297,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.8549160000111442,
+      "latency_s": 1.8643283999990672,
       "top_rerank_score": 3.4323904514312744
     },
     {
@@ -16352,7 +16352,7 @@
       "ranks": [
         3
       ],
-      "latency_s": 0.7911396999843419,
+      "latency_s": 1.5895280000113416,
       "top_rerank_score": -7.084040641784668
     },
     {
@@ -16407,7 +16407,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.8461085000017192,
+      "latency_s": 1.4993916999956127,
       "top_rerank_score": -1.326664686203003
     },
     {
@@ -16462,7 +16462,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 1.3134947999787983,
+      "latency_s": 1.9673991999879945,
       "top_rerank_score": -6.4791154861450195
     },
     {
@@ -16517,7 +16517,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 1.1024374999979045,
+      "latency_s": 1.9034058999968693,
       "top_rerank_score": 1.1832501888275146
     },
     {
@@ -16572,7 +16572,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 1.3936951000068802,
+      "latency_s": 2.0751481000042986,
       "top_rerank_score": 8.078306198120117
     },
     {
@@ -16627,7 +16627,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 1.6812439000059385,
+      "latency_s": 2.2519032999989577,
       "top_rerank_score": 5.893216133117676
     },
     {
@@ -16682,7 +16682,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 1.108228600001894,
+      "latency_s": 1.5104209999844898,
       "top_rerank_score": -6.398619651794434
     },
     {
@@ -16737,7 +16737,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 1.4324870000127703,
+      "latency_s": 2.0908906999975443,
       "top_rerank_score": -5.1042890548706055
     },
     {
@@ -16792,7 +16792,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 1.5059657999954652,
+      "latency_s": 2.4081555000157095,
       "top_rerank_score": 0.03287778049707413
     },
     {
@@ -16847,7 +16847,7 @@
       "ranks": [
         4
       ],
-      "latency_s": 1.5256814999738708,
+      "latency_s": 2.2780330999812577,
       "top_rerank_score": -5.395228385925293
     },
     {
@@ -16902,7 +16902,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 1.2543400999857113,
+      "latency_s": 2.0155348999833222,
       "top_rerank_score": -8.711769104003906
     },
     {
@@ -16957,7 +16957,7 @@
       "ranks": [
         7
       ],
-      "latency_s": 0.7791218999773264,
+      "latency_s": 2.3118388999719173,
       "top_rerank_score": -11.132278442382812
     },
     {
@@ -17012,7 +17012,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.9685422999900766,
+      "latency_s": 1.6020445000031032,
       "top_rerank_score": 3.827432632446289
     },
     {
@@ -17067,7 +17067,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 1.1659139999828767,
+      "latency_s": 2.2212968000094406,
       "top_rerank_score": -3.068723678588867
     },
     {
@@ -17122,7 +17122,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.9599836000124924,
+      "latency_s": 1.5375554999918677,
       "top_rerank_score": -8.230406761169434
     },
     {
@@ -17177,7 +17177,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.8385613999853376,
+      "latency_s": 1.3128156999882776,
       "top_rerank_score": -9.613554000854492
     },
     {
@@ -17232,7 +17232,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.9477566000132356,
+      "latency_s": 1.4108227000106126,
       "top_rerank_score": 4.052684783935547
     },
     {
@@ -17287,7 +17287,7 @@
       "ranks": [
         2
       ],
-      "latency_s": 0.9521712000132538,
+      "latency_s": 1.5365878000156954,
       "top_rerank_score": -4.865361213684082
     },
     {
@@ -17342,7 +17342,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.9129887000017334,
+      "latency_s": 1.5944536000024527,
       "top_rerank_score": 2.155463695526123
     },
     {
@@ -17397,7 +17397,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 1.199772700027097,
+      "latency_s": 2.4531835000088904,
       "top_rerank_score": -8.962636947631836
     },
     {
@@ -17452,7 +17452,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.975147899996955,
+      "latency_s": 1.6660109999938868,
       "top_rerank_score": -9.16008186340332
     },
     {
@@ -17507,7 +17507,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 1.0261447000084445,
+      "latency_s": 1.779919799999334,
       "top_rerank_score": -8.139653205871582
     },
     {
@@ -17562,7 +17562,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 1.3429973000020254,
+      "latency_s": 3.3059154999791645,
       "top_rerank_score": 2.3818202018737793
     },
     {
@@ -17617,7 +17617,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.8837288999930024,
+      "latency_s": 2.5829404999967664,
       "top_rerank_score": -1.7697727680206299
     },
     {
@@ -17672,7 +17672,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.9014069999975618,
+      "latency_s": 5.600080899981549,
       "top_rerank_score": 3.1127586364746094
     },
     {
@@ -17727,7 +17727,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.7148832999810111,
+      "latency_s": 4.261041799996747,
       "top_rerank_score": -7.479109287261963
     },
     {
@@ -17782,7 +17782,7 @@
       "ranks": [
         2
       ],
-      "latency_s": 0.602873499999987,
+      "latency_s": 2.645388000004459,
       "top_rerank_score": 1.3918524980545044
     },
     {
@@ -17837,7 +17837,7 @@
       "ranks": [
         2
       ],
-      "latency_s": 0.6806110999896191,
+      "latency_s": 3.049585800006753,
       "top_rerank_score": -5.420199871063232
     },
     {
@@ -17892,7 +17892,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.9654933999991044,
+      "latency_s": 4.428602600004524,
       "top_rerank_score": 2.7431883811950684
     },
     {
@@ -17947,7 +17947,7 @@
       "ranks": [
         2
       ],
-      "latency_s": 0.973713699990185,
+      "latency_s": 4.736946599994553,
       "top_rerank_score": 0.7626699805259705
     },
     {
@@ -18002,7 +18002,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.9178130999789573,
+      "latency_s": 3.5778767000010703,
       "top_rerank_score": -7.867083549499512
     },
     {
@@ -18057,7 +18057,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 1.0027281999937259,
+      "latency_s": 4.498716500005685,
       "top_rerank_score": -2.628671646118164
     },
     {
@@ -18112,7 +18112,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.8182253999984823,
+      "latency_s": 3.1077135000086855,
       "top_rerank_score": -5.477638244628906
     },
     {
@@ -18167,7 +18167,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.7552583000215236,
+      "latency_s": 2.520006700011436,
       "top_rerank_score": 5.606625556945801
     },
     {
@@ -18222,7 +18222,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.7734914000029676,
+      "latency_s": 2.472038400010206,
       "top_rerank_score": -1.8915348052978516
     },
     {
@@ -18277,7 +18277,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.6653296000149567,
+      "latency_s": 1.6187799000181258,
       "top_rerank_score": 7.293598175048828
     },
     {
@@ -18332,7 +18332,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.6769724000187125,
+      "latency_s": 1.875010799994925,
       "top_rerank_score": 1.25344717502594
     },
     {
@@ -18387,7 +18387,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.9347200999909546,
+      "latency_s": 2.2077499000006355,
       "top_rerank_score": -4.464590549468994
     },
     {
@@ -18442,7 +18442,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.9568762000126299,
+      "latency_s": 3.9284149000013713,
       "top_rerank_score": -5.189445495605469
     },
     {
@@ -18497,7 +18497,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.788787700003013,
+      "latency_s": 3.3970026000170037,
       "top_rerank_score": -10.150009155273438
     },
     {
@@ -18552,7 +18552,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.7482596000190824,
+      "latency_s": 2.8894163999939337,
       "top_rerank_score": -4.27105188369751
     },
     {
@@ -18607,7 +18607,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.6999413000012282,
+      "latency_s": 3.034414800000377,
       "top_rerank_score": -3.8920321464538574
     },
     {
@@ -18662,7 +18662,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.818712600012077,
+      "latency_s": 3.2353046000062022,
       "top_rerank_score": 5.499274253845215
     },
     {
@@ -18717,7 +18717,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 1.4640220000001136,
+      "latency_s": 3.6934921000211034,
       "top_rerank_score": 3.183485507965088
     },
     {
@@ -18773,7 +18773,7 @@
         2,
         1
       ],
-      "latency_s": 1.294469400017988,
+      "latency_s": 3.0311135000083596,
       "top_rerank_score": 4.23353385925293
     },
     {
@@ -18828,7 +18828,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 1.01927620000788,
+      "latency_s": 3.4971550999907777,
       "top_rerank_score": 2.4503307342529297
     },
     {
@@ -18884,7 +18884,7 @@
         3,
         1
       ],
-      "latency_s": 0.9174245999893174,
+      "latency_s": 3.7595270999881905,
       "top_rerank_score": 3.8074145317077637
     },
     {
@@ -18940,7 +18940,7 @@
         2,
         1
       ],
-      "latency_s": 1.0414231000177097,
+      "latency_s": 3.7048292999970727,
       "top_rerank_score": 1.0042294263839722
     },
     {
@@ -18996,7 +18996,7 @@
         4,
         7
       ],
-      "latency_s": 0.8525372000003699,
+      "latency_s": 3.516204799991101,
       "top_rerank_score": -6.022202491760254
     },
     {
@@ -19052,7 +19052,7 @@
         1,
         3
       ],
-      "latency_s": 0.7641723999986425,
+      "latency_s": 4.6352637999807484,
       "top_rerank_score": -7.199832439422607
     },
     {
@@ -19107,7 +19107,7 @@
       "ranks": [
         2
       ],
-      "latency_s": 0.6777528000238817,
+      "latency_s": 3.29797340001096,
       "top_rerank_score": -4.277176856994629
     },
     {
@@ -19162,7 +19162,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 2.0281036000233144,
+      "latency_s": 5.084239800024079,
       "top_rerank_score": 0.9240239858627319
     },
     {
@@ -19217,7 +19217,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 1.0809191000007559,
+      "latency_s": 4.1294476999901235,
       "top_rerank_score": 5.589382648468018
     },
     {
@@ -19272,7 +19272,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 1.3205485999933444,
+      "latency_s": 4.972576500003925,
       "top_rerank_score": 5.515809059143066
     },
     {
@@ -19327,7 +19327,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 1.0502178999886382,
+      "latency_s": 4.5290565000032075,
       "top_rerank_score": 4.731056213378906
     },
     {
@@ -19382,7 +19382,7 @@
       "ranks": [
         4
       ],
-      "latency_s": 0.704376300011063,
+      "latency_s": 2.7346981999871787,
       "top_rerank_score": -0.16502657532691956
     },
     {
@@ -19437,7 +19437,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.8669850000005681,
+      "latency_s": 2.863658900023438,
       "top_rerank_score": 6.660533905029297
     },
     {
@@ -19492,7 +19492,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.82872329998645,
+      "latency_s": 2.914556400006404,
       "top_rerank_score": 4.424082279205322
     },
     {
@@ -19547,7 +19547,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 1.0395228000124916,
+      "latency_s": 3.4676855000143405,
       "top_rerank_score": 2.2607526779174805
     },
     {
@@ -19602,7 +19602,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 1.236087099998258,
+      "latency_s": 4.098218900006032,
       "top_rerank_score": 3.581667184829712
     },
     {
@@ -19657,7 +19657,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.9079449000128079,
+      "latency_s": 3.2198187000176404,
       "top_rerank_score": 4.857365608215332
     },
     {
@@ -19712,7 +19712,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.7336580000119284,
+      "latency_s": 2.7923219999938738,
       "top_rerank_score": 0.4713084101676941
     },
     {
@@ -19767,7 +19767,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.8094260999932885,
+      "latency_s": 3.0681309000065085,
       "top_rerank_score": 3.694286584854126
     },
     {
@@ -19822,7 +19822,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 0.9373174000065774,
+      "latency_s": 4.711858700000448,
       "top_rerank_score": 4.77187442779541
     },
     {
@@ -19877,7 +19877,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 1.0337477000139188,
+      "latency_s": 4.0261262000130955,
       "top_rerank_score": 3.061851978302002
     },
     {
@@ -19932,7 +19932,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 1.1800203000020701,
+      "latency_s": 4.21952880002209,
       "top_rerank_score": 0.12741802632808685
     },
     {
@@ -19987,7 +19987,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 1.2318997000111267,
+      "latency_s": 3.614852200000314,
       "top_rerank_score": 6.619345188140869
     },
     {
@@ -20042,7 +20042,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 1.2555371999915224,
+      "latency_s": 3.991878500004532,
       "top_rerank_score": 6.549362659454346
     },
     {
@@ -20097,7 +20097,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 1.3543979000241961,
+      "latency_s": 3.971810100018047,
       "top_rerank_score": -2.042603015899658
     },
     {
@@ -20152,7 +20152,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 1.1810703999944963,
+      "latency_s": 3.799788800009992,
       "top_rerank_score": -0.14834702014923096
     },
     {
@@ -20207,7 +20207,7 @@
       "ranks": [
         1
       ],
-      "latency_s": 1.3122208999993745,
+      "latency_s": 4.79363060000469,
       "top_rerank_score": 4.745641708374023
     },
     {
@@ -20260,7 +20260,7 @@
         ]
       ],
       "ranks": [],
-      "latency_s": 0.8941839000035543,
+      "latency_s": 1.7406417000165675,
       "top_rerank_score": -3.7576560974121094
     },
     {
@@ -20313,7 +20313,7 @@
         ]
       ],
       "ranks": [],
-      "latency_s": 0.6683229000191204,
+      "latency_s": 1.3919681000115816,
       "top_rerank_score": -11.219379425048828
     },
     {
@@ -20366,7 +20366,7 @@
         ]
       ],
       "ranks": [],
-      "latency_s": 0.8082445000181906,
+      "latency_s": 3.0639926999865565,
       "top_rerank_score": -4.071025848388672
     },
     {
@@ -20419,7 +20419,7 @@
         ]
       ],
       "ranks": [],
-      "latency_s": 0.7787419999949634,
+      "latency_s": 3.545928300009109,
       "top_rerank_score": -6.913091659545898
     },
     {
@@ -20472,7 +20472,7 @@
         ]
       ],
       "ranks": [],
-      "latency_s": 0.7246191000158433,
+      "latency_s": 3.176076000003377,
       "top_rerank_score": -10.543510437011719
     },
     {
@@ -20525,7 +20525,7 @@
         ]
       ],
       "ranks": [],
-      "latency_s": 0.8810254999843892,
+      "latency_s": 3.3577470000018366,
       "top_rerank_score": -9.226897239685059
     },
     {
@@ -20578,7 +20578,7 @@
         ]
       ],
       "ranks": [],
-      "latency_s": 1.1031612000078894,
+      "latency_s": 4.3162924999778625,
       "top_rerank_score": -7.691705703735352
     },
     {
@@ -20631,7 +20631,7 @@
         ]
       ],
       "ranks": [],
-      "latency_s": 0.9183941999799572,
+      "latency_s": 3.9656658000021707,
       "top_rerank_score": -6.241667747497559
     }
   ],
