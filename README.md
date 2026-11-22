@@ -13,6 +13,45 @@ docker compose up -d --build                   # Qdrant + the API (first build t
 
 Open **http://localhost:8000/docs**, click **Authorize** and paste a key. You can then ask questions (`POST /query`), list your documents, and, with the admin key, upload PDFs, delete documents and change who may read them. Each key stands for one principal, so the same question gives an employee and a manager different answers. Without Docker, run the API with `uv run uvicorn --factory hybrid_rag.api.app:create_app`. Details are in the [API README](src/hybrid_rag/api/README.md).
 
+## Making an API key
+
+Each key stands for one person or app (a *principal*) and decides what they may read. `scripts/make_api_key.py` prints the key **once** and saves only its SHA-256 hash in `api_keys.yaml` (git-ignored), so copy it when it's shown. A lost key can't be recovered, only replaced.
+
+```bash
+# An employee: reads internal policies
+uv run python scripts/make_api_key.py alice --clearance internal
+
+# A manager: can also read the merit policy (confidential, restricted to people managers)
+uv run python scripts/make_api_key.py bob --clearance confidential --role people_manager
+
+# HR compensation
+uv run python scripts/make_api_key.py carol --clearance confidential --group hr-compensation
+
+# A tenant admin: can upload, delete and change who may read a document
+uv run python scripts/make_api_key.py ops --clearance restricted --admin
+```
+
+| Option | Meaning |
+|---|---|
+| `name` | A label for the key, shown in the audit log |
+| `--user` | The user ID (default: the name) |
+| `--tenant` | The tenant (default: `documents.tenant_id` in `config.yaml`) |
+| `--clearance` | `public`, `internal`, `confidential` or `restricted`: the highest classification the key may read |
+| `--group`, `--role` | Groups and roles that documents can grant access to (repeat for several) |
+| `--admin` | Tenant admin |
+| `--demo` | Creates four demo keys: `demo-employee`, `demo-manager`, `demo-hr-comp`, `demo-admin` |
+
+The API reads `api_keys.yaml` at startup, so **restart it after adding a key** (`docker compose restart api`). The file is mounted into the container, so keys made on your machine work in Docker too.
+
+**Using a key:** send the printed `hrk_…` value in the `X-API-Key` header, or paste it under **Authorize** in Swagger UI. Don't send the `sha256` value from `api_keys.yaml`: that's the hash, and it's refused with 401.
+
+```bash
+curl -s localhost:8000/query -H "X-API-Key: hrk_..." -H "Content-Type: application/json" \
+  -d '{"question": "How many PTO days do I get after 4 years?"}'
+```
+
+**Disabling a key:** set `disabled: true` on its entry in `api_keys.yaml` and restart the API. To start over with fresh demo keys, delete `api_keys.yaml` and run `--demo` again. The old keys then stop working.
+
 ## Indexing the HR policies
 
 ```bash
