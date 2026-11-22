@@ -94,6 +94,30 @@ In the sample set, the merit and bonus policy is restricted to HR compensation, 
 
 Before a PDF is chunked, personal data is replaced with placeholders such as `<PERSON>` and `<EMAIL>`. A document containing high-risk data, such as an SSN or a card number, is quarantined and not indexed. Every chunk is checked again before it is embedded. Settings are in the `privacy:` section of [config.yaml](config.yaml), and the details are in the [privacy README](src/hybrid_rag/privacy/README.md).
 
+## Evaluation results
+
+94 labelled HR questions ([eval/golden.yaml](eval/golden.yaml)) are run through each retrieval mode, each asked as an employee, manager or HR-compensation principal. Ranks are per chunk, as sent to the LLM:
+
+| Mode | Recall@1 | Recall@3 | Recall@5 | Recall@10 | MRR | Median latency |
+|---|---|---|---|---|---|---|
+| `dense` | 77.3% | 94.8% | 98.8% | 98.8% | 0.878 | 0.20 s |
+| `sparse` | 50.6% | 70.3% | 77.9% | 86.0% | 0.634 | 0.21 s |
+| `hybrid` | 62.8% | 90.7% | 95.9% | 100% | 0.787 | 0.21 s |
+| **`hybrid_rerank`** (default) | **82.6%** | **95.3%** | 98.3% | 100% | **0.908** | 0.92 s |
+
+- **The reranker earns its 0.7 s.** It puts the right section first for 82.6% of questions, against 77.3% for dense search alone.
+- **Hybrid without reranking is worse than dense.** Sparse search is weak on reworded questions (65.6% Recall@5 on the 45 paraphrased ones, against 91.5% on keyword ones), and fusing it in pulls good dense results down. With the reranker on top, hybrid is the best mode.
+- **No leaks:** the 12 questions about the restricted merit policy were also asked by an employee, in every mode. No chunk from that policy came back.
+
+**End to end** (`--answers`, `gpt-5`, `hybrid_rerank`): 85 of 86 answerable questions were answered, cited an expected section and contained every expected figure, and 7 of 8 unanswerable questions were refused. The failures:
+- **A sabbatical question:** the right section ranked 7th, just outside the 6 chunks sent to the LLM.
+- **"Vacation days in Germany":** the assistant answered with the US PTO table and a caveat, instead of saying the policies are US-only.
+- **An employee asking about a raise at the top of the salary range:** nothing restricted was retrieved, but the answer guessed "paid as a lump sum", which happens to be the restricted rule.
+
+**The evaluation changed a setting.** The confidence gate (`answer.min_rerank_score`) was −8.5, calibrated by hand on 23 questions. At that value it refused 9 of the 86 answerable questions, most with the right section ranked first, and stopped no question the LLM wouldn't refuse anyway. It is now −12: a cost floor for questions nothing comes close to, with refusals left to the LLM.
+
+The full results, with per-category tables and every miss, are in [eval/results/](eval/results/). How to run the evaluation and add questions is in the [evaluation README](eval/README.md).
+
 ## Setting up LangSmith (optional tracing)
 
 [LangSmith](https://smith.langchain.com) records a trace of every LangChain run, with each step's inputs, outputs, timing and token usage. In this project, each LLM request appears as a `FailoverChatModel` run, with every provider attempt nested under it (for example `openai/gpt-5-mini (attempt 1)`). Retries and failovers are therefore visible in the trace.

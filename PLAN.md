@@ -104,7 +104,7 @@ Each step ends with something working and tested. Features and design decisions 
 - One LangSmith trace per question: query rewrite, retrieval, reranking, context building, prompt, `FailoverChatModel` and citation parsing, each as a nested run.
 - **Done when:** questions end to end return grounded answers with correct citations, and still do when failover to Anthropic is forced (once that key is added).
 - **Built:** `hybrid_rag/generation/` (`AnswerService` with `answer()` and `stream()`, prompts, context building, citation parsing), `Sanitizer.redact_text()` and `check_output()`, `reasoning_effort` per model in `llm:`, and `scripts/ask.py`.
-- **Results:** real `gpt-5` answers on the HR policies are grounded and correctly cited (live tests: PTO, an out-of-scope question, and the merit policy as employee and as manager). The confidence threshold (−8.5 for MiniLM) stops 7 of 9 unanswerable test questions without an LLM call and lets all 14 answerable ones through. `reasoning_effort: low` cut answer latency from about 26 s to about 7 s. Failover to Anthropic is tested with fake models only, because `ANTHROPIC_API_KEY` is empty.
+- **Results:** real `gpt-5` answers on the HR policies are grounded and correctly cited (live tests: PTO, an out-of-scope question, and the merit policy as employee and as manager). The confidence threshold (−8.5 for MiniLM) stops 7 of 9 unanswerable test questions without an LLM call and lets all 14 answerable ones through (moved to −12 in step 7, after the golden-set evaluation). `reasoning_effort: low` cut answer latency from about 26 s to about 7 s. Failover to Anthropic is tested with fake models only, because `ANTHROPIC_API_KEY` is empty.
 
 ## Step 6: FastAPI service ✅
 - `POST /ingest`, `POST /query` (with `debug` and `stream` options), `GET /documents`, `DELETE /documents/{id}`, `PUT /documents/{id}/access` and `GET /health`, which reports Qdrant and circuit-breaker states.
@@ -117,10 +117,17 @@ Each step ends with something working and tested. Features and design decisions 
 - **Built:** `hybrid_rag/api/` (routes, schemas, services, key store, audit log, background ingest jobs, JSON logging with request IDs), `AccessOverrides` (API permission changes survive CLI ingests), the LangSmith anonymizer client, provider and status as trace metadata, `scripts/make_api_key.py`, the `Dockerfile` (CPU-only PyTorch on Linux) and the `api` service in Docker Compose.
 - **Decisions:** ingestion runs as a background job (a PDF takes minutes on CPU); API keys stored as SHA-256 hashes in a git-ignored file; the audit log keeps a hash of the question, not its text, by default; 404 for documents you may not see, the same as for missing ones.
 
-## Step 7: Evaluation
+## Step 7: Evaluation ✅
 - A golden dataset of 50–100 HR questions, each tagged with its expected policy and section, including exceptions, table lookups, country differences and outdated versions.
 - A script comparing the four retrieval modes on Recall@k and MRR, writing a results table.
 - **Done when:** the results table is produced and added to the README.
+- **Built:** `eval/golden.yaml` (94 questions: facts, table lookups, exceptions, cross-policy, definitions, follow-ups, restricted access, unanswerable; half reworded), `eval/evaluate.py` (Recall@1/3/5/10, MRR and latency per mode, by category and style; a leakage check; confidence-gate calibration; `--answers` for end-to-end checks), `hybrid_rag.evaluation`, and the results in `eval/results/` and the README.
+- **Results:** `hybrid_rerank` is best (Recall@1 82.6%, MRR 0.908). `hybrid` without reranking is worse than `dense`, because sparse search is weak on reworded questions. No restricted chunk leaked. End to end, 85 of 86 answerable questions were fully correct, and 7 of 8 unanswerable ones were refused.
+- **Decisions:**
+  - Labels are policy sections, not chunk IDs, so the dataset survives re-chunking.
+  - Answers are checked with strings rather than an LLM judge: cheap and repeatable, but strict.
+  - No country-difference or superseded-version questions, because all five policies are current and US-only. The filters behind them are unit-tested.
+  - `min_rerank_score` moved from −8.5 to −12, after the evaluation showed that −8.5 refused 9 answerable questions.
 
 ## Step 8: Documentation and polish
 - A README with an architecture diagram, quick start, API examples, evaluation results, design decisions and notes on scaling.
