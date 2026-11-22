@@ -212,10 +212,10 @@ class AnswerSettings(BaseModel):
     """Answer generation (step 5)."""
 
     context_max_tokens: int = Field(default=3000, gt=0)  # numbered sources in the prompt
-    # Below this top rerank score, the question is answered "not found" without an LLM call.
-    # The scale belongs to reranker.model: -8.5 was calibrated for ms-marco-MiniLM-L-6-v2 on
-    # the HR policies (see the generation README). null turns the check off.
-    min_rerank_score: float | None = -8.5
+    # Below this top rerank score, the question is answered "not found" without an LLM call:
+    # a cost floor, not a quality filter. The scale belongs to reranker.model: -12 is for
+    # ms-marco-MiniLM-L-6-v2, from the golden-set evaluation (eval/). null turns it off.
+    min_rerank_score: float | None = -12.0
     max_history_turns: int = Field(default=6, ge=0)  # earlier messages used for query rewriting
     # Shown when the policies don't answer a question.
     contact: str = "the HR Service Center"

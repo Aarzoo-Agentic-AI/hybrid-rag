@@ -147,6 +147,11 @@ class CachingEncoder:
     def dense_dim(self) -> int:
         return self.inner.dense_dim
 
+    def clear(self) -> None:
+        """Forget every cached encoding (the evaluation times each search from scratch)."""
+        with self._lock:
+            self._cache.clear()
+
     def encode(self, texts: list[str]) -> list[Encoding]:
         results: dict[str, Encoding] = {}
         with self._lock:

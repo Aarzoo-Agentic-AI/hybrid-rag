@@ -82,16 +82,15 @@ The same wording is used whether nothing matched or the caller may not read what
 | `low_confidence` | The best rerank score is below `min_rerank_score` | No |
 | `no_sources` | Nothing the caller may read matched | No |
 
-**Calibration of `min_rerank_score: -8.5`** for `ms-marco-MiniLM-L-6-v2`, from the top rerank score of 23 questions asked as an employee:
+**Calibration of `min_rerank_score: -12`** for `ms-marco-MiniLM-L-6-v2`, from the golden-set evaluation ([`eval/`](../../../eval/README.md), 86 answerable and 8 unanswerable questions):
 
 | Questions | Top score |
 |---|---|
-| 14 answerable (PTO, hotel caps, COBRA, gifts, 401(k), harassment reporting, …) | −7.6 to +6.2 |
-| 9 unanswerable (capital of France, dog in the office, Okta password, poem, …) | −11.2 to −7.9 |
+| 86 answerable | −11.1 to +7 |
+| 8 unanswerable | −11.2 to −3.8 |
 
-At −8.5, every answerable question goes through, and 7 of the 9 unanswerable ones are stopped without an LLM call. The other two are handled by the prompt's `NOT_FOUND` rule:
-- the merit question, asked by an employee who can't read the merit policy (−7.9);
-- "Who is the CEO" (−9.2).
+- **The scores overlap:** MiniLM ranks conversational questions well (the right section is usually first) but gives them low absolute scores, so no threshold separates answerable from unanswerable questions. At the first setting, −8.5 (calibrated on 23 keyword-style questions), 9 answerable questions out of 86 were refused, and every unanswerable question the gate stopped, the LLM refused anyway.
+- **So the gate is a cost floor:** at −12 it lets every answerable question in the set through and stops only questions nothing in the policies comes close to, without an LLM call. Refusing the rest is the prompt's `NOT_FOUND` rule, which refused 7 of the 8 unanswerable questions.
 
 The scale belongs to the reranker: **re-calibrate if you change `reranker.model`**. `bge-reranker` scores run from 0 to 1, for example. Set it to `null` to turn the check off.
 
@@ -132,7 +131,7 @@ These are measured on the development laptop, warm, i.e. after the first questio
 ```yaml
 answer:
   context_max_tokens: 3000
-  min_rerank_score: -8.5     # calibrated for the default reranker; null turns it off
+  min_rerank_score: -12      # a cost floor for the default reranker; null turns it off
   max_history_turns: 6
   contact: the HR Service Center
 llm:

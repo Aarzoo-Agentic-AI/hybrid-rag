@@ -27,7 +27,6 @@ logs/
 qdrant_data/
 models/
 .cache/
-eval/results/
 
 # Editors and OS
 .vscode/

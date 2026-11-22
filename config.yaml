@@ -68,9 +68,11 @@ retrieval:
 
 answer:
   context_max_tokens: 3000   # sources in the prompt, in tokens
-  # Below this top rerank score: "not found", without calling the LLM. The scale depends on
-  # reranker.model; -8.5 is calibrated for ms-marco-MiniLM-L-6-v2. null to turn it off.
-  min_rerank_score: -8.5
+  # Below this top rerank score: "not found", without calling the LLM. A cost floor for
+  # questions nothing comes close to, not a quality filter (the LLM refuses the rest). The
+  # scale depends on reranker.model; -12 is for ms-marco-MiniLM-L-6-v2 (eval/results/).
+  # null to turn it off.
+  min_rerank_score: -12
   max_history_turns: 6       # chat history used to rewrite follow-up questions
   contact: the HR Service Center
 

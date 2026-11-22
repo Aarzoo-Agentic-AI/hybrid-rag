@@ -1,0 +1,744 @@
+# Golden dataset: HR questions with the policy sections that answer them.
+#
+# Used by eval/evaluate.py (see eval/README.md). Each question has:
+#   id        unique, <policy>-<topic>
+#   question  as an employee would ask it
+#   category  fact | table_lookup | exception | cross_policy | definition | follow_up | access |
+#             unanswerable
+#   style     keyword (uses the policy's own words) | paraphrase (deliberately reworded)
+#   caller    who asks: employee (default), manager, hr-comp or admin (demo principals)
+#   expected  what retrieval must find. Each item is one requirement; a list item gives
+#             alternatives, any of which meets it. A label is "<source alias>::<section path>",
+#             the section path exactly as indexed (scripts/search.py shows it).
+#   facts     for --answers: text the answer must contain; "a|b" means either. Matching
+#             ignores case, dash style and thousands separators.
+#   history   follow_up only: the earlier turns. standalone: the question rewritten by hand,
+#             used for retrieval scoring (--answers uses the real rewrite).
+#   hidden_from  callers who must NOT get this question's sources (leakage check).
+#
+# Unanswerable questions have no expected sections: the right result is a refusal.
+
+version: 1
+
+sources:
+  hb: HR_Policy_Handbook_2027.pdf
+  ben: Employee_Benefits_Guide_2027.pdf
+  trv: Travel_Policy.pdf
+  exp: Expense_Policy.pdf
+  merit: Annual_Review_Merit_Bonus_Policy_2027.pdf
+
+questions:
+  # ------------------------------------------------------------------ fact: HR Handbook
+  - id: hb-hybrid-days
+    question: "How many days a week do hybrid employees have to be in the office?"
+    category: fact
+    style: keyword
+    expected: ["hb::8 Remote and Hybrid Work"]
+    facts: ["3 anchor days|3 days|three"]
+
+  - id: hb-work-abroad
+    question: "Can I work from Spain for a month while I visit family?"
+    category: fact
+    style: paraphrase
+    expected: [["hb::8 Remote and Hybrid Work", "trv::4 Approval and booking"]]
+    facts: ["HR approval|approval from HR|approved by HR"]
+
+  - id: hb-i9
+    question: "When must new hires complete Form I-9?"
+    category: fact
+    style: keyword
+    expected: ["hb::6 Recruitment, Hiring and Onboarding"]
+    facts: ["3 business days|three business days"]
+
+  - id: hb-internal-posting
+    question: "How long are open roles posted internally?"
+    category: fact
+    style: keyword
+    expected: ["hb::6 Recruitment, Hiring and Onboarding"]
+    facts: ["5 business days|five business days"]
+
+  - id: hb-internal-apply
+    question: "How long do I need to be in my current job before I can go for another role inside the company?"
+    category: fact
+    style: paraphrase
+    expected: ["hb::6 Recruitment, Hiring and Onboarding"]
+    facts: ["12 months|twelve months|one year|1 year"]
+
+  - id: hb-phishing-report
+    question: "I clicked a suspicious link in an email. How quickly do I have to tell someone?"
+    category: fact
+    style: paraphrase
+    expected: [["hb::16 Information Security and Acceptable Use", "trv::12 Health, safety and security"]]
+    facts: ["1 hour|one hour"]
+
+  - id: hb-harassment-escalate
+    question: "A colleague told me they're being harassed. How fast do I have to pass it on to HR?"
+    category: fact
+    style: paraphrase
+    caller: manager
+    expected: ["hb::3 Anti-Harassment and Anti-Discrimination > Reporting and investigation"]
+    facts: ["one business day|1 business day"]
+
+  - id: hb-pto-request
+    question: "How far ahead should I ask for planned vacation?"
+    category: fact
+    style: paraphrase
+    expected: ["hb::13 Leave and Time Off"]
+    facts: ["2 weeks|two weeks"]
+
+  - id: hb-fmla
+    question: "How many weeks of FMLA leave can I take?"
+    category: fact
+    style: keyword
+    expected: ["hb::13 Leave and Time Off"]
+    facts: ["12 weeks|twelve weeks"]
+
+  - id: hb-injury-report
+    question: "How soon must a work injury be reported?"
+    category: fact
+    style: keyword
+    expected: [["hb::14 Health, Safety and Security", "trv::12 Health, safety and security"]]
+    facts: ["24 hours"]
+
+  - id: hb-ai-customer-data
+    question: "Can I paste customer data into a chatbot to help me draft an email?"
+    category: fact
+    style: paraphrase
+    expected: ["hb::17 Responsible Use of AI Tools"]
+    facts: ["approved"]
+
+  - id: hb-no-call-no-show
+    question: "What happens if I'm absent for three days without notifying anyone?"
+    category: fact
+    style: keyword
+    expected: ["hb::7 Working Hours, Attendance and Timekeeping"]
+    facts: ["voluntary resignation|resigned|resignation"]
+
+  - id: hb-pay-frequency
+    question: "How often do we get paid?"
+    category: fact
+    style: paraphrase
+    expected: ["hb::9 Compensation and Payroll"]
+    facts: ["biweekly|bi-weekly|every two weeks|every 2 weeks"]
+
+  - id: hb-pay-discuss
+    question: "Am I allowed to talk about my salary with coworkers?"
+    category: fact
+    style: paraphrase
+    expected: [["hb::9 Compensation and Payroll", "hb::18 Data Privacy and Confidentiality"]]
+    facts: ["discuss"]
+
+  # ------------------------------------------------------------------ fact: Benefits Guide
+  - id: ben-401k-match
+    question: "What is the company 401(k) match?"
+    category: fact
+    style: keyword
+    expected: ["ben::6 Retirement Savings: 401(k)"]
+    facts: ["4%", "5%"]
+
+  - id: ben-401k-vesting
+    question: "When does the money the company adds to my retirement account become mine?"
+    category: fact
+    style: paraphrase
+    expected: ["ben::6 Retirement Savings: 401(k)"]
+    facts: ["2 years|two years"]
+
+  - id: ben-parental-leave
+    question: "How much paid leave do new parents get?"
+    category: fact
+    style: paraphrase
+    expected: ["ben::7 Time Off and Leave"]
+    facts: ["16 weeks|sixteen weeks"]
+
+  - id: ben-dependent-age
+    question: "Until what age can my kids stay on my health insurance?"
+    category: fact
+    style: paraphrase
+    expected: ["ben::1 Eligibility and Enrollment > Who is eligible"]
+    facts: ["26"]
+
+  - id: ben-new-hire-enroll
+    question: "I just started. How long do I have to sign up for benefits?"
+    category: fact
+    style: paraphrase
+    expected: ["ben::1 Eligibility and Enrollment > When you can enroll"]
+    facts: ["31 days"]
+
+  - id: ben-cobra
+    question: "How long can I keep COBRA coverage?"
+    category: fact
+    style: keyword
+    expected: ["ben::10 Life Events, COBRA and Changes > COBRA continuation"]
+    facts: ["18 months"]
+
+  - id: ben-eap-sessions
+    question: "How many free counseling sessions does the EAP offer?"
+    category: fact
+    style: keyword
+    expected: ["ben::8 Wellbeing and Support Programs"]
+    facts: ["8 free|8 counseling|8 sessions|eight"]
+
+  - id: ben-tuition
+    question: "Will the company help pay for my master's degree?"
+    category: fact
+    style: paraphrase
+    expected: ["ben::9 Additional and Voluntary Benefits > Company-paid"]
+    facts: ["$5,250"]
+
+  - id: ben-ivf
+    question: "Is IVF covered?"
+    category: fact
+    style: keyword
+    expected: ["ben::2 Medical Plans > Medical plan features"]
+    facts: ["$20,000"]
+
+  - id: ben-hsa-family
+    question: "How much does the company put into my HSA if I have family coverage?"
+    category: fact
+    style: keyword
+    expected: [["ben::2 Medical Plans", "ben::4 Health Savings and Flexible Spending Accounts"]]
+    facts: ["$1,500"]
+
+  - id: ben-short-term-disability
+    question: "If I'm off sick for several weeks, how much of my pay is covered?"
+    category: fact
+    style: paraphrase
+    expected: ["ben::5 Life and Disability Insurance"]
+    facts: ["60%"]
+
+  - id: ben-internet-stipend
+    question: "Do I get money for my home internet?"
+    category: fact
+    style: paraphrase
+    expected: [["ben::9 Additional and Voluntary Benefits > Company-paid", "exp::4 Eligible expense categories"]]
+    facts: ["$50"]
+
+  - id: ben-sabbatical
+    question: "When do I get a sabbatical?"
+    category: fact
+    style: keyword
+    expected: ["ben::7 Time Off and Leave"]
+    facts: ["7 years|seven years"]
+
+  # ------------------------------------------------------------------ fact: Travel and Expense
+  - id: trv-book-ahead
+    question: "How far in advance should business travel be booked?"
+    category: fact
+    style: keyword
+    expected: ["trv::4 Approval and booking"]
+    facts: ["14 days"]
+
+  - id: trv-rental-car
+    question: "What size rental car can I get?"
+    category: fact
+    style: keyword
+    expected: ["trv::7 Ground transportation"]
+    facts: ["compact|mid-size|midsize"]
+
+  - id: trv-loyalty-points
+    question: "Who keeps the airline miles I earn on business trips?"
+    category: fact
+    style: paraphrase
+    expected: ["trv::5 Air travel"]
+    facts: ["traveller|traveler|you keep|yours|belong to you"]
+
+  - id: trv-unsafe-destination
+    question: "Can I refuse a trip to a country I think is dangerous?"
+    category: fact
+    style: paraphrase
+    expected: ["trv::12 Health, safety and security"]
+    facts: ["penalty"]
+
+  - id: exp-submit-deadline
+    question: "What's the deadline for submitting expense claims?"
+    category: fact
+    style: keyword
+    expected:
+      - ["exp::7 Submission, corporate card and reimbursement", "exp::3 Roles and responsibilities",
+         "trv::9 Corporate card and expense submission", "hb::20 Travel and Expenses"]
+    facts: ["30 days"]
+
+  - id: exp-receipt-threshold
+    question: "Do I need to keep the receipt for a $15 taxi ride?"
+    category: fact
+    style: paraphrase
+    expected:
+      - ["exp::6 Documentation", "trv::9 Corporate card and expense submission",
+         "hb::20 Travel and Expenses"]
+    facts: ["$25"]
+
+  - id: exp-office-supplies
+    question: "What's the limit for office supplies on expenses?"
+    category: fact
+    style: keyword
+    expected: ["exp::4 Eligible expense categories"]
+    facts: ["$100"]
+
+  - id: exp-vendor-tickets
+    question: "A supplier wants to give me concert tickets. Can I accept them?"
+    category: fact
+    style: paraphrase
+    expected: [["hb::12 Conflicts of Interest and Gifts", "exp::9 Gifts and entertainment"]]
+    facts: ["$100"]
+
+  - id: exp-wine-dinner
+    question: "Can I expense a glass of wine with dinner on a work trip?"
+    category: fact
+    style: paraphrase
+    expected:
+      - ["trv::8 Meals", "trv::11 Non-reimbursable expenses", "exp::8 Non-reimbursable expenses",
+         "exp::4 Eligible expense categories"]
+    facts: ["not reimbursable|not reimbursed|non-reimbursable|cannot|can't|not covered"]
+
+  - id: exp-partner-travel
+    question: "Can my partner come along on a work trip at company cost?"
+    category: fact
+    style: paraphrase
+    expected: [["trv::11 Non-reimbursable expenses", "exp::8 Non-reimbursable expenses"]]
+    facts: ["not reimbursable|not reimbursed|non-reimbursable|cannot|can't|not covered|own cost"]
+
+  # ------------------------------------------------------------------ table_lookup
+  - id: ben-pto-4-years
+    question: "How many PTO days do I get after 4 years?"
+    category: table_lookup
+    style: keyword
+    expected: ["ben::7 Time Off and Leave"]
+    facts: ["20"]
+
+  - id: trv-hotel-boston
+    question: "What's the hotel limit for a trip to Boston?"
+    category: table_lookup
+    style: keyword
+    expected: ["trv::6 Lodging"]
+    facts: ["$300"]
+
+  - id: trv-hotel-denver
+    question: "What's the nightly lodging cap in Denver?"
+    category: table_lookup
+    style: keyword
+    expected: ["trv::6 Lodging"]
+    facts: ["$220"]
+
+  - id: trv-long-flight-cabin
+    question: "I'm flying 8 hours to London for a client meeting. Can I book business class?"
+    category: table_lookup
+    style: paraphrase
+    expected: [["trv::5 Air travel", "hb::20 Travel and Expenses"]]
+    facts: ["premium economy"]
+
+  - id: exp-approve-3000
+    question: "Who has to approve a $3,000 expense?"
+    category: table_lookup
+    style: keyword
+    expected: ["exp::5 Approval limits"]
+    facts: ["Finance director"]
+
+  - id: exp-approve-200
+    question: "Who signs off on a $200 expense claim?"
+    category: table_lookup
+    style: paraphrase
+    expected: ["exp::5 Approval limits"]
+    facts: ["manager"]
+
+  - id: ben-ppo-family-cost
+    question: "What does family coverage on the PPO cost per paycheck?"
+    category: table_lookup
+    style: keyword
+    expected: ["ben::2 Medical Plans > Your cost per paycheck (26 pay periods)"]
+    facts: ["$205"]
+
+  - id: ben-hdhp-deductible
+    question: "What's the individual deductible on the HDHP?"
+    category: table_lookup
+    style: keyword
+    expected: ["ben::2 Medical Plans"]
+    facts: ["$1,700"]
+
+  - id: ben-adult-braces
+    question: "Does the dental plan pay for braces for adults?"
+    category: table_lookup
+    style: paraphrase
+    expected: ["ben::3 Dental and Vision > Dental"]
+    facts: ["Premier", "$2,500"]
+
+  - id: ben-glasses-frames
+    question: "How often can I get new glasses frames, and how much is covered?"
+    category: table_lookup
+    style: keyword
+    expected: ["ben::3 Dental and Vision > Vision"]
+    facts: ["$200", "24 months|two years|2 years"]
+
+  - id: ben-bereavement-grandparent
+    question: "How many days off do I get if my grandmother dies?"
+    category: table_lookup
+    style: paraphrase
+    expected: ["ben::7 Time Off and Leave"]
+    facts: ["3 days|three days"]
+
+  - id: hb-exempt-overtime
+    question: "Do exempt employees get paid overtime?"
+    category: table_lookup
+    style: keyword
+    expected: [["hb::5 Employment Classifications", "hb::7 Working Hours, Attendance and Timekeeping"]]
+    facts: ["not eligible|aren't eligible|are not eligible|no overtime|do not get|don't get"]
+
+  # ------------------------------------------------------------------ exception
+  - id: hb-manager-resignation-notice
+    question: "I manage a team. How much notice should I give if I quit?"
+    category: exception
+    style: paraphrase
+    expected: ["hb::23 Separation from Employment"]
+    facts: ["4 weeks|four weeks"]
+
+  - id: exp-exception-approver
+    question: "Who can approve an exception to the expense policy?"
+    category: exception
+    style: keyword
+    expected:
+      - ["exp::11 Exceptions", "trv::14 Compliance and exceptions", "hb::24 Policy Administration"]
+    facts: ["Chief People Officer"]
+
+  - id: trv-international-meals
+    question: "What's the meal allowance for international trips?"
+    category: exception
+    style: keyword
+    expected: ["trv::8 Meals"]
+    facts: ["published rates|Finance"]
+
+  - id: ben-part-time-medical
+    question: "I work 25 hours a week. Can I join the medical plan?"
+    category: exception
+    style: paraphrase
+    expected: [["ben::1 Eligibility and Enrollment > Who is eligible", "hb::5 Employment Classifications"]]
+    facts: ["30"]
+
+  - id: hb-weapons-in-car
+    question: "Am I allowed to keep a gun in my car at work?"
+    category: exception
+    style: paraphrase
+    expected: ["hb::14 Health, Safety and Security"]
+    facts: ["state law"]
+
+  - id: trv-long-stay
+    question: "I'm going on a 3-week project trip. Do I have to stay in a hotel the whole time?"
+    category: exception
+    style: paraphrase
+    expected: ["trv::6 Lodging"]
+    facts: ["serviced apartment"]
+
+  - id: ben-add-newborn
+    question: "I just had a baby. How long do I have to add them to my insurance?"
+    category: exception
+    style: paraphrase
+    expected:
+      - ["ben::1 Eligibility and Enrollment > When you can enroll", "ben::10 Life Events, COBRA and Changes"]
+    facts: ["60 days"]
+
+  - id: hb-asking-for-help-drinking
+    question: "If I ask for help with a drinking problem, will I get disciplined?"
+    category: exception
+    style: paraphrase
+    expected: ["hb::15 Drug- and Alcohol-Free Workplace"]
+    facts: ["EAP|not grounds"]
+
+  - id: merit-protected-leave-rating
+    question: "Can being on protected leave lower someone's performance rating?"
+    category: exception
+    style: paraphrase
+    caller: manager
+    hidden_from: [employee]
+    expected: [["merit::4 Performance Rating Scale > Special cases",
+                "merit::7 Annual Performance Bonus Plan > 7.6 Proration and special situations"]]
+    facts: ["never lowers|does not lower|cannot lower|can't lower|won't lower"]
+
+  - id: merit-promoted-in-august
+    question: "Someone on my team was promoted in August. Do they also get a merit increase this cycle?"
+    category: exception
+    style: paraphrase
+    caller: manager
+    hidden_from: [employee]
+    expected: ["merit::6 Merit Increase Guidelines > 6.3 Proration"]
+    facts: ["usually not|not eligible|replaces"]
+
+  # ------------------------------------------------------------------ cross_policy
+  - id: xp-domestic-meals
+    question: "Is the daily meal limit for domestic trips the same in the Handbook and the Travel Policy?"
+    category: cross_policy
+    style: keyword
+    expected: ["hb::20 Travel and Expenses", "trv::8 Meals"]
+    facts: ["$75"]
+
+  - id: xp-precedence
+    question: "If the Travel Policy and the HR Handbook disagree, which one wins?"
+    category: cross_policy
+    style: paraphrase
+    expected: [["trv::1 Purpose", "exp::1 Purpose"]]
+    facts: ["Handbook"]
+
+  - id: xp-long-flight-sources
+    question: "Which policies set the cabin class for long flights, and what do they allow?"
+    category: cross_policy
+    style: keyword
+    expected: ["hb::20 Travel and Expenses", "trv::5 Air travel"]
+    facts: ["premium economy"]
+
+  - id: xp-gift-limit
+    question: "What's the gift limit, and which policies set it?"
+    category: cross_policy
+    style: keyword
+    expected: ["hb::12 Conflicts of Interest and Gifts", "exp::9 Gifts and entertainment"]
+    facts: ["$100"]
+
+  - id: xp-home-office
+    question: "What can I get for setting up a home office, and do I claim it as an expense?"
+    category: cross_policy
+    style: paraphrase
+    expected: ["ben::9 Additional and Voluntary Benefits > Company-paid", "exp::4 Eligible expense categories"]
+    facts: ["$500"]
+
+  - id: xp-hurt-on-trip
+    question: "I got hurt during a business trip. What do I need to do?"
+    category: cross_policy
+    style: paraphrase
+    expected: ["trv::12 Health, safety and security", "hb::14 Health, Safety and Security"]
+    facts: ["24 hours"]
+
+  - id: xp-fake-receipt
+    question: "What happens to someone who submits a fake receipt?"
+    category: cross_policy
+    style: paraphrase
+    expected:
+      - ["exp::10 Fraud, audit and consequences", "trv::14 Compliance and exceptions",
+         "hb::22 Corrective Action"]
+    facts: ["termination|corrective action"]
+
+  # ------------------------------------------------------------------ definition
+  - id: ben-def-coinsurance
+    question: "What does coinsurance mean?"
+    category: definition
+    style: keyword
+    expected: ["ben::12 Required Notices and Glossary > Glossary"]
+    facts: ["percentage|%"]
+
+  - id: ben-def-out-of-pocket
+    question: "What is an out-of-pocket maximum?"
+    category: definition
+    style: keyword
+    expected: [["ben::12 Required Notices and Glossary > Glossary", "ben::2 Medical Plans"]]
+    facts: ["most you pay|maximum|100%"]
+
+  - id: ben-def-eoi
+    question: "What is Evidence of Insurability?"
+    category: definition
+    style: keyword
+    expected: [["ben::12 Required Notices and Glossary > Glossary", "ben::5 Life and Disability Insurance"]]
+    facts: ["questionnaire|health"]
+
+  - id: ben-def-hdhp
+    question: "What's an HDHP?"
+    category: definition
+    style: keyword
+    expected: [["ben::12 Required Notices and Glossary > Glossary", "ben::2 Medical Plans"]]
+    facts: ["high-deductible|high deductible"]
+
+  - id: hb-def-non-exempt
+    question: "What does non-exempt mean?"
+    category: definition
+    style: keyword
+    expected: ["hb::5 Employment Classifications"]
+    facts: ["overtime"]
+
+  - id: merit-def-compa-ratio
+    question: "What is a compa-ratio?"
+    category: definition
+    style: keyword
+    caller: manager
+    hidden_from: [employee]
+    expected: [["merit::12 Definitions", "merit::6 Merit Increase Guidelines > 6.2 Merit matrix"]]
+    facts: ["midpoint"]
+
+  - id: merit-def-performance-year
+    question: "What dates does the performance year cover?"
+    category: definition
+    style: keyword
+    caller: manager
+    hidden_from: [employee]
+    expected: [["merit::12 Definitions", "merit::7 Annual Performance Bonus Plan"]]
+    facts: ["December 31|Dec 31|31 December"]
+
+  # ------------------------------------------------------------------ follow_up
+  - id: fu-hotel-chicago
+    question: "And in Chicago?"
+    category: follow_up
+    style: paraphrase
+    history:
+      - user: "What's the hotel cap in New York?"
+        assistant: "$300 per night including taxes, as New York is a Tier 1 city [1]."
+    standalone: "What's the nightly hotel cap in Chicago?"
+    expected: ["trv::6 Lodging"]
+    facts: ["$220"]
+
+  - id: fu-pto-rollover
+    question: "How many of them can I carry over to next year?"
+    category: follow_up
+    style: paraphrase
+    history:
+      - user: "How many PTO days do new employees get?"
+        assistant: "15 days a year for 0-2 years of service [1]."
+    standalone: "How many PTO days can roll over to the next year?"
+    expected: ["ben::7 Time Off and Leave"]
+    facts: ["5 days|five days|5 PTO days|five PTO days"]
+
+  - id: fu-401k-vesting
+    question: "When is it vested?"
+    category: follow_up
+    style: paraphrase
+    history:
+      - user: "What's the 401(k) match?"
+        assistant: "100% of the first 4% you contribute plus 50% of the next 2%, up to 5% in total [1]."
+    standalone: "When does the 401(k) company match vest?"
+    expected: ["ben::6 Retirement Savings: 401(k)"]
+    facts: ["2 years|two years"]
+
+  - id: fu-approve-12000
+    question: "What about $12,000?"
+    category: follow_up
+    style: paraphrase
+    history:
+      - user: "Who approves a $1,000 expense?"
+        assistant: "A Vice President [1]."
+    standalone: "Who approves a $12,000 expense?"
+    expected: ["exp::5 Approval limits"]
+    facts: ["CFO"]
+
+  - id: fu-bonus-senior-director
+    question: "And for a senior director?"
+    category: follow_up
+    style: paraphrase
+    caller: manager
+    history:
+      - user: "What's the target bonus at L3?"
+        assistant: "8%-10% of base salary [1]."
+    standalone: "What is the target bonus for a senior director?"
+    expected: ["merit::7 Annual Performance Bonus Plan > 7.1 Target bonus by level"]
+    facts: ["25%"]
+
+  # ------------------------------------------------------------------ access (restricted policy)
+  - id: merit-matrix-meets
+    question: "What merit increase does a Meets rating get at a 0.95 compa-ratio?"
+    category: access
+    style: keyword
+    caller: manager
+    hidden_from: [employee]
+    expected: ["merit::6 Merit Increase Guidelines > 6.2 Merit matrix"]
+    facts: ["2.5%", "3.5%"]
+
+  - id: merit-target-bonus-l5
+    question: "What's the target bonus for an L5 manager?"
+    category: access
+    style: keyword
+    caller: manager
+    hidden_from: [employee]
+    expected: ["merit::7 Annual Performance Bonus Plan > 7.1 Target bonus by level"]
+    facts: ["12%", "15%"]
+
+  - id: merit-pip-multiplier
+    question: "If someone is on a PIP at year end, what happens to their bonus?"
+    category: access
+    style: paraphrase
+    caller: manager
+    hidden_from: [employee]
+    expected: ["merit::7 Annual Performance Bonus Plan > 7.6 Proration and special situations"]
+    facts: ["50%"]
+
+  - id: merit-budget
+    question: "What's the merit budget for 2027?"
+    category: access
+    style: keyword
+    caller: hr-comp
+    hidden_from: [employee]
+    expected: ["merit::6 Merit Increase Guidelines > 6.1 Merit budget"]
+    facts: ["3.5%"]
+
+  - id: merit-appeal-window
+    question: "How long does an employee have to appeal a performance rating?"
+    category: access
+    style: keyword
+    caller: manager
+    hidden_from: [employee]
+    expected: ["merit::9 Review and Appeal Process"]
+    facts: ["15 business days"]
+
+  - id: merit-top-of-range
+    question: "What happens to the raise of someone already at the top of their salary range?"
+    category: access
+    style: paraphrase
+    caller: manager
+    hidden_from: [employee]
+    expected: ["merit::6 Merit Increase Guidelines > 6.4 Employees at or above range maximum"]
+    facts: ["lump sum"]
+
+  - id: merit-late-hire
+    question: "Does someone who joined in November get a merit increase?"
+    category: access
+    style: paraphrase
+    caller: manager
+    hidden_from: [employee]
+    expected:
+      - ["merit::2 Scope and Eligibility", "merit::6 Merit Increase Guidelines > 6.3 Proration",
+         "merit::4 Performance Rating Scale > Special cases"]
+    facts: ["September 30|Sept 30|Sep 30"]
+
+  - id: merit-bonus-worked-example
+    question: "What bonus would an L5 on $120,000 rated Exceeds get if the company factor is 105%?"
+    category: access
+    style: keyword
+    caller: hr-comp
+    hidden_from: [employee]
+    expected: ["merit::7 Annual Performance Bonus Plan > 7.5 Worked example"]
+    facts: ["$22,680"]
+
+  # ------------------------------------------------------------------ unanswerable
+  - id: na-relocation
+    question: "How much relocation allowance do new hires get?"
+    category: unanswerable
+    style: paraphrase
+
+  - id: na-dogs-in-office
+    question: "Can I bring my dog to the office?"
+    category: unanswerable
+    style: paraphrase
+    notes: "Pet insurance is listed under voluntary benefits; it doesn't answer this."
+
+  - id: na-germany-vacation
+    question: "How many vacation days do employees in Germany get?"
+    category: unanswerable
+    style: paraphrase
+    notes: "All policies are US-only."
+
+  - id: na-stock-option-vesting
+    question: "What's the vesting schedule for stock options?"
+    category: unanswerable
+    style: keyword
+    notes: "Only the ESPP and 401(k) vesting are covered."
+
+  - id: na-free-lunch
+    question: "Does the office provide free lunch?"
+    category: unanswerable
+    style: paraphrase
+
+  - id: na-ceo
+    question: "Who is the CEO of the company?"
+    category: unanswerable
+    style: keyword
+
+  - id: na-vpn-reset
+    question: "How do I reset my VPN password?"
+    category: unanswerable
+    style: keyword
+
+  - id: na-tuition-payback
+    question: "Do I have to pay back tuition assistance if I leave within a year?"
+    category: unanswerable
+    style: paraphrase
+    notes: "The guide gives the $5,250 limit but no repayment rule."

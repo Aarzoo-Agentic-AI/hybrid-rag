@@ -165,8 +165,16 @@ def test_superseded_versions_are_left_out_unless_asked_for(tmp_path: Path) -> No
     index = new_index()
     registry = PolicyRegistry(
         {
-            "travel_2026.pdf": {"policy_name": "Travel 2026", "is_current": False},
-            "travel_2027.pdf": {"policy_name": "Travel 2027", "policy_category": "travel"},
+            "travel_2026.pdf": {
+                "policy_name": "Travel 2026",
+                "is_current": False,
+                "jurisdiction": "UK",
+            },
+            "travel_2027.pdf": {
+                "policy_name": "Travel 2027",
+                "policy_category": "travel",
+                "jurisdiction": "US",
+            },
         },
         defaults={"access": {"classification": "internal", "visibility": "tenant"}},
     )
@@ -186,6 +194,9 @@ def test_superseded_versions_are_left_out_unless_asked_for(tmp_path: Path) -> No
     assert sources(None) == {"travel_2027.pdf"}
     assert sources(RelevanceFilters(current_only=False)) == {"travel_2026.pdf", "travel_2027.pdf"}
     assert sources(RelevanceFilters(policy_categories=["expenses"])) == set()
+    assert sources(RelevanceFilters(current_only=False, jurisdictions=["UK"])) == {
+        "travel_2026.pdf"
+    }
 
 
 def test_empty_filter_lists_are_refused() -> None:
