@@ -38,6 +38,13 @@ def test_unknown_disabled_and_empty_keys_are_refused(tmp_path: Path) -> None:
     assert len(KeyStore.load(tmp_path / "missing.yaml")) == 0
 
 
+def test_a_directory_in_place_of_the_keys_file_is_a_clear_error(tmp_path: Path) -> None:
+    (tmp_path / "keys.yaml").mkdir()  # what Docker does when a mounted file doesn't exist
+
+    with pytest.raises(ValueError, match="is a directory"):
+        KeyStore.load(tmp_path / "keys.yaml")
+
+
 def test_invalid_key_entries_are_refused(tmp_path: Path) -> None:
     with pytest.raises(ValueError):
         add_key(tmp_path / "k.yaml", "bad", {**SPEC, "clearance": "top-secret"})

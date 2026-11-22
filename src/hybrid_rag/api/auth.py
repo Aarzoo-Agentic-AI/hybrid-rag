@@ -89,6 +89,12 @@ class KeyStore:
     def load(cls, path: Path) -> KeyStore:
         if not path.exists():
             return cls([])  # no keys: every authenticated route answers 401
+        if path.is_dir():
+            # Docker creates a directory when a bind-mounted file doesn't exist yet.
+            raise ValueError(
+                f"The API keys file {path} is a directory. Delete it and create the keys with "
+                "`docker compose run --rm keys --demo` (or scripts/make_api_key.py)"
+            )
         data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
         return cls([KeyEntry(**e) for e in data.get("keys") or []])
 

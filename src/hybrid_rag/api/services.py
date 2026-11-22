@@ -90,7 +90,7 @@ def build_services(settings: Settings) -> Services:
     if not len(keys):
         logger.warning(
             "No API keys in %s: every request will be refused. Create one with "
-            "scripts/make_api_key.py",
+            "`docker compose run --rm keys --demo` or scripts/make_api_key.py",
             settings.api.keys_file,
         )
     trace_client = None

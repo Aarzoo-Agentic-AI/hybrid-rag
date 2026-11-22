@@ -11,6 +11,7 @@ services:
 
   api:
     build: .
+    image: hybrid-rag-api
     container_name: hybrid-rag-api
     ports:
       - "8000:8000"   # Swagger UI: http://localhost:8000/docs
@@ -19,13 +20,24 @@ services:
       HYBRID_RAG_QDRANT__URL: http://qdrant:6333
     volumes:
       - hf_cache:/models                       # downloaded models, kept between restarts
-      - ./api_keys.yaml:/app/api_keys.yaml:ro  # create it first: scripts/make_api_key.py --demo
-      - ./logs:/app/logs                       # audit log
-      - api_data:/app/.data                    # access overrides, uploads in progress
-      - parse_cache:/app/.cache                # Docling parse cache
+      - ./secrets:/app/secrets:ro    # API key hashes: docker compose run --rm keys --demo
+      - ./logs:/app/logs             # audit log
+      - api_data:/app/.data          # access overrides, uploads in progress
+      - parse_cache:/app/.cache      # Docling parse cache
     depends_on:
       - qdrant
     restart: unless-stopped
+
+  # A tool, not a service: creates API keys in ./secrets without a local Python install.
+  #   docker compose run --rm keys --demo
+  #   docker compose run --rm keys alice --clearance internal
+  keys:
+    build: .
+    image: hybrid-rag-api
+    profiles: [tools]                # not started by `docker compose up`
+    entrypoint: ["python", "scripts/make_api_key.py"]
+    volumes:
+      - ./secrets:/app/secrets
 
 volumes:
   qdrant_data:

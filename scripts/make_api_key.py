@@ -7,7 +7,8 @@ Usage:
     uv run python scripts/make_api_key.py ops-admin --admin
 
 The tenant defaults to documents.tenant_id. Keys look like hrk_...; keep them like passwords.
-The keys file (api_keys.yaml) is git-ignored. Restart the API after adding keys.
+The keys file (secrets/api_keys.yaml) is git-ignored. Restart the API after adding keys.
+With Docker only: docker compose run --rm keys --demo (same arguments).
 """
 
 from __future__ import annotations

@@ -1,6 +1,7 @@
 # Keep secrets, local state and caches out of the build context and the image.
 .env
 api_keys.yaml
+secrets/
 .venv/
 .git/
 .cache/

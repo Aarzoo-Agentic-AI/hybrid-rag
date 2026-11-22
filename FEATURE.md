@@ -1,5 +1,7 @@
 # Hybrid RAG: Features and Design Decisions
 
+> **Status:** this is the design document, written before the build. The MVP (phase 1 in section 15) is built, plus parts of phases 2 and 3: metadata filters, query rewriting, incremental ingestion, caching and LangSmith tracing. The [README](README.md) describes what exists and how to run it, and [PLAN.md](PLAN.md) records each build step and the decisions made along the way. Where they differ, for example `min_rerank_score` (−12 after the evaluation), the README and the code are current. Not built yet: multi-query/HyDE, quantization, the benchmark script, the feedback loop and the later phases in section 14.
+
 ## 1. Project decisions
 - **Goal:** a portfolio project, designed so it could scale to production.
 - **Domain:** HR policies (employee handbook, benefits, leave, travel, expenses, conduct and similar). See section 10 for the chunking and metadata strategy this calls for.

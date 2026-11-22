@@ -11,12 +11,13 @@ uv run uvicorn --factory hybrid_rag.api.app:create_app --port 8000
 
 Then open **http://localhost:8000/docs** (Swagger UI), click **Authorize**, and paste a key.
 
-With Docker (the API and Qdrant together):
+With Docker (the API and Qdrant together, nothing installed locally), as in the [quick start](../../../README.md#quick-start-docker):
 
 ```bash
-uv run python scripts/make_api_key.py --demo       # creates api_keys.yaml, mounted read-only
-docker compose up -d --build                       # first build: 10+ minutes; first start downloads models
-docker compose exec api python scripts/ingest.py   # index data/pdfs inside the stack
+docker compose run --rm keys --demo                    # four demo keys into secrets/ (mounted read-only)
+docker compose up -d qdrant
+docker compose run --rm api python scripts/ingest.py   # index data/pdfs; first time downloads the models
+docker compose up -d                                   # the API
 ```
 
 Startup loads `bge-m3`, the reranker and Presidio (about 30 s warm, several minutes on the first start while the models download), so the first question isn't slow. `/health` answers once the API is ready.
@@ -57,7 +58,7 @@ The final event is authoritative, because its text has passed the citation and o
 
 ## API keys and principals
 
-`api_keys.yaml` (`api.keys_file`, git-ignored) maps the **SHA-256 of each key** to a principal. The keys themselves are never stored.
+`secrets/api_keys.yaml` (`api.keys_file`, git-ignored) maps the **SHA-256 of each key** to a principal. The keys themselves are never stored. Docker mounts the `secrets/` folder, not the file: a missing mounted file would make Docker create a directory in its place, which the API refuses with a clear error.
 
 ```yaml
 keys:
@@ -67,7 +68,7 @@ keys:
                 roles: [people_manager]}
 ```
 
-- `scripts/make_api_key.py`:
+- `scripts/make_api_key.py`, or `docker compose run --rm keys` with the same arguments:
   - `--demo` creates four demo keys (employee, manager, HR compensation, admin).
   - `NAME --user … --clearance … --group … --role … [--admin]` creates one key.
 - **Disabling a key:** set `disabled: true` on its entry. Keys are read at startup, so restart the API after a change.

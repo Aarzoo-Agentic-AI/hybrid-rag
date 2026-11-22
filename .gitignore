@@ -18,6 +18,8 @@ htmlcov/
 # Secrets
 .env
 api_keys.yaml
+secrets/*
+!secrets/.gitkeep
 
 # API state: audit log, permission overrides, uploads
 logs/

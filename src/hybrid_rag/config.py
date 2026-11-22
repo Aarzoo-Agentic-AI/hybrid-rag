@@ -224,7 +224,7 @@ class AnswerSettings(BaseModel):
 class ApiSettings(BaseModel):
     """The FastAPI service (step 6)."""
 
-    keys_file: Path = Path("api_keys.yaml")  # API key hashes -> principals; git-ignored
+    keys_file: Path = Path("secrets/api_keys.yaml")  # key hashes -> principals; git-ignored
     audit_log: Path = Path("logs/audit.jsonl")  # one JSON line per request; git-ignored
     # Store the (redacted) question text in the audit log. Off: only its hash and length,
     # because HR questions can be personal even after redaction.
