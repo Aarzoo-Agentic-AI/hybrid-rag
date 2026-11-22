@@ -233,7 +233,7 @@ Each part has its own README with the details.
 - **Observability:** each request's `X-Request-ID` appears in the response, the JSON logs, the audit log and the LangSmith trace. [Setting up LangSmith](docs/langsmith.md) is optional.
 - **[Runtime evaluation](src/hybrid_rag/api/README.md#runtime-evaluation):**
   - Users rate answers with `POST /feedback`, linked to the answer's trace.
-  - When `runtime_eval` is on, a sample of answers gets a background faithfulness check by `gpt-5-mini`.
+  - 10% of answers get a background faithfulness check by `gpt-5-mini` (`runtime_eval` in `config.yaml`).
   - `scripts/runtime_report.py` summarises both by day and drafts thumbs-down questions as golden-set candidates.
 
 ## Evaluation results
@@ -287,7 +287,7 @@ The full results, with per-category tables and every miss, are in [eval/results/
 | **API keys mapped to principals, stored as hashes** | Simple, and the principal never comes from request fields; a leaked keys file can't be used | No single sign-on yet; replacing keys with OIDC/JWT changes `auth.py` only |
 | **Uploads indexed by a background job, one at a time** | A PDF takes minutes on a CPU; requests return at once and uploads don't compete for the CPU | Job status is kept in memory and lost on restart (the indexed documents aren't) |
 | **Agentic retrieval is opt-in** (`strategy: agentic`) | The evaluation showed no gain on these questions, for twice the searches and about 3 s more per answer | It may help on harder multi-part questions; the golden set needs some to show it |
-| **Runtime faithfulness checks run in the background, on a sample** | They never delay an answer, and cost one `gpt-5-mini` call per checked answer | Off by default; a burst of traffic skips checks rather than queueing them |
+| **Runtime faithfulness checks run in the background, on a sample** | They never delay an answer, and cost one `gpt-5-mini` call per checked answer | On for 10% of answers (`runtime_eval.sample_rate`); a burst of traffic skips checks rather than queueing them |
 | **CPU-only Docker image, models in a volume** | 3.9 GB instead of about 7 GB with CUDA; rebuilding the image doesn't download the models again | Slower than a GPU; the first start downloads about 3 GB |
 
 ## Scaling

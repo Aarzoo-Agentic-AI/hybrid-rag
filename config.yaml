@@ -97,7 +97,7 @@ runtime_eval:
   # A faithfulness check (llm.judge) on a sample of answered questions, in a background
   # thread: never delays the answer. Results go to the audit log and, with tracing on, to
   # LangSmith as `faithfulness` feedback. scripts/runtime_report.py summarises them.
-  enabled: false
+  enabled: true
   sample_rate: 0.1
   max_pending: 50
 

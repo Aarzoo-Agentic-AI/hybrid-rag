@@ -153,7 +153,7 @@ curl -s localhost:8000/feedback -H "X-API-Key: $KEY" -H "Content-Type: applicati
 - **What's stored** in `logs/feedback.jsonl` (`api.feedback_log`, git-ignored): the rating, the comment masked like questions, and the answer's status. **A thumbs-down also stores the masked question**, so it can become a golden-set question. The question's text is kept nowhere else.
 - **LangSmith:** with tracing on, the rating is attached to the answer's trace as `user_rating` feedback (1 or 0). Each answer trace's ID is derived from the request ID (`run_id_for()`), so no lookup is needed.
 
-**2. The faithfulness check (`runtime_eval`, off by default).**
+**2. The faithfulness check (`runtime_eval`, on for 10% of answers in `config.yaml`).**
 
 ```yaml
 runtime_eval:

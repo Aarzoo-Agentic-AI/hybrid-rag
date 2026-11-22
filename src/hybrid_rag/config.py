@@ -249,7 +249,8 @@ class ApiSettings(BaseModel):
 class RuntimeEvalSettings(BaseModel):
     """Runtime evaluation: a faithfulness check on a sample of live answers."""
 
-    # Off by default: each checked answer costs one llm.judge call, in a background thread.
+    # Off unless config.yaml turns it on (it does, for 10% of answers): each checked answer
+    # costs one llm.judge call, in a background thread.
     enabled: bool = False
     sample_rate: float = Field(default=0.1, ge=0, le=1)  # share of answered questions checked
     max_pending: int = Field(default=50, gt=0)  # checks waiting; more are skipped, not queued
