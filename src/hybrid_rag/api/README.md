@@ -18,6 +18,7 @@ docker compose run --rm keys --demo                    # four demo keys into sec
 docker compose up -d qdrant
 docker compose run --rm api python scripts/ingest.py   # index data/pdfs; first time downloads the models
 docker compose up -d                                   # the API
+docker compose restart api                             # after editing config.yaml (mounted, no rebuild)
 ```
 
 Startup loads `bge-m3`, the reranker and Presidio (about 30 s warm, several minutes on the first start while the models download), so the first question isn't slow. `/health` answers once the API is ready.

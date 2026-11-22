@@ -20,6 +20,7 @@ services:
       HYBRID_RAG_QDRANT__URL: http://qdrant:6333
     volumes:
       - hf_cache:/models                       # downloaded models, kept between restarts
+      - ./config.yaml:/app/config.yaml:ro  # edit, then `docker compose restart api` (no rebuild)
       - ./secrets:/app/secrets:ro    # API key hashes: docker compose run --rm keys --demo
       - ./logs:/app/logs             # audit log
       - api_data:/app/.data          # access overrides, uploads in progress

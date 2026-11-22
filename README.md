@@ -14,7 +14,7 @@ Built with LangChain: Docling parses the PDFs, `bge-m3` produces dense and spars
 - [Quick start](#quick-start-docker)
 - [Using the API](#using-the-api)
 - [How it works](#how-it-works)
-- [Evaluation results](#evaluation-results)
+- [Evaluation](#evaluation) and [results](#evaluation-results)
 - [Design decisions](#design-decisions)
 - [Scaling](#scaling)
 - [Development](#development)
@@ -236,6 +236,21 @@ Each part has its own README with the details.
   - 10% of answers get a background faithfulness check by `gpt-5-mini` (`runtime_eval` in `config.yaml`).
   - `scripts/runtime_report.py` summarises both by day and drafts thumbs-down questions as golden-set candidates.
 
+## Evaluation
+
+There are two kinds, and they feed each other:
+
+| | Offline | Runtime |
+|---|---|---|
+| **Questions** | 94 fixed questions with known answers ([eval/golden.yaml](eval/golden.yaml)) | Real questions from API users |
+| **When** | On demand, before and after a change | Always, inside the running API |
+| **Measures** | Retrieval (Recall@k, MRR), answer correctness, refusals, permission leaks | Faithfulness of 10% of answers (`gpt-5-mini` judge), user ratings |
+| **Run with** | `uv run python eval/evaluate.py` (add `--answers` for end to end) | Automatic; `uv run python scripts/runtime_report.py` for the report |
+| **Results** | `eval/results/` (`retrieval.md`, `answers.md`) | `logs/audit.jsonl`, `logs/feedback.jsonl` and LangSmith feedback |
+| **Details** | [Evaluation README](eval/README.md) | [Runtime evaluation](src/hybrid_rag/api/README.md#runtime-evaluation) |
+
+**The loop:** `runtime_report.py` lists low faithfulness scores and drafts each thumbs-down question as a `golden.yaml` entry (you fill in the expected sections and facts). Once it's in the golden set, `evaluate.py` checks every later change against it.
+
 ## Evaluation results
 
 94 labelled HR questions ([eval/golden.yaml](eval/golden.yaml)) are run through each retrieval mode, each asked as an employee, manager or HR-compensation principal. Ranks are per chunk, as sent to the LLM:
@@ -328,6 +343,7 @@ uv run python eval/evaluate.py                                       # the evalu
 **Configuration:**
 - [`config.yaml`](config.yaml) holds every pipeline setting, with comments: models, chunking, privacy, retrieval, answer, LLM failover and API.
 - `.env` holds secrets only (see [`.env.example`](.env.example)).
+- **In Docker,** `config.yaml` is mounted into the API container: after editing it, `docker compose restart api` is enough, with no rebuild (settings are read at startup). Code changes still need `docker compose up -d --build`.
 - Any setting can be overridden with an environment variable such as `HYBRID_RAG_RETRIEVAL__MODE=dense`.
 
 **Tests:**
