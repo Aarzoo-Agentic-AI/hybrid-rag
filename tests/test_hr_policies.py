@@ -66,6 +66,16 @@ def test_access_rules_from_the_registry_are_on_every_chunk(docs) -> None:
             assert "people_manager" not in c.page_content  # never in the text or header
 
 
+def test_handbook_contents_spill_is_repaired(docs) -> None:
+    (eeo,) = section(docs, "HR_Policy_Handbook_2027.pdf", "2 Equal Employment Opportunity (EEO)")
+
+    assert "veteran or military status, marital status, or any other characteristic" in (
+        eeo.page_content
+    )
+    for entry in ("Travel and expenses", "Corrective action", "Acknowledgment form"):
+        assert entry not in eeo.page_content
+
+
 def test_policy_names_come_from_the_registry(docs) -> None:
     # The Expense Policy's title is an image: no text to read it from.
     assert docs["Expense_Policy.pdf"].title == "Expense Policy"

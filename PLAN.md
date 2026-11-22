@@ -80,12 +80,19 @@ Each step ends with something working and tested. Features and design decisions 
 - The `sanitize` step in LangSmith traces, with counts only.
 - **Done when:** the 5 HR PDFs come out clean with their content intact; planted names, emails, phones and IDs are redacted; planted SSNs and cards quarantine the document; no value appears in Qdrant, traces, logs or errors; changing the privacy settings re-indexes. ✅
 
-## Step 4: Hybrid retrieval and reranking
+## Step 4: Hybrid retrieval and reranking ✅
 - Retrievers from `QdrantVectorStore` in dense, sparse and hybrid mode (Qdrant does the RRF fusion). Every retriever requires a `Principal`, and its security filter is always applied. Relevance filters (`is_current`, `jurisdiction`, `applies_to`, document, file type) are separate and optional.
 - Small-to-big retrieval: matched chunks are expanded to their parent section before reranking or generation.
 - Tracing: retrievers are traced automatically by LangChain; `@traceable` on the cross-encoder (scores before and after reranking) and on small-to-big expansion. Query embedding is already traced as `embed`.
-- Reranking with `ContextualCompressionRetriever` and `CrossEncoderReranker`, plus our own `BaseCrossEncoder` running `bge-reranker-v2-m3` through `sentence-transformers`.
+- Reranking with `ContextualCompressionRetriever` and `CrossEncoderReranker`, plus our own `BaseCrossEncoder` running a cross-encoder through `sentence-transformers`: `ms-marco-MiniLM-L-6-v2` by default, `bge-reranker-v2-m3` on a GPU.
 - **Done when:** sample queries return relevant chunks, and you can switch between dense-only, sparse-only, hybrid and hybrid plus rerank. The evaluation script in step 7 needs these modes. Leakage tests from step 3b also pass through every retriever and the reranker.
+- **Built:**
+  - `DocumentIndex.search(query, principal, mode=...)` (dense, sparse, hybrid with separate prefetch limits) and `section_chunks()`, both always scoped to the principal.
+  - `hybrid_rag/retrieval/`: `PolicyRetriever`, `RelevanceFilters`, `LocalCrossEncoder` and `ScoredReranker` (keeps `rerank_score`), `SectionExpandingRetriever`, and `build_retriever(settings, index, principal, mode=...)`.
+  - `scripts/search.py` to try queries as an employee, manager, HR or admin, in one mode or all four (`--compare`).
+  - Before step 4: `ingestion/cleanup.py` repairs reading-order errors (the Handbook's contents page spilling into section 2), with per-file `corrections` in the registry.
+- **Results:** the leakage matrix (12 callers × 6 documents) passes in all four modes with small-to-big on; removing the security filter from `search()` fails 50 tests. On the HR PDFs no section is split, so small-to-big doesn't change results yet; it's tested on a synthetic long section.
+- **Reranker speed:** `bge-reranker-v2-m3` took about 60 s per query on the development laptop's CPU (20 candidates of about 450 tokens; 568M parameters). The default is now `ms-marco-MiniLM-L-6-v2` (about 1.5 s per query on the HR policies); `bge-reranker-v2-m3` stays one config line away for a GPU. Step 7 measures what each costs in quality. Warm timings for the other modes: dense 0.5 s, sparse and hybrid under 0.05 s.
 
 ## Step 5: Answer generation (LCEL chain)
 - An LCEL chain: retriever → format numbered sources → `ChatPromptTemplate` → `FailoverChatModel` → output parser.

@@ -17,7 +17,7 @@
 | Vector database | Qdrant in Docker, one collection with dense and sparse vectors, used through `langchain-qdrant` (`QdrantVectorStore`) |
 | Embeddings | `bge-m3` (dense and sparse from one model), wrapped in LangChain's `Embeddings` and `SparseEmbeddings` interfaces |
 | Fusion | Reciprocal Rank Fusion (RRF), done by Qdrant through `QdrantVectorStore`'s hybrid mode |
-| Reranker | `bge-reranker-v2-m3` through LangChain's `CrossEncoderReranker` and `ContextualCompressionRetriever`, with our own `BaseCrossEncoder` running the model through `sentence-transformers` |
+| Reranker | `ms-marco-MiniLM-L-6-v2` by default on CPU, `bge-reranker-v2-m3` on a GPU (one config setting), through LangChain's `CrossEncoderReranker` and `ContextualCompressionRetriever`, with our own `BaseCrossEncoder` running the model through `sentence-transformers` |
 | LLM | `ChatOpenAI` (primary) + `ChatAnthropic` (fallback) behind a custom `FailoverChatModel` (see section 9) |
 | Loaders and chunking | Our own LangChain `BaseLoader` (`PdfPageLoader` on `pypdf`) and LangChain's `RecursiveCharacterTextSplitter` |
 | Privacy | Our own validated patterns plus Microsoft Presidio with the spaCy model `en_core_web_sm`, before chunking (section 12) |
@@ -32,11 +32,13 @@
 - extra metadata on documents (content hashes, page numbers, contextual headers)
 
 ## 3. Core retrieval: what makes it "hybrid"
-- **Retrieval modes:** `QdrantVectorStore` supports dense, sparse and hybrid modes, so the evaluation can compare them directly.
+- **Retrieval modes:** dense, sparse, hybrid and hybrid plus rerank (`retrieval.mode`), so the evaluation can compare them directly. Our own `PolicyRetriever` (a LangChain `BaseRetriever`) queries Qdrant directly, because `QdrantVectorStore`'s hybrid mode fetches as many candidates from each search as it returns, and we want 50 dense + 50 sparse fused down to 20 for the reranker.
 - **Dense retrieval (vectors):** uses embeddings, so it finds passages with the same meaning even when the wording differs.
 - **Sparse retrieval:** matches exact words, which is good for names, IDs, error codes and acronyms. Uses `bge-m3`'s sparse output.
-- **Fusion:** combines the two ranked lists into one with RRF, which needs no tuning. Weighted score blending is an optional alternative.
-- **Reranking:** a cross-encoder re-scores the top ~20–50 fused results down to the top 5–10. This is usually the biggest quality gain for the effort. In LangChain this is a `ContextualCompressionRetriever` with a `CrossEncoderReranker`, wrapped around the hybrid retriever. The cross-encoder itself is our own small `BaseCrossEncoder` (from `langchain-core`) that runs the model with `sentence-transformers`.
+- **Fusion:** combines the two ranked lists into one with RRF, which needs no tuning. Qdrant does it server-side, with the security filter on both prefetches. Weighted score blending is an optional alternative.
+- **Reranking:** a cross-encoder re-scores the top ~20–50 fused results down to the top 5–10. This is usually the biggest quality gain for the effort. In LangChain this is a `ContextualCompressionRetriever` with a `CrossEncoderReranker`, wrapped around the hybrid retriever. The cross-encoder itself is our own small `BaseCrossEncoder` (from `langchain-core`) that runs the model with `sentence-transformers`. Each result keeps its retrieval rank and score and its rerank score.
+- **Small-to-big:** after reranking, a hit on one part of a split section is replaced by the whole section (up to `max_section_tokens`), fetched with the caller's permissions. Glossary terms aren't expanded.
+- **Relevance filters:** current versions only by default, plus optional category, jurisdiction, audience and document filters. They are ANDed with the security filter, so they never widen access (section 11).
 
 ## 4. Ingestion pipeline
 - **Layout-aware parsing:**
@@ -86,7 +88,8 @@
   |---|---|---|
   | Ingestion | `ingest` → `ingest_file` (one per PDF) → `load_document`, `index_document` → `qdrant_upsert` → `embed` | ✅ Built |
   | LLM call | `FailoverChatModel` → one run per provider attempt | ✅ Built |
-  | Query | `query` → query rewrite (LLM) → retriever (dense / sparse / hybrid) → `embed` (query) → reranker (scores before and after) → small-to-big expansion → prompt → `FailoverChatModel` → citation parser | Steps 4–5 |
+  | Retrieval | `SectionExpandingRetriever` → `ContextualCompressionRetriever` → `PolicyRetriever` → `embed` (query), then `rerank` (ranks and scores, no text) and `expand_sections` | ✅ Built |
+  | Query | `query` → query rewrite (LLM) → retrieval (above) → prompt → `FailoverChatModel` → citation parser | Step 5 |
   | API request | Each route's trace carries `request_id`, `tenant_id`, retrieval mode and the answering provider as metadata and tags | Step 6 |
 
 - **What traces contain.** Ingestion and embedding runs record counts, names, statuses and timings only: never document text, vectors or local paths (a unit test checks this). Query traces do contain the question, the retrieved chunks and the answer, which is what makes them useful. For restricted HR documents, `LANGSMITH_HIDE_INPUTS=true` and `LANGSMITH_HIDE_OUTPUTS=true` keep the trace structure and timings but drop the text. Each environment uses its own LangSmith project.
@@ -345,7 +348,7 @@ PDF ─► extract ─► clean ─► ① DETECT + REDACT ─► chunk ─► �
 
 **Where the real bottlenecks are at that scale:**
 1. **Embedding throughput during ingestion.** CPU embedding of tens of millions of chunks takes days. Production needs GPUs, batching and worker queues, or a hosted embedding API.
-2. **Reranker latency.** The slowest step in the query path. Needs a GPU, fewer candidates, or a hosted reranker.
+2. **Reranker latency.** The slowest step in the query path. Measured on a laptop CPU (i7-1265U), 20 candidates: `bge-reranker-v2-m3` about 60–75 s, `bge-reranker-base` about 28 s, `ms-marco-MiniLM-L-6-v2` about 4 s. Hence MiniLM by default on CPU, and `bge-reranker-v2-m3` on a GPU or a hosted reranker in production. `bge-m3` embedding has the same cost profile, which is why the first ingest takes minutes.
 3. **Ingestion design.** Job queues, retries, deduplication and incremental updates rather than a single upload endpoint.
 4. **Operations.** Monitoring, backups, rolling upgrades and capacity planning (or Qdrant Cloud).
 5. **Retrieval quality.** As the corpus grows, more chunks look similar, so metadata filters, good chunking and reranking matter more.

@@ -16,8 +16,12 @@ embedding:
 
 reranker:
   enabled: true
-  model: BAAI/bge-reranker-v2-m3
+  # MiniLM: ~4 s per query on a laptop CPU, English only. On a GPU, use
+  # BAAI/bge-reranker-v2-m3 (multilingual, stronger; max_length 1024): ~60 s per query on CPU.
+  model: cross-encoder/ms-marco-MiniLM-L-6-v2
   device: cpu
+  batch_size: 8          # query-chunk pairs scored at once
+  max_length: 512        # tokens per pair (the model's limit)
 
 documents:
   path: data/pdfs                    # default folder for scripts/ingest.py
@@ -53,10 +57,13 @@ privacy:
   allowlist_patterns: []
 
 retrieval:
+  mode: hybrid_rerank    # dense | sparse | hybrid | hybrid_rerank
   dense_limit: 50        # candidates from dense search
   sparse_limit: 50       # candidates from sparse search
   fused_limit: 20        # candidates kept after RRF, passed to the reranker
   top_k: 6               # chunks sent to the LLM
+  expand_sections: true  # small-to-big: return the whole section for a hit on part of it
+  max_section_tokens: 1500
 
 llm:
   # Ordered lists: the first entry is the primary, the rest are fallbacks.

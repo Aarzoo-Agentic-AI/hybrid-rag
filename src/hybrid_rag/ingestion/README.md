@@ -23,16 +23,17 @@ pipeline.load("/tmp/upload_8f3a.tmp", source="Travel_Policy.pdf")
 ## How a PDF is processed
 
 ```
-PDF ─► parse ──────────► registry ─► ① sanitize ─► sections ─────► chunks ──────► ② verify
-       Docling: blocks   policy      redact or     heading paths   section-aware   re-check
-       with pages,       metadata    quarantine    from numbering  (sizes in       each chunk
-       cached by hash    per file                                  tokens)
+PDF ─► parse ──────────► registry ─► repair ──────► ① sanitize ─► sections ─────► chunks ──────► ② verify
+       Docling: blocks   policy      parser errors  redact or     heading paths   section-aware   re-check
+       with pages,       metadata                   quarantine    from numbering  (sizes in       each chunk
+       cached by hash    per file                                                 tokens)
 ```
 
 | Step | File | What it does |
 |---|---|---|
 | Parse | [`parsers.py`](parsers.py) | Turns the PDF into **blocks** (heading, paragraph, list item, table), each with its page number |
 | Policy metadata | [`registry.py`](registry.py) | Looks up the file in `data/pdfs/registry.yaml` |
+| Repair | [`cleanup.py`](cleanup.py) | Fixes reading-order errors: drops misplaced contents entries, rejoins split sentences, applies the registry's `corrections` |
 | Sanitize | [`../privacy/`](../privacy/) | Runs on every paragraph, list item and table row, and on the policy name |
 | Sections | [`sections.py`](sections.py) | Groups blocks under their headings and builds the heading path |
 | Chunks | [`chunking.py`](chunking.py) | Section-aware chunking, headers, IDs and the metadata schema |
@@ -110,6 +111,21 @@ policies:
 - Entries are validated, and a typo (`efective_date`) or an invalid value is an error, not silently ignored.
 - A file that isn't listed loads with the defaults and its PDF title, plus a warning.
 - The registry also supplies the policy name when the PDF's title is an image, as with the Expense Policy.
+
+**Corrections.** Layout parsers sometimes read a page in the wrong order. On the HR Policy Handbook, Docling reads the second column of the two-column contents page after section 2, so 11 contents entries land in the middle of the EEO sentence. The repair step handles this in three ways:
+
+- **Contents spill:** a run of 3 or more list items that repeat numbered section titles of the same document is dropped. The real contents page is skipped as its own section anyway.
+- **Continuations:** a paragraph that starts in lower case is joined onto the previous paragraph when that one ends mid-sentence.
+- **Corrections:** what no rule can recognise safely is fixed with an exact find-and-replace in the file's registry entry. The handbook needs one, for the last contents entry ("Acknowledgment form"), which is fused into the sentence it interrupts.
+
+  ```yaml
+  corrections:
+    - find: "Acknowledgment form marital status"
+      replace: "marital status"
+      reason: Docling reads the contents page's second column after section 2
+  ```
+
+  A correction that no longer matches anything is reported as a warning, so stale fixes don't linger after the PDF or the parser changes. Corrections are part of the entry hash, so adding one re-processes the file (from the parse cache).
 
 **Access rules.** Each entry may have an `access:` block saying who may read the policy ([`hybrid_rag/access.py`](../access.py), FEATURE.md section 11). It is merged key by key with the `access:` block in `defaults`:
 

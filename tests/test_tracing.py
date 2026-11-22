@@ -173,3 +173,34 @@ def test_quarantined_file_trace_reveals_no_values(traced, index, tmp_path) -> No
     assert runs.outputs(runs.named("ingest")[0]) == {"files": 1, "quarantined": 1}
     assert runs.named("index_document") == []  # never reaches the store
     assert "6789" not in runs.everything_sent
+
+
+def test_retrieval_traces_scores_but_no_chunk_text(traced, index, tmp_path: Path) -> None:
+    from hybrid_rag.access import Principal
+    from hybrid_rag.config import RetrievalSettings, Settings
+    from hybrid_rag.ingestion import PolicyRegistry
+    from hybrid_rag.retrieval import build_retriever
+    from tests.test_retrieval import KeywordCrossEncoder
+
+    registry = PolicyRegistry(
+        {"pay.pdf": {"policy_name": "Pay", "access": {"visibility": "tenant"}}}
+    )
+    pipeline = IngestionPipeline(CHUNKING, registry=registry)
+    ingest_paths([write_pdf(tmp_path / "pay.pdf", [[SECRET_SENTENCE]])], index, pipeline)
+    settings = Settings.model_construct(
+        retrieval=RetrievalSettings(fused_limit=5, top_k=2), chunking=CHUNKING
+    )
+    caller = Principal("default", "u-1", "restricted")
+    retriever = build_retriever(
+        settings, index, caller, mode="hybrid_rerank", cross_encoder=KeywordCrossEncoder()
+    )
+
+    hits, runs = traced(lambda: retriever.invoke("salary band"))
+
+    assert SECRET_SENTENCE in hits[0].page_content
+    (rerank_run,) = runs.named("rerank")
+    kept = runs.outputs(rerank_run)["kept"]
+    assert kept[0]["rerank_rank"] == 1 and "rerank_score" in kept[0]
+    assert SECRET_SENTENCE not in repr(runs.outputs(rerank_run))
+    (expand_run,) = runs.named("expand_sections")
+    assert runs.outputs(expand_run) == {"results": 1, "expanded": 0}

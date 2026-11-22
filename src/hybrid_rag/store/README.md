@@ -114,11 +114,14 @@ All of these take a `Principal` and return only what it may read.
 
 | Method | Returns |
 |---|---|
-| `search(query, principal, k=4, conditions=None)` | Hybrid search (dense + sparse, fused by Qdrant with RRF) over readable chunks. `conditions` are relevance filters |
+| `search(query, principal, k=4, mode="hybrid", conditions=None, dense_limit=None, sparse_limit=None)` | Dense, sparse or hybrid search over readable chunks (hybrid: two prefetches fused by Qdrant with RRF, each with the security filter). Results carry `retrieval_mode`, `retrieval_score` and `retrieval_rank`. `conditions` are relevance filters. The retrievers in [`../retrieval/`](../retrieval/README.md) build on this |
+| `section_chunks(section_id, principal)` | The readable chunks of one section, in order, for small-to-big retrieval |
 | `list_documents(principal)` | One `DocumentInfo` per readable document, sorted by source: `doc_id`, `source`, `title`, `chunk_count`, `doc_hash`, `ingested_at`, the privacy status, and the access fields (`tenant_id`, `classification`, `visibility`, grants, `access_version`, `access_updated_at`) |
 | `get_document(doc_id, principal)` | One `DocumentInfo`, or `None` if it doesn't exist or isn't readable (the two cases look the same) |
 | `count_chunks(principal, doc_id=None)` | Exact count of readable chunks, for one document or for all |
 | `health()` | Collection name, status and total point count, for the operations-only `/health` |
+
+`build_document_index()` raises `StoreError` with a hint (`docker compose up -d`) when Qdrant can't be reached.
 
 ## Tracing
 

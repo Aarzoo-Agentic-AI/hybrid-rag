@@ -1,9 +1,9 @@
 """The ingestion pipeline: PDF -> parse -> policy metadata -> sanitize -> sections -> chunks.
 
 ```
-PDF ─► parse (Docling, cached) ─► registry ─► sanitize ─► sections ─► chunks ─► verify
-       blocks + pages             policy +    ① redact /   heading     section-   ② re-check
-                                  access      quarantine   paths       aware      each chunk
+PDF ─► parse ──────► registry ─► repair ─► sanitize ─► sections ─► chunks ─► verify
+       (Docling,     policy +    parser    ① redact /   heading     section-   ② re-check
+        cached)      access      errors    quarantine   paths       aware      each chunk
 ```
 
 A pipeline belongs to one tenant: document IDs are scoped to it, and every chunk carries its
@@ -30,6 +30,7 @@ from hybrid_rag.access import AccessPolicy, validate_tenant_id
 from hybrid_rag.config import ChunkingSettings, Settings
 from hybrid_rag.ingestion.blocks import Block, ParsedDocument
 from hybrid_rag.ingestion.chunking import SectionChunker, finalize_chunks, make_doc_id
+from hybrid_rag.ingestion.cleanup import repair_blocks
 from hybrid_rag.ingestion.parsers import DoclingParser, Parser, PypdfParser
 from hybrid_rag.ingestion.registry import PolicyRegistry, RegistryError
 from hybrid_rag.ingestion.sections import build_sections
@@ -44,7 +45,8 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 # Bump when sectioning or chunking logic changes, so every document is re-processed.
-PIPELINE_VERSION = 2
+# 3: repair_blocks (contents spill, continuations, registry corrections).
+PIPELINE_VERSION = 3
 
 _ROW = " | "  # table rows are sanitized as one line, then split back into cells
 
@@ -159,9 +161,10 @@ class IngestionPipeline:
         parsed = self._parse(path, doc_hash, source=source)
         policy, registry_warnings = self.registry.lookup(source, title=parsed.title)
         access, access_warnings = self.access_for(source)
+        blocks, repair_warnings = repair_blocks(parsed.blocks, self.registry.corrections(source))
 
         # ① Sanitize before chunking: every paragraph, list item and table row, and the name.
-        blocks, title, report = self._sanitize(parsed.blocks, policy.policy_name, source)
+        blocks, title, report = self._sanitize(blocks, policy.policy_name, source)
         policy = policy.model_copy(update={"policy_name": title})
 
         sections = build_sections(blocks, self.chunking.skip_sections)
@@ -183,7 +186,7 @@ class IngestionPipeline:
         )
         self.sanitizer.verify(chunks, source=source)  # ② re-check the finished chunks
 
-        warnings = [*parsed.warnings, *registry_warnings, *access_warnings]
+        warnings = [*parsed.warnings, *registry_warnings, *repair_warnings, *access_warnings]
         for warning in warnings:
             logger.warning("%s: %s", source, warning)
         stats = {

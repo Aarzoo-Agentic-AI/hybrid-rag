@@ -61,8 +61,13 @@ class EmbeddingSettings(BaseModel):
 
 class RerankerSettings(BaseModel):
     enabled: bool = True
-    model: str = "BAAI/bge-reranker-v2-m3"
+    # Any sentence-transformers cross-encoder. The default (22M parameters, English) reranks
+    # 20 candidates in about 4 s on a laptop CPU. "BAAI/bge-reranker-v2-m3" (568M,
+    # multilingual, max_length 1024) is stronger but takes about a minute there; use it on a GPU.
+    model: str = "cross-encoder/ms-marco-MiniLM-L-6-v2"
     device: str = "cpu"
+    batch_size: int = Field(default=8, gt=0)  # query-chunk pairs scored at once
+    max_length: int = Field(default=512, gt=0)  # tokens per pair; longer pairs are truncated
 
 
 class DocumentsSettings(BaseModel):
@@ -169,11 +174,21 @@ class PrivacySettings(BaseModel):
         return self
 
 
+RetrievalMode = Literal["dense", "sparse", "hybrid", "hybrid_rerank"]
+
+
 class RetrievalSettings(BaseModel):
-    dense_limit: int = Field(default=50, gt=0)
-    sparse_limit: int = Field(default=50, gt=0)
-    fused_limit: int = Field(default=20, gt=0)
-    top_k: int = Field(default=6, gt=0)
+    # dense / sparse / hybrid return top_k directly; hybrid_rerank fuses fused_limit
+    # candidates and the cross-encoder keeps the best top_k.
+    mode: RetrievalMode = "hybrid_rerank"
+    dense_limit: int = Field(default=50, gt=0)  # hybrid: candidates from dense search
+    sparse_limit: int = Field(default=50, gt=0)  # hybrid: candidates from sparse search
+    fused_limit: int = Field(default=20, gt=0)  # hybrid_rerank: candidates for the reranker
+    top_k: int = Field(default=6, gt=0)  # chunks returned (sent to the LLM)
+    # Small-to-big: a hit on one part of a split section is replaced by the whole section,
+    # if the section is at most max_section_tokens long.
+    expand_sections: bool = True
+    max_section_tokens: int = Field(default=1500, gt=0)
 
     @model_validator(mode="after")
     def _top_k_within_fused(self) -> RetrievalSettings:

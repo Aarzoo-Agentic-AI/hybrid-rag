@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from qdrant_client import QdrantClient
+from qdrant_client.http.exceptions import ResponseHandlingException
 
 from hybrid_rag.config import Settings
 from hybrid_rag.embedding import EmbeddingModels, build_embeddings
@@ -11,6 +12,7 @@ from hybrid_rag.store.qdrant import (
     DocumentIndex,
     DocumentInfo,
     IndexResult,
+    SearchMode,
     StoreError,
     ensure_collection,
 )
@@ -28,13 +30,22 @@ def build_document_index(
     embeddings: EmbeddingModels | None = None,
     client: QdrantClient | None = None,
 ) -> DocumentIndex:
-    """Connect to Qdrant and return the ``DocumentIndex`` for the configured collection."""
-    return DocumentIndex(
-        client=client or create_client(settings),
-        collection=settings.qdrant.collection,
-        embeddings=embeddings or build_embeddings(settings.embedding),
-        batch_size=settings.embedding.batch_size,
-    )
+    """Connect to Qdrant and return the ``DocumentIndex`` for the configured collection.
+
+    Raises ``StoreError`` if Qdrant can't be reached.
+    """
+    try:
+        return DocumentIndex(
+            client=client or create_client(settings),
+            collection=settings.qdrant.collection,
+            embeddings=embeddings or build_embeddings(settings.embedding),
+            batch_size=settings.embedding.batch_size,
+        )
+    except ResponseHandlingException as exc:
+        raise StoreError(
+            f"Can't reach Qdrant at {settings.qdrant.url} ({exc}). "
+            "Is it running? Start it with: docker compose up -d"
+        ) from exc
 
 
 __all__ = [
@@ -45,6 +56,7 @@ __all__ = [
     "DocumentIndex",
     "DocumentInfo",
     "IndexResult",
+    "SearchMode",
     "StoreError",
     "build_document_index",
     "create_client",

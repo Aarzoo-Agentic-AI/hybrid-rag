@@ -41,6 +41,8 @@ from hybrid_rag.tracing import traceable
 
 logger = logging.getLogger(__name__)
 
+SearchMode = Literal["dense", "sparse", "hybrid"]
+
 
 class StoreError(Exception):
     """Base class for vector store errors."""
@@ -304,13 +306,81 @@ class DocumentIndex:
         principal: Principal,
         *,
         k: int = 4,
+        mode: SearchMode = "hybrid",
         conditions: list[models.Condition] | None = None,
+        dense_limit: int | None = None,
+        sparse_limit: int | None = None,
     ) -> list[Document]:
-        """Hybrid search over the chunks ``principal`` may read. ``conditions`` are relevance
-        filters; they are ANDed with the security filter, so they can only narrow it."""
-        return self.vector_store.similarity_search(
-            query, k=k, filter=scoped(principal, *(conditions or []))
+        """Search the chunks ``principal`` may read; the best ``k``, best first.
+
+        - ``dense``: cosine similarity of bge-m3 dense vectors (meaning).
+        - ``sparse``: bge-m3 lexical weights (exact terms such as "HR-TRV-003" or "COBRA").
+        - ``hybrid``: both searches as prefetches (``dense_limit`` and ``sparse_limit``
+          candidates, default ``k`` each), fused by Qdrant with Reciprocal Rank Fusion.
+
+        ``conditions`` are relevance filters; they are ANDed with the security filter, which is
+        applied to every prefetch and to the final query, so they can only narrow it. Each
+        result's metadata gets ``retrieval_mode``, ``retrieval_score`` and ``retrieval_rank``
+        (1-based).
+        """
+        selector = scoped(principal, *(conditions or []))
+        (encoding,) = self.embeddings.encoder.encode([query])
+        dense = encoding.dense
+        sparse = models.SparseVector(
+            indices=list(encoding.sparse.keys()), values=list(encoding.sparse.values())
         )
+        common: dict[str, Any] = {
+            "query_filter": selector,
+            "limit": k,
+            "with_payload": True,
+            "with_vectors": False,
+        }
+        if mode == "dense":
+            response = self.client.query_points(
+                self.collection, query=dense, using=DENSE_VECTOR, **common
+            )
+        elif mode == "sparse":
+            if not encoding.sparse:  # nothing to match lexically (e.g. only stop words)
+                return []
+            response = self.client.query_points(
+                self.collection, query=sparse, using=SPARSE_VECTOR, **common
+            )
+        elif mode == "hybrid":
+            prefetch = [
+                models.Prefetch(
+                    query=dense, using=DENSE_VECTOR, filter=selector, limit=dense_limit or k
+                )
+            ]
+            if encoding.sparse:
+                prefetch.append(
+                    models.Prefetch(
+                        query=sparse, using=SPARSE_VECTOR, filter=selector, limit=sparse_limit or k
+                    )
+                )
+            response = self.client.query_points(
+                self.collection,
+                prefetch=prefetch,
+                query=models.FusionQuery(fusion=models.Fusion.RRF),
+                **common,
+            )
+        else:
+            raise ValueError(f"Unknown search mode {mode!r}; use dense, sparse or hybrid")
+        return [
+            _to_document(point, mode=mode, rank=rank)
+            for rank, point in enumerate(response.points, start=1)
+        ]
+
+    def section_chunks(self, section_id: str, principal: Principal) -> list[Document]:
+        """Every readable chunk of one section, in order (for small-to-big retrieval)."""
+        points, _ = self.client.scroll(
+            self.collection,
+            scroll_filter=scoped(principal, match("section_id", section_id)),
+            limit=256,
+            with_payload=True,
+            with_vectors=False,
+        )
+        docs = [_to_document(p) for p in points]
+        return sorted(docs, key=lambda d: d.metadata.get("chunk_index", 0))
 
     def get_document(self, doc_id: str, principal: Principal) -> DocumentInfo | None:
         """The document, or ``None`` if it doesn't exist or ``principal`` may not read it."""
@@ -423,6 +493,23 @@ class DocumentIndex:
                 self.collection, points_selector=models.FilterSelector(filter=selector), wait=True
             )
         return count
+
+
+def _to_document(
+    point: models.ScoredPoint | models.Record,
+    *,
+    mode: SearchMode | None = None,
+    rank: int | None = None,
+) -> Document:
+    payload = point.payload or {}
+    metadata = dict(payload.get(METADATA_KEY, {}))
+    if mode is not None:
+        metadata |= {
+            "retrieval_mode": mode,
+            "retrieval_score": getattr(point, "score", None),
+            "retrieval_rank": rank,
+        }
+    return Document(page_content=payload.get(CONTENT_KEY, ""), metadata=metadata, id=str(point.id))
 
 
 def _document_info(payload: dict[str, Any] | None) -> DocumentInfo:

@@ -44,9 +44,12 @@ import yaml
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator
 
 from hybrid_rag.access import AccessPolicy
+from hybrid_rag.ingestion.cleanup import Correction
 from hybrid_rag.ingestion.types import IngestionError
 
 ACCESS_KEY = "access"
+CORRECTIONS_KEY = "corrections"  # per-file text fixes for parser errors (see cleanup.py)
+_NOT_POLICY_FIELDS = {ACCESS_KEY, CORRECTIONS_KEY}
 
 
 class RegistryError(IngestionError):
@@ -90,6 +93,7 @@ class PolicyRegistry:
         for name in self._policies:  # validate every entry up front, not on first use
             self.lookup(name, title=name)
             self.access(name)
+            self.corrections(name)
         if not self._policies:
             self.access("")  # still validate the defaults
 
@@ -124,7 +128,9 @@ class PolicyRegistry:
             if self._policies:  # only worth a warning when a registry is in use
                 warnings.append(f"{source} is not in the policy registry; using defaults")
             entry = {}
-        fields = {k: v for k, v in {**self.defaults, **entry}.items() if k != ACCESS_KEY}
+        fields = {
+            k: v for k, v in {**self.defaults, **entry}.items() if k not in _NOT_POLICY_FIELDS
+        }
         fields.setdefault("policy_name", title or Path(source).stem.replace("_", " "))
         try:
             return PolicyInfo(**fields), warnings
@@ -157,9 +163,26 @@ class PolicyRegistry:
             )
         return policy, warnings
 
+    def corrections(self, source: str) -> list[Correction]:
+        """Text fixes for this file's parser output. Per file only: never in ``defaults``."""
+        entry = self._policies.get(source.lower()) or {}
+        items = entry.get(CORRECTIONS_KEY) or []
+        try:
+            if not isinstance(items, list):
+                raise TypeError("corrections must be a list of {find, replace} entries")
+            return [Correction(**item) for item in items]
+        except (ValidationError, TypeError) as exc:
+            problems = (
+                "; ".join(f"{'.'.join(map(str, e['loc']))}: {e['msg']}" for e in exc.errors())
+                if isinstance(exc, ValidationError)
+                else str(exc)
+            )
+            raise RegistryError(f"Invalid corrections for {source}: {problems}") from None
+
     def entry_hash(self, source: str) -> str:
         """Changes whenever this file's registry entry (or the defaults) change, except for
-        the access rules: those are applied without re-processing the file."""
+        the access rules: those are applied without re-processing the file. Corrections
+        change the text, so they are included."""
         data = {
             "defaults": _without_access(self.defaults),
             "entry": _without_access(self._policies.get(source.lower())),

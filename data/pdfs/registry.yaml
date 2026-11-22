@@ -33,6 +33,12 @@ policies:
     effective_date: 2027-01-01
     owner_department: People (Chief People Officer)
     review_date: 2028-01-01          # reviewed annually
+    corrections:                     # parser errors no general rule can fix (see cleanup.py)
+      - find: "Acknowledgment form marital status"
+        replace: "marital status"
+        reason: >-
+          Docling reads the second column of the contents page after section 2; the last
+          contents entry ("Acknowledgment form") is fused into the sentence it interrupts.
 
   Employee_Benefits_Guide_2027.pdf:
     policy_name: Employee Benefits Guide
