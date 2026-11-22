@@ -81,6 +81,9 @@ class DocumentsSettings(BaseModel):
     # fallback with heading heuristics, used by unit tests.
     parser: Literal["docling", "pypdf"] = "docling"
     cache_dir: Path | None = Path(".cache/parsed")  # parsed documents, keyed by file hash
+    # Permission changes made through the API (PUT /documents/{id}/access). Applied on top
+    # of the registry by every ingest, so the CLI never undoes them. Git-ignored.
+    access_overrides: Path = Path(".data/access_overrides.json")
 
     @field_validator("tenant_id")
     @classmethod
@@ -218,6 +221,20 @@ class AnswerSettings(BaseModel):
     contact: str = "the HR Service Center"
 
 
+class ApiSettings(BaseModel):
+    """The FastAPI service (step 6)."""
+
+    keys_file: Path = Path("api_keys.yaml")  # API key hashes -> principals; git-ignored
+    audit_log: Path = Path("logs/audit.jsonl")  # one JSON line per request; git-ignored
+    # Store the (redacted) question text in the audit log. Off: only its hash and length,
+    # because HR questions can be personal even after redaction.
+    audit_questions: bool = False
+    max_upload_mb: int = Field(default=25, gt=0)
+    max_files_per_upload: int = Field(default=10, gt=0)
+    warmup: bool = True  # load the models at startup, not on the first question
+    json_logs: bool = True  # structured logs with request_id
+
+
 class RetrySettings(BaseModel):
     max_attempts: int = Field(default=3, ge=1)
     base_delay_s: float = Field(default=0.5, ge=0)
@@ -261,6 +278,7 @@ class Settings(BaseSettings):
     privacy: PrivacySettings = Field(default_factory=PrivacySettings)
     retrieval: RetrievalSettings = Field(default_factory=RetrievalSettings)
     answer: AnswerSettings = Field(default_factory=AnswerSettings)
+    api: ApiSettings = Field(default_factory=ApiSettings)
     llm: LLMSettings = Field(default_factory=LLMSettings)
 
     anthropic_api_key: SecretStr | None = Field(

@@ -33,6 +33,7 @@ from langchain_core.runnables import (
     RunnableLambda,
     RunnablePassthrough,
 )
+from langsmith.run_helpers import get_current_run_tree
 
 from hybrid_rag.access import Principal
 from hybrid_rag.config import RetrievalMode, Settings
@@ -310,6 +311,7 @@ class AnswerService:
         answer: Answer = respond.invoke(x)
         answer.redactions = redactions
         answer.rewritten = standalone != question
+        _tag_run(answer)
         return answer
 
     @traceable(
@@ -361,7 +363,30 @@ class AnswerService:
             answer = self._build_answer(x, raw, metadata)
         answer.redactions = redactions
         answer.rewritten = standalone != question
+        _tag_run(answer)
         yield {"type": "answer", "answer": answer}
+
+
+def _tag_run(answer: Answer) -> None:
+    """Put the outcome on the current trace as metadata and tags, so traces can be filtered by
+    the provider that answered and by status."""
+    run = get_current_run_tree()
+    if run is None:
+        return
+    provider = answer.provider or {}
+    run.add_metadata(
+        {
+            "answer_status": answer.status,
+            "grounded": answer.grounded,
+            "provider": provider.get("provider"),
+            "model": provider.get("model"),
+            "failed_over": provider.get("failed_over"),
+        }
+    )
+    tags = [f"status:{answer.status}"]
+    if provider.get("provider"):
+        tags.append(f"provider:{provider['provider']}")
+    run.add_tags(tags)
 
 
 def _prompt_inputs(x: dict[str, Any]) -> dict[str, Any]:

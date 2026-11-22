@@ -1,0 +1,17 @@
+# Keep secrets, local state and caches out of the build context and the image.
+.env
+api_keys.yaml
+.venv/
+.git/
+.cache/
+.data/
+logs/
+qdrant_data/
+models/
+eval/results/
+**/__pycache__/
+.pytest_cache/
+.ruff_cache/
+.vscode/
+.idea/
+tests/

@@ -9,7 +9,26 @@ services:
       - qdrant_data:/qdrant/storage
     restart: unless-stopped
 
-  # The API service is added in step 6.
+  api:
+    build: .
+    container_name: hybrid-rag-api
+    ports:
+      - "8000:8000"   # Swagger UI: http://localhost:8000/docs
+    env_file: .env    # OPENAI_API_KEY, ANTHROPIC_API_KEY, LANGSMITH_* (never baked into the image)
+    environment:
+      HYBRID_RAG_QDRANT__URL: http://qdrant:6333
+    volumes:
+      - hf_cache:/models                       # downloaded models, kept between restarts
+      - ./api_keys.yaml:/app/api_keys.yaml:ro  # create it first: scripts/make_api_key.py --demo
+      - ./logs:/app/logs                       # audit log
+      - api_data:/app/.data                    # access overrides, uploads in progress
+      - parse_cache:/app/.cache                # Docling parse cache
+    depends_on:
+      - qdrant
+    restart: unless-stopped
 
 volumes:
   qdrant_data:
+  hf_cache:
+  api_data:
+  parse_cache:

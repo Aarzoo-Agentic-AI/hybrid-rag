@@ -24,9 +24,12 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import re
+import threading
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any, Literal, get_args
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
@@ -193,3 +196,45 @@ class Principal:
             or bool(self.groups & set(metadata.get("allowed_groups", [])))
             or bool(self.roles & set(metadata.get("allowed_roles", [])))
         )
+
+
+class AccessOverrides:
+    """Permission changes made through the API, in a JSON file (``documents.access_overrides``).
+
+    The registry says who may read each policy; an override set with
+    ``PUT /documents/{id}/access`` replaces that for one document, until it is cleared. Every
+    ingest (API or ``scripts/ingest.py``) reads the overrides on top of the registry, so a CLI
+    run never silently undoes a change made through the API. Keyed by tenant, then source.
+    """
+
+    def __init__(self, path: Path | None) -> None:
+        self.path = path
+        self._lock = threading.Lock()
+
+    def _read(self) -> dict[str, dict[str, dict[str, Any]]]:
+        if self.path is None or not self.path.exists():
+            return {}
+        try:
+            return json.loads(self.path.read_text(encoding="utf-8"))
+        except (OSError, ValueError) as exc:
+            raise AccessError(f"Can't read access overrides {self.path}: {exc}") from exc
+
+    def get(self, tenant_id: str, source: str) -> AccessPolicy | None:
+        entry = self._read().get(tenant_id, {}).get(source.lower())
+        return AccessPolicy(**entry) if entry is not None else None
+
+    def set(self, tenant_id: str, source: str, policy: AccessPolicy | None) -> None:
+        """Store an override, or remove it with ``None`` (back to the registry's rules)."""
+        if self.path is None:
+            raise AccessError("No access overrides file is configured")
+        with self._lock:
+            data = self._read()
+            tenant = data.setdefault(tenant_id, {})
+            if policy is None:
+                tenant.pop(source.lower(), None)
+            else:
+                tenant[source.lower()] = policy.model_dump(mode="json")
+            self.path.parent.mkdir(parents=True, exist_ok=True)
+            tmp = self.path.with_suffix(".tmp")
+            tmp.write_text(json.dumps(data, indent=2, sort_keys=True), encoding="utf-8")
+            os.replace(tmp, self.path)

@@ -28,6 +28,7 @@ documents:
   tenant_id: dummymocktest           # the organisation these policies belong to
   registry: data/pdfs/registry.yaml  # policy metadata per file (name, category, dates, ...)
   parser: docling                    # docling (layout-aware) | pypdf (fast, text only)
+  access_overrides: .data/access_overrides.json  # permission changes made through the API
   cache_dir: .cache/parsed           # parsed PDFs, keyed by file hash (Docling is slow)
 
 chunking:
@@ -72,6 +73,15 @@ answer:
   min_rerank_score: -8.5
   max_history_turns: 6       # chat history used to rewrite follow-up questions
   contact: the HR Service Center
+
+api:
+  keys_file: api_keys.yaml       # created by scripts/make_api_key.py; git-ignored
+  audit_log: logs/audit.jsonl
+  audit_questions: false         # true: also store the (redacted) question text
+  max_upload_mb: 25
+  max_files_per_upload: 10
+  warmup: true                   # load the models at startup
+  json_logs: true
 
 llm:
   # Ordered lists: the first entry is the primary, the rest are fallbacks.

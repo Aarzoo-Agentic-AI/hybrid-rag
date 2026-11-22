@@ -17,6 +17,11 @@ htmlcov/
 
 # Secrets
 .env
+api_keys.yaml
+
+# API state: audit log, permission overrides, uploads
+logs/
+.data/
 
 # Local data and model caches
 qdrant_data/

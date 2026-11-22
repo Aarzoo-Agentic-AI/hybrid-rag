@@ -26,7 +26,7 @@ from typing import TYPE_CHECKING
 
 from langchain_core.documents import Document
 
-from hybrid_rag.access import AccessPolicy, validate_tenant_id
+from hybrid_rag.access import AccessOverrides, AccessPolicy, validate_tenant_id
 from hybrid_rag.config import ChunkingSettings, Settings
 from hybrid_rag.ingestion.blocks import Block, ParsedDocument
 from hybrid_rag.ingestion.chunking import SectionChunker, finalize_chunks, make_doc_id
@@ -61,10 +61,12 @@ class IngestionPipeline:
         registry: PolicyRegistry | None = None,
         cache_dir: Path | None = None,
         tenant_id: str = "default",
+        access_overrides: AccessOverrides | None = None,
     ) -> None:
         from hybrid_rag.privacy import default_sanitizer
 
         self.tenant_id = validate_tenant_id(tenant_id)
+        self.access_overrides = access_overrides
         self.chunking = chunking or ChunkingSettings()
         self.parser = parser or PypdfParser()
         self.sanitizer = sanitizer or default_sanitizer()
@@ -80,37 +82,40 @@ class IngestionPipeline:
         *,
         tenant_id: str | None = None,
         registry_path: Path | None = None,
+        registry: PolicyRegistry | None = None,
+        parser: Parser | None = None,
+        sanitizer: Sanitizer | None = None,
     ) -> IngestionPipeline:
         """The production pipeline. ``tenant_id`` and ``registry_path`` override
-        ``documents.tenant_id`` and ``documents.registry`` (``scripts/ingest.py --tenant``)."""
+        ``documents.tenant_id`` and ``documents.registry`` (``scripts/ingest.py --tenant``);
+        ``registry``, ``parser`` and ``sanitizer`` let the API share them between tenants."""
         from hybrid_rag.privacy import build_sanitizer
 
         docs = settings.documents
         registry_file = registry_path or docs.registry
-        if registry_file is None:
-            registry = PolicyRegistry.empty()
-        elif registry_file.exists():
-            registry = PolicyRegistry.load(registry_file)
-        else:
-            raise RegistryError(
-                f"Policy registry {registry_file} not found. Create it, or set "
-                "documents.registry to null in config.yaml to use defaults for every file."
-            )
+        if registry is None:
+            registry = _load_registry(registry_file)
         return cls(
             settings.chunking,
-            parser=DoclingParser() if docs.parser == "docling" else PypdfParser(),
-            sanitizer=build_sanitizer(settings.privacy),
+            parser=parser or (DoclingParser() if docs.parser == "docling" else PypdfParser()),
+            sanitizer=sanitizer or build_sanitizer(settings.privacy),
             registry=registry,
             cache_dir=docs.cache_dir,
             tenant_id=tenant_id or docs.tenant_id,
+            access_overrides=AccessOverrides(docs.access_overrides),
         )
 
     def doc_id(self, source: str) -> str:
         return make_doc_id(self.tenant_id, source)
 
     def access_for(self, source: str) -> tuple[AccessPolicy, list[str]]:
-        """Who may read ``source``, from the registry, plus warnings. Cheap: no file access,
-        so the store can apply a permission change without loading the document."""
+        """Who may read ``source``: an API override if there is one, else the registry, plus
+        warnings. Cheap (no PDF access), so the store can apply a permission change without
+        loading the document."""
+        if self.access_overrides is not None:
+            override = self.access_overrides.get(self.tenant_id, source)
+            if override is not None:
+                return override, []
         return self.registry.access(source)
 
     def fingerprint(self, source: str) -> str:
@@ -268,6 +273,17 @@ class IngestionPipeline:
             else:
                 block.rows.append(doc.page_content.split(_ROW))
         return out, title, report
+
+
+def _load_registry(path: Path | None) -> PolicyRegistry:
+    if path is None:
+        return PolicyRegistry.empty()
+    if path.exists():
+        return PolicyRegistry.load(path)
+    raise RegistryError(
+        f"Policy registry {path} not found. Create it, or set "
+        "documents.registry to null in config.yaml to use defaults for every file."
+    )
 
 
 def _unit(text: str, page: int, block: int, row: int | None) -> Document:

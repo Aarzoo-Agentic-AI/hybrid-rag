@@ -106,7 +106,7 @@ Each step ends with something working and tested. Features and design decisions 
 - **Built:** `hybrid_rag/generation/` (`AnswerService` with `answer()` and `stream()`, prompts, context building, citation parsing), `Sanitizer.redact_text()` and `check_output()`, `reasoning_effort` per model in `llm:`, and `scripts/ask.py`.
 - **Results:** real `gpt-5` answers on the HR policies are grounded and correctly cited (live tests: PTO, an out-of-scope question, and the merit policy as employee and as manager). The confidence threshold (−8.5 for MiniLM) stops 7 of 9 unanswerable test questions without an LLM call and lets all 14 answerable ones through. `reasoning_effort: low` cut answer latency from about 26 s to about 7 s. Failover to Anthropic is tested with fake models only, because `ANTHROPIC_API_KEY` is empty.
 
-## Step 6: FastAPI service
+## Step 6: FastAPI service ✅
 - `POST /ingest`, `POST /query` (with `debug` and `stream` options), `GET /documents`, `DELETE /documents/{id}`, `PUT /documents/{id}/access` and `GET /health`, which reports Qdrant and circuit-breaker states.
 - A LangSmith anonymizer for query traces; redaction and quarantine counts in the audit log; `POST /ingest` reports quarantined files.
 - API keys mapped to principals in config; every route scoped to the caller's principal. An audit log of who asked and which chunks (and `access_version`s) were retrieved.
@@ -114,6 +114,8 @@ Each step ends with something working and tested. Features and design decisions 
 - Every route traced, with `request_id`, `tenant_id`, retrieval mode and the answering provider as LangSmith metadata and tags, and the `request_id` also in the logs, so a log line leads to its trace.
 - The API itself added to Docker Compose.
 - **Done when:** API tests pass, the whole flow works through Swagger UI, and `docker compose up` runs everything.
+- **Built:** `hybrid_rag/api/` (routes, schemas, services, key store, audit log, background ingest jobs, JSON logging with request IDs), `AccessOverrides` (API permission changes survive CLI ingests), the LangSmith anonymizer client, provider and status as trace metadata, `scripts/make_api_key.py`, the `Dockerfile` (CPU-only PyTorch on Linux) and the `api` service in Docker Compose.
+- **Decisions:** ingestion runs as a background job (a PDF takes minutes on CPU); API keys stored as SHA-256 hashes in a git-ignored file; the audit log keeps a hash of the question, not its text, by default; 404 for documents you may not see, the same as for missing ones.
 
 ## Step 7: Evaluation
 - A golden dataset of 50–100 HR questions, each tagged with its expected policy and section, including exceptions, table lookups, country differences and outdated versions.

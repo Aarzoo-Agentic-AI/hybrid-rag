@@ -29,6 +29,8 @@ dependencies = [
     "pyyaml>=6.0.3",
     "qdrant-client>=1.20.0",
     "sentence-transformers>=6.3.0",
+    "torch>=2.15.0",          # listed so Linux (Docker) gets the CPU-only build below
+    "torchvision>=0.29.2",
     "uvicorn[standard]>=0.54.0",
 ]
 
@@ -65,5 +67,14 @@ filterwarnings = [
     "ignore:Payload indexes have no effect in the local Qdrant:UserWarning",
 ]
 
+# Docker (Linux): CPU-only PyTorch, about 3 GB smaller than the default CUDA build. Windows and
+# macOS wheels on PyPI are CPU builds already, so they keep using PyPI.
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
 [tool.uv.sources]
+torch = [{ index = "pytorch-cpu", marker = "sys_platform == 'linux'" }]
+torchvision = [{ index = "pytorch-cpu", marker = "sys_platform == 'linux'" }]
 en-core-web-sm = { url = "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl" }

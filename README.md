@@ -4,6 +4,15 @@ Hybrid RAG for HR policies, built with LangChain: dense + sparse retrieval in Qd
 
 See [FEATURE.md](FEATURE.md) for the design and [PLAN.md](PLAN.md) for the implementation plan. Full documentation comes in step 8.
 
+## Running the API
+
+```bash
+uv run python scripts/make_api_key.py --demo   # demo keys: employee, manager, hr-comp, admin
+docker compose up -d --build                   # Qdrant + the API (first build takes 10+ minutes)
+```
+
+Open **http://localhost:8000/docs**, click **Authorize** and paste a key. You can then ask questions (`POST /query`), list your documents, and, with the admin key, upload PDFs, delete documents and change who may read them. Each key stands for one principal, so the same question gives an employee and a manager different answers. Without Docker, run the API with `uv run uvicorn --factory hybrid_rag.api.app:create_app`. Details are in the [API README](src/hybrid_rag/api/README.md).
+
 ## Indexing the HR policies
 
 ```bash

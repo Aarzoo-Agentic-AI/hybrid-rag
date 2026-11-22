@@ -106,11 +106,14 @@
   - `DELETE /documents/{id}`: remove a document and its chunks
   - `PUT /documents/{id}/access`: change a document's permissions without re-embedding
   - `GET /health`: health of the service, Qdrant and the LLM providers
-- **Authentication:** every request carries an API key that maps to a principal (tenant, user, groups, roles, clearance). Results, document lists and deletes are scoped to that principal (section 11).
+- **Authentication:** every request carries an API key (`X-API-Key`) that maps to a principal (tenant, user, groups, roles, clearance). Keys are stored only as SHA-256 hashes. Results, document lists and deletes are scoped to that principal (section 11); a document you may not see answers 404, like a missing one.
+- **Background ingestion:** `POST /ingest` returns a job at once; one worker thread parses and embeds the uploads, and `GET /ingest/{job_id}` reports each file's result, including quarantined files.
+- **Audit log:** one JSON line per question, upload, delete and permission change, with the caller, the chunks used and their `access_version`, redaction counts and the provider; the question only as a hash by default.
+- **Observability:** an `X-Request-ID` on every response, in every JSON log line, in the audit log and as LangSmith metadata, with the tenant, mode, provider and answer status; a LangSmith anonymizer masks personal data in everything traced.
 - **Debug mode:** a `debug` flag on `/query` returns the retrieved chunks, scores, reranker output and provider details.
 - **Config-driven pipeline:** swap models, chunk sizes, fusion settings and LLM providers through config files instead of code changes.
 - **Caching:** for embeddings and repeated queries.
-- **Docker Compose:** for local setup (API + Qdrant).
+- **Docker Compose:** for local setup (API + Qdrant). The API image uses CPU-only PyTorch; models are downloaded into a volume on first start.
 
 ## 9. LLM abstraction layer with failover
 **Built on LangChain's chat model interface.** All providers are LangChain chat models, so the rest of the code works with LangChain messages and never imports a provider SDK directly:
