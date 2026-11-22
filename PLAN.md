@@ -129,9 +129,14 @@ Each step ends with something working and tested. Features and design decisions 
   - No country-difference or superseded-version questions, because all five policies are current and US-only. The filters behind them are unit-tested.
   - `min_rerank_score` moved from −8.5 to −12, after the evaluation showed that −8.5 refused 9 answerable questions.
 
-## Step 8: Documentation and polish
+## Step 8: Documentation and polish ✅
 - A README with an architecture diagram, quick start, API examples, evaluation results, design decisions and notes on scaling.
 - **Done when:** someone could clone the repo and get it running from the README alone.
+- **Built:** the README rewritten (two Mermaid diagrams, a Docker-only quick start with troubleshooting, API examples, how it works, evaluation results, 13 design decisions with trade-offs, scaling, development, limitations and roadmap); the LangSmith guide moved to `docs/langsmith.md`; a status note in `FEATURE.md`. For the Docker-only path: API keys in `secrets/` (Compose mounts the folder) and a `keys` tool service, so no local Python install is needed.
+- **Verified:** from a clean copy of the repo, following the README exactly, key creation and API startup work. Not verified: indexing inside Docker, which doesn't fit in the 2 GB this machine's Docker is limited to. The README says it needs more than 2 GB and offers indexing on the host instead, which is how the project was run during development.
+- **Decisions:**
+  - The quick start indexes before starting the API, so only one process holds the models in memory.
+  - No license: all rights reserved.
 
 ## Proposed structure
 ```
